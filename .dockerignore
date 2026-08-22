@@ -1,0 +1,9 @@
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/release
+**/*.tsbuildinfo
+.git
+.github
+*.log

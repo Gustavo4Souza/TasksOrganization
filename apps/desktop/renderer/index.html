@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>TasksOrg — Desktop (POC)</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #fafafa;
+        color: #111;
+        padding: 1.5rem 2rem;
+      }
+      h1 { font-size: 1.4rem; margin-bottom: 0; }
+      .subtitle { color: #666; margin-top: 0.25rem; }
+      section {
+        margin-top: 1.5rem;
+        padding: 1rem 1.25rem;
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        background: white;
+      }
+      .task-form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+      .task-form input { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 8px; }
+      button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 8px;
+        background: #111;
+        color: white;
+        cursor: pointer;
+      }
+      button.secondary { background: #eee; color: #111; }
+      ul { list-style: none; padding: 0; margin: 0; }
+      li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      li.done .title { text-decoration: line-through; color: #999; }
+      .pomodoro { text-align: center; }
+      .time { font-size: 2.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .phase { text-transform: uppercase; font-size: 0.75rem; color: #666; letter-spacing: 0.08em; }
+      .controls { margin-top: 0.75rem; display: flex; gap: 0.5rem; justify-content: center; }
+    </style>
+  </head>
+  <body>
+    <h1>TasksOrg</h1>
+    <p class="subtitle">POC Desktop (Electron) — mesma lógica de @tasksorg/core usada na web</p>
+
+    <section>
+      <h2>Tarefas</h2>
+      <form class="task-form" id="task-form">
+        <input type="text" id="task-input" placeholder="Nova tarefa..." />
+        <button type="submit">Adicionar</button>
+      </form>
+      <ul id="task-list"></ul>
+    </section>
+
+    <section class="pomodoro">
+      <h2>Pomodoro</h2>
+      <p class="phase" id="pomodoro-phase">Foco</p>
+      <p class="time" id="pomodoro-time">25:00</p>
+      <div class="controls">
+        <button id="btn-start">Iniciar</button>
+        <button class="secondary" id="btn-pause">Pausar</button>
+        <button class="secondary" id="btn-reset">Resetar</button>
+      </div>
+    </section>
+
+    <script src="../dist/renderer.js"></script>
+  </body>
+</html>

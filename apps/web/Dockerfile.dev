@@ -1,0 +1,14 @@
+# Imagem de DESENVOLVIMENTO do app web.
+# Não copia o código — o código entra via bind mount no docker-compose.yml.
+# Essa imagem só precisa ter Node + pnpm prontos; o `pnpm install` roda
+# no `command:` do compose, contra o código montado do host.
+
+FROM node:20-bullseye
+
+RUN corepack enable
+
+WORKDIR /app
+
+EXPOSE 3000
+
+CMD ["pnpm", "--filter", "@tasksorg/web", "dev"]

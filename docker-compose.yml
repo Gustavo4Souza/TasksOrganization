@@ -1,54 +1,57 @@
+name: tasksorg
+
 services:
-
-  postgres:
-    image: postgres:17-alpine
-    container_name: postgres_db
-
-    environment:
-      POSTGRES_DB: devops_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-
-    ports:
-      - "5432:5432"
-
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  backend:
+  # --- App Web (Next.js) em modo desenvolvimento, com BIND MOUNT ---
+  # O código do host (sua pasta local) é montado dentro do container.
+  # Você edita no VSCode, o container enxerga a mudança na hora (hot reload) —
+  # sem precisar rebuildar a imagem a cada alteração.
+  web:
     build:
-      context: ./backend
-
-    container_name: backend
-
+      context: .
+      dockerfile: apps/web/Dockerfile.dev
+    working_dir: /app
+    command: sh -c "pnpm install --frozen-lockfile && pnpm --filter @tasksorg/web dev"
     ports:
       - "3000:3000"
-
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/devops_db
-
-    depends_on:
-      - postgres
-
+      NODE_ENV: development
+      # necessário pro hot-reload funcionar de forma confiável com bind mount,
+      # especialmente rodando o Docker Desktop no Windows
+      WATCHPACK_POLLING: "true"
     volumes:
-      - ./backend:/app
+      # --- bind mount: pasta do projeto no host <-> /app no container ---
+      - .:/app
+      # --- volumes anônimos: "protegem" essas pastas de serem sobrescritas
+      # pelo bind mount acima. Sem isso, o node_modules instalado DENTRO do
+      # container (Linux) seria substituído pelo node_modules do host
+      # (Windows), quebrando pacotes com binário nativo (ex: esbuild). ---
       - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/apps/web/.next
+      - /app/apps/desktop/node_modules
+      - /app/packages/core/node_modules
+      # cache do pnpm entre reinicializações do container (instala mais rápido)
+      - pnpm-store:/root/.local/share/pnpm/store
 
-  frontend:
+  # --- Jenkins, já com Docker CLI instalado (ver devops/jenkins/Dockerfile) ---
+  jenkins:
     build:
-      context: ./frontend
-
-    container_name: frontend
-
+      context: ./devops/jenkins
     ports:
-      - "5173:5173"
-
-    depends_on:
-      - backend
-
+      # formato é "porta_da_sua_máquina:porta_dentro_do_container" — o
+      # Jenkins sempre escuta na 8080 *dentro* do container, então só o
+      # lado esquerdo muda (aqui: 7000, pra não bater com um Jenkins local
+      # que você já tinha rodando na 8080)
+      - "7000:8080" # interface web do Jenkins -> http://localhost:7000
+      - "50000:50000" # porta usada por agentes Jenkins remotos (não usamos agora)
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - jenkins_home:/var/jenkins_home
+      # bind mount do socket do Docker do host: é assim que o Jenkins,
+      # rodando dentro de um container, consegue mandar o Docker do HOST
+      # buildar outras imagens (ex: a imagem de produção do web).
+      # É chamado de "Docker outside of Docker" (DooD).
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
-  postgres_data:
+  jenkins_home:
+  pnpm-store:

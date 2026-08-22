@@ -1,0 +1,23 @@
+{
+  "name": "@tasksorg/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node esbuild.renderer.mjs",
+    "dev": "pnpm build && electron .",
+    "start": "electron .",
+    "lint": "echo \"(lint placeholder - eslint pode ser adicionado depois)\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "echo \"(sem testes automatizados no desktop na POC - a logica fica coberta pelos testes de @tasksorg/core)\" && exit 0"
+  },
+  "dependencies": {
+    "@tasksorg/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.11",
+    "electron": "^32.2.5",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.3"
+  }
+}
