@@ -1,1 +1,0 @@
-// Layout compartilhado entre as páginas
