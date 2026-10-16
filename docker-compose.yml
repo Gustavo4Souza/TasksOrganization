@@ -33,25 +33,5 @@ services:
       # cache do pnpm entre reinicializações do container (instala mais rápido)
       - pnpm-store:/root/.local/share/pnpm/store
 
-  # --- Jenkins, já com Docker CLI instalado (ver devops/jenkins/Dockerfile) ---
-  jenkins:
-    build:
-      context: ./devops/jenkins
-    ports:
-      # formato é "porta_da_sua_máquina:porta_dentro_do_container" — o
-      # Jenkins sempre escuta na 8080 *dentro* do container, então só o
-      # lado esquerdo muda (aqui: 7000, pra não bater com um Jenkins local
-      # que você já tinha rodando na 8080)
-      - "7000:8080" # interface web do Jenkins -> http://localhost:7000
-      - "50000:50000" # porta usada por agentes Jenkins remotos (não usamos agora)
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      # bind mount do socket do Docker do host: é assim que o Jenkins,
-      # rodando dentro de um container, consegue mandar o Docker do HOST
-      # buildar outras imagens (ex: a imagem de produção do web).
-      # É chamado de "Docker outside of Docker" (DooD).
-      - /var/run/docker.sock:/var/run/docker.sock
-
 volumes:
-  jenkins_home:
   pnpm-store:

@@ -10,8 +10,11 @@
 | Lógica compartilhada | pacote `@tasksorg/core`, sem nenhuma dependência de UI |
 | Testes | Vitest (packages/core) |
 | Containers | Docker + Docker Compose |
-| CI/CD | Jenkins (Jenkinsfile) |
+| CI/CD | GitHub Actions (`.github/workflows/ci.yml`) |
 | Orquestração (futuro) | Kubernetes |
+| Hospedagem web | Vercel |
+| Hospedagem da API | Render |
+| Banco de dados | Neon PostgreSQL |
 
 ## Estrutura do monorepo
 
@@ -24,14 +27,16 @@ TasksOrganization/
 │   └── desktop/     → Electron (empacota a web/lógica num app nativo)
 ├── packages/
 │   └── core/         → Regras de negócio compartilhadas (tasks + pomodoro)
-├── devops/
-│   └── jenkins/       → imagem custom do Jenkins (Docker CLI + plugins)
-├── docker-compose.yml → sobe o app web (bind mount) + o Jenkins
-├── Jenkinsfile        → pipeline de CI/CD
+├── docker-compose.yml → sobe o app web em desenvolvimento (bind mount)
+├── .github/workflows/ → pipeline de CI/CD no GitHub Actions
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
 ```
+
+O backend, o banco de dados e seus containers serão incorporados em fases
+posteriores. A antiga pasta `frontend/` foi removida por não fazer parte da
+arquitetura oficial; o frontend oficial é `apps/web`.
 
 ## Por que um monorepo?
 
