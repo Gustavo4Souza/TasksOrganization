@@ -96,7 +96,7 @@ MVP ──► entrega que dá para demonstrar e usar
 
 - [x] `T0.1.1` Registrar a decisão "GitHub Actions de volta como CI/CD" no cofre e em `docs/Decisões/` — **Guilhermo** · P
 - [x] `T0.1.2` Remover `Jenkinsfile`, `devops/jenkins/` e o serviço `jenkins` do `docker-compose.yml` — **Guilhermo** · P · ⛓ T0.1.1
-- [ ] `T0.1.3` Remover arquivos soltos da raiz (`teste.js`, `Claude outputs/`) — **Guilhermo** · P
+- [x] `T0.1.3` Remover arquivos soltos da raiz (`teste.js`, `Claude outputs/`) — **Guilhermo** · P
 - [x] `T0.1.4` Decidir entre `frontend/` e `apps/web` (hoje existem dois apps Next.js), migrar o que for útil e apagar o outro; registrar a decisão — **Higor** · M
 - [x] `T0.1.5` Revisar `.github/workflows/ci.yml`: install → lint → typecheck → test → build, com cache do pnpm — **Guilhermo** · M · ⛓ T0.1.4
 - [x] `T0.1.6` Proteger a `main`: merge só por PR, com 1 aprovação e CI verde — **Guilhermo** · P · ⛓ T0.1.5
