@@ -12,7 +12,7 @@ function formatTime(totalSeconds: number): string {
   return `${minutes}:${seconds}`;
 }
 
-let tasks: Task[] = [];
+const tasks: Task[] = [];
 
 function renderTasks(): void {
   const list = document.getElementById("task-list");
