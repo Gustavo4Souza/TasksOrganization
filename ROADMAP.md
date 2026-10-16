@@ -1,36 +1,31 @@
 # 🚀 TasksOrg — Roadmap do Projeto
 
-> Gerenciador de tarefas multiplataforma inspirado no Notion, desenvolvido com foco em **DevOps, DevSecOps, CI/CD, testes automatizados e monitoramento de KPIs**.
+> Gerenciador de tarefas multiplataforma com estética **pixel art / Metroidvania**, feito para ficar **aberto num monitor secundário**, desenvolvido com foco em **DevOps, DevSecOps, CI/CD, testes automatizados e monitoramento de KPIs**.
 
 ---
 
 ## 📌 Visão Geral
 
-O **TasksOrg** é um aplicativo de organização pessoal com suporte a:
+O **TasksOrg** é um aplicativo de organização pessoal com:
 
-- 📋 Tarefas
-- 📅 Tarefas diárias, semanais e anuais
-- 🎯 Prioridades
-- ✅ Status de tarefas
-- 🍅 Timer Pomodoro
-- 📊 Dashboard
-- 🔐 Autenticação
-- 💾 Persistência de dados
-- 🌐 Aplicação Web
-- 🖥️ Aplicação Desktop
-- 📱 Aplicação Mobile — futura
-- 🐳 Docker
-- ⚙️ CI/CD
-- 🧪 Testes automatizados
-- 🔒 DevSecOps / SAST
-- 📈 KPIs de DevOps
-- ☸️ Kubernetes — futura etapa
-
-O projeto segue o fluxo:
+- 📋 Tarefas ("missões") com status, prioridade e escopo diário, semanal ou anual
+- 🍅 Timer Pomodoro ligado à tarefa em andamento
+- 🗺️ Mapa de progresso da semana e do ano
+- 🖥️ Tela única, **sem rolagem**, pensada para o segundo monitor
+- 🌐 Web, 🖥️ Desktop e 📱 Mobile (futuro), com a mesma regra de negócio
+- 🐳 Docker, ⚙️ CI/CD, 🧪 testes, 🔒 SAST, 📈 KPIs de DevOps, ☸️ Kubernetes (futuro)
 
 ```text
 PLAN → CODE → BUILD → TEST → RELEASE → DEPLOY → OPERATE → MONITOR
 ```
+
+### 🎨 Referências de design
+
+| O quê | Onde |
+|---|---|
+| Design System (tokens, fontes, componentes `px-*`) | [Design System TasksOrg](https://claude.ai/artifact/1CWD4ogZnHRhc5SyxuQnJe) |
+| Telas prototipadas (Quadro, Modo foco, Pergaminho, Ano, Vertical) | [TasksOrg — Telas Pixel](https://claude.ai/artifact/Bk4WBV9v1PWYYX4mW4MdUS) |
+| Decisão registrada | [`docs/Decisões/Identidade visual pixel (Metroidvania) e tela sem rolagem.md`](docs/Decisões/Identidade%20visual%20pixel%20(Metroidvania)%20e%20tela%20sem%20rolagem.md) |
 
 ---
 
@@ -38,470 +33,263 @@ PLAN → CODE → BUILD → TEST → RELEASE → DEPLOY → OPERATE → MONITOR
 
 | Integrante | Área principal | Responsabilidades |
 |---|---|---|
-| 👨‍💻 Higor | Produto + Frontend | Interface, UX, funcionalidades, Dashboard e integração |
-| 👨‍💻 Gustavo | Backend + Qualidade | API, banco de dados, regras de negócio e testes |
-| 👨‍💻 Guilhermo | DevOps + DevSecOps | Docker, CI/CD, SAST, Deploy, Monitoramento e KPIs |
+| 👨‍💻 Higor | Produto + Frontend | Telas, componentes React, UX, acessibilidade, integração com a API |
+| 👨‍💻 Gustavo | Backend + Qualidade | `@tasksorg/core`, API, banco, tokens do Design System, testes |
+| 👨‍💻 Guilhermo | DevOps + DevSecOps | Repositório, CI/CD, Docker, Electron build, SAST, deploy, KPIs |
 
-> A divisão define o responsável principal por cada área. Todos os integrantes devem participar das revisões de código e integração das funcionalidades.
+> Cada task tem **um único responsável** (quem entrega). Todo PR passa pela revisão de pelo menos um dos outros dois.
 
 ---
 
-## 🏗️ Arquitetura
+## 🧭 Como este roadmap está organizado
 
 ```text
-                         ┌──────────────────┐
-                         │     TasksOrg     │
-                         └────────┬─────────┘
-                                  │
-                 ┌────────────────┼────────────────┐
-                 ↓                ↓                ↓
-              Web App          Desktop          Mobile
-              Next.js         Electron           Expo
-                 │                │                │
-                 └────────────────┼────────────────┘
-                                  ↓
-                         @tasksorg/core
-                                  │
-                                  ↓
-                                API
-                                  │
-                                  ↓
-                              Database
+MVP ──► entrega que dá para demonstrar e usar
+ └─ Épico ──► bloco grande de valor (vira uma milestone/label no GitHub)
+     └─ Task ──► 1 responsável, cabe em até 2 dias (vira uma issue)
 ```
 
-### Stack atual
+- **ID da task:** `T<mvp>.<épico>.<nº>` — ex.: `T1.2.4` = MVP 1, Épico 2, Task 4. Use o ID no nome da branch e do PR: `feat/T1.2.4-densidade-adaptativa`.
+- **Tamanho:** `P` (até meio dia) · `M` (1 dia) · `G` (2 dias — se passar disso, quebre em duas).
+- **Dependência:** `⛓ T0.2.1` = só começa depois dessa.
+- **Board:** `Backlog → A fazer → Em andamento → Em revisão → Concluído` (o mesmo fluxo que o app ensina: Missões → Em batalha → Conquistas).
 
-| Camada | Tecnologia |
-|---|---|
-| Linguagem | TypeScript |
-| Monorepo | pnpm Workspaces + Turborepo |
-| Web | Next.js + React |
-| Desktop | Electron |
-| Mobile | Expo / React Native — futuro |
-| Core | `@tasksorg/core` |
-| Testes | Vitest |
-| Containers | Docker + Docker Compose |
-| CI/CD | GitHub Actions |
-| Segurança | SAST |
-| Orquestração | Kubernetes — futuro |
+---
+
+## ✅ Já conquistado (POC)
+
+- [x] Monorepo com pnpm workspaces + Turborepo
+- [x] `@tasksorg/core` com `Task`, `TaskStore` e `PomodoroTimer` (13 testes com Vitest)
+- [x] `apps/web` (Next.js 14) e `apps/desktop` (Electron 32) consumindo o core
+- [x] Docker com bind mount para desenvolvimento do web + Dockerfile de produção
+- [x] Base de Decisões (ADR) no cofre e em `docs/`
+- [x] Identidade visual: Design System pixel/Metroidvania (paleta Castelo/Pergaminho, fontes, 8 componentes)
+- [x] Protótipo interativo das telas (Quadro, Modo foco, tema claro, escopo Ano, monitor vertical)
 
 ---
 
 ## 🗺️ Roadmap
 
-### 🟦 FASE 0 — Planejamento e Organização
-
-**🎯 Objetivo:** Organizar o projeto antes do desenvolvimento das funcionalidades.
-
-#### Higor
-- [ ] Levantar requisitos funcionais
-- [ ] Definir fluxo de usuário
-- [ ] Criar wireframes
-- [ ] Definir telas principais
-- [ ] Definir identidade visual
-- [ ] Documentar funcionalidades
-
-#### Gustavo
-- [ ] Levantar entidades do sistema
-- [ ] Definir modelo de dados
-- [ ] Definir estrutura da API
-- [ ] Definir estratégia de testes
-- [ ] Revisar `packages/core`
-
-#### Guilhermo
-- [ ] Revisar configuração Docker
-- [ ] Revisar estrutura de CI/CD
-- [ ] Definir ambientes
-- [ ] Definir estratégia de SAST
-- [ ] Definir coleta dos KPIs
-
-#### Entregáveis
-- [ ] Requisitos documentados
-- [ ] Arquitetura documentada
-- [ ] Wireframes
-- [ ] Estrutura inicial do projeto
-- [ ] Estratégia de DevOps documentada
+| MVP | Nome | O que dá para demonstrar no fim | Sprints |
+|---|---|---|---|
+| 🟦 **MVP 0** | Fundação | Página `/design` com todos os componentes pixel nos dois temas, CI verde | 1–2 |
+| 🟩 **MVP 1** | Quadro no segundo monitor | O protótipo funcionando de verdade no web e no desktop, salvando localmente | 3–5 |
+| 🟨 **MVP 2** | Conta e sincronização | Login, dados no Postgres, web e desktop sincronizados | 6–7 |
+| 🟥 **MVP 3** | DevSecOps e KPIs | SAST bloqueando PR, tela de KPIs de DevOps no estilo pixel | 8–9 |
+| 🟪 **MVP 4** | Evolução | Deploy no Kubernetes e app mobile | 10+ |
 
 ---
 
-### 🟩 FASE 1 — Produto Mínimo Viável
+### 🟦 MVP 0 — Fundação
 
-**🎯 Objetivo:** Transformar a POC em um gerenciador de tarefas funcional.
+**🎯 Objetivo:** deixar o repositório pronto para construir as telas: um único app web, CI rodando e o Design System virando código reutilizável.
 
-#### Funcionalidades
-- [ ] Criar tarefa
-- [ ] Editar tarefa
-- [ ] Excluir tarefa
-- [ ] Concluir tarefa
-- [ ] Alterar status
-- [ ] Definir prioridade
-- [ ] Filtrar tarefas
-- [ ] Tarefas diárias
-- [ ] Tarefas semanais
-- [ ] Tarefas anuais
-- [ ] Dashboard inicial
-- [ ] Pomodoro
+**🏁 Entrega:** rota `/design` no `apps/web` mostrando todos os componentes `px-*` nos temas Castelo e Pergaminho, com o CI passando no PR.
 
-#### Higor — Frontend
-- [ ] Dashboard
-- [ ] Lista de tarefas
-- [ ] Formulário de criação
-- [ ] Edição de tarefas
-- [ ] Filtros
-- [ ] Prioridades
-- [ ] Visualização diária
-- [ ] Visualização semanal
-- [ ] Visualização anual
-- [ ] Interface do Pomodoro
+#### Épico 0.1 — Repositório limpo e CI básico
 
-#### Gustavo — Backend
-- [ ] Modelagem inicial
-- [ ] Regras de negócio
-- [ ] CRUD de tarefas
-- [ ] API
-- [ ] Validações
-- [ ] Regras do Pomodoro
+> Como time, queremos um repositório sem duplicidades e com CI confiável, para que todo PR seja validado automaticamente.
 
-#### Guilhermo — Infraestrutura
-- [ ] Docker
-- [ ] Docker Compose
-- [ ] `.env.example`
-- [ ] Ambiente de desenvolvimento
-- [ ] Ambiente de testes
-- [ ] Health check inicial
+- [ ] `T0.1.1` Registrar a decisão "GitHub Actions de volta como CI/CD" no cofre e em `docs/Decisões/` — **Guilhermo** · P
+- [ ] `T0.1.2` Remover `Jenkinsfile`, `devops/jenkins/` e o serviço `jenkins` do `docker-compose.yml` — **Guilhermo** · P · ⛓ T0.1.1
+- [ ] `T0.1.3` Remover arquivos soltos da raiz (`teste.js`, `Claude outputs/`) — **Guilhermo** · P
+- [ ] `T0.1.4` Decidir entre `frontend/` e `apps/web` (hoje existem dois apps Next.js), migrar o que for útil e apagar o outro; registrar a decisão — **Higor** · M
+- [ ] `T0.1.5` Revisar `.github/workflows/ci.yml`: install → lint → typecheck → test → build, com cache do pnpm e do Turborepo — **Guilhermo** · M · ⛓ T0.1.4
+- [ ] `T0.1.6` Proteger a `main`: merge só por PR, com 1 aprovação e CI verde — **Guilhermo** · P · ⛓ T0.1.5
+- [ ] `T0.1.7` Criar `packages/eslint-config` e `packages/tsconfig` compartilhados e trocar os lints placeholder de `core` e `desktop` — **Gustavo** · M
+
+#### Épico 0.2 — Design System no código (`packages/ui`)
+
+> Como dev, quero importar tokens e componentes pixel de um único pacote, para que web e desktop fiquem idênticos ao protótipo.
+
+- [ ] `T0.2.1` Criar `packages/ui` no workspace (build, export de CSS e de componentes, tarefas no `turbo.json`) — **Guilhermo** · M
+- [ ] `T0.2.2` Gerar `tokens.css` dos temas Castelo e Pergaminho a partir do `tokens.json` do Design System (script versionado) — **Gustavo** · M · ⛓ T0.2.1
+- [ ] `T0.2.3` Teste automatizado de contraste: falha se algum par texto/fundo dos tokens ficar abaixo de 4.5:1 — **Gustavo** · P · ⛓ T0.2.2
+- [ ] `T0.2.4` Portar as classes `px-*` do `bundle.css` do Design System para `packages/ui/styles` — **Higor** · P · ⛓ T0.2.2
+- [ ] `T0.2.5` Fontes Silkscreen, Pixelify Sans e Jersey 10 (via `next/font` no web e arquivos locais no Electron) — **Higor** · P
+- [ ] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4
+- [ ] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6
+- [ ] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6
+- [ ] `T0.2.9` Componentes React `PomodoroHUD` e `RoomMap`, recebendo o `PomodoroSnapshot` do core como prop — **Gustavo** · M · ⛓ T0.2.6
+- [ ] `T0.2.10` Testes de componentes (Vitest + Testing Library): estados, props e acessibilidade básica — **Gustavo** · M · ⛓ T0.2.7
+- [ ] `T0.2.11` Rota `/design` no `apps/web` com o catálogo de componentes e alternância de tema — **Higor** · P · ⛓ T0.2.7
+
+**✔️ Critérios de aceite do MVP 0**
+- Componentes iguais aos previews do Design System nos dois temas.
+- Nenhuma cor em hex fora de `tokens.css`.
+- CI rodando lint, typecheck, testes e build em todo PR.
 
 ---
 
-### 🟨 FASE 2 — Persistência e Backend
+### 🟩 MVP 1 — Quadro no segundo monitor
 
-**🎯 Objetivo:** Substituir o armazenamento em memória por persistência real.
+**🎯 Objetivo:** transformar o protótipo em um app usável no dia a dia, ainda **sem login**: os dados ficam salvos no navegador (web) ou em arquivo (desktop).
 
-```text
-Frontend
-   ↓
-API
-   ↓
-Database
-```
+**🏁 Entrega:** telas Quadro e Modo foco funcionando no web e no Electron, com Pomodoro, temas e layouts do protótipo. Release `v0.1.0`.
 
-#### Gustavo
-- [ ] Configurar banco de dados
-- [ ] Criar migrations
-- [ ] Criar models
-- [ ] Criar repositórios
-- [ ] Implementar CRUD
-- [ ] Implementar autenticação
-- [ ] Implementar autorização
-- [ ] Implementar persistência
-- [ ] Implementar histórico de Pomodoro
+#### Épico 1.1 — Core: regras novas que as telas precisam
 
-#### Higor
-- [ ] Integrar frontend com API
-- [ ] Estados de loading
-- [ ] Tratamento de erros
-- [ ] Autenticação no frontend
-- [ ] Gerenciamento de sessão
-- [ ] Feedback visual das operações
+> Como usuário, quero que o Pomodoro conte para a missão em que estou trabalhando e que meu progresso fique registrado.
 
-#### Guilhermo
-- [ ] Container do backend
-- [ ] Container do banco
-- [ ] Variáveis de ambiente
-- [ ] Health checks
-- [ ] Configuração dos ambientes
+- [ ] `T1.1.1` Adicionar `pomodoros` (focos gastos) e `completedAt` ao `Task` — **Gustavo** · P
+- [ ] `T1.1.2` Regra "só uma missão em batalha": `TaskStore.startBattle(id)` devolve a anterior para `todo` — **Gustavo** · M
+- [ ] `T1.1.3` `TaskStore.update` (título, prioridade, escopo, prazo) e ordenação por prioridade — **Gustavo** · P
+- [ ] `T1.1.4` `PomodoroTimer` emite evento de troca de fase; ao fim de um Foco, credita +1 à missão em batalha — **Gustavo** · M · ⛓ T1.1.2
+- [ ] `T1.1.5` Histórico diário de conclusões, com nível de 0 a 3 por dia e por mês (alimenta o `RoomMap`) — **Gustavo** · M · ⛓ T1.1.1
+- [ ] `T1.1.6` Interface `TaskRepository` + adaptadores `localStorage` (web) e arquivo JSON (desktop) — **Gustavo** · M
+- [ ] `T1.1.7` Testes unitários das regras acima (meta: ≥ 90% de cobertura no core) — **Gustavo** · M
 
----
+#### Épico 1.2 — Tela Quadro
 
-### 🧪 FASE 3 — Testes Automatizados
+> Como usuário, quero ver todas as missões do escopo de relance, sem rolar a tela, e mudá-las de coluna com um clique.
 
-**🎯 Objetivo:** Garantir qualidade e preparar a aplicação para CI/CD.
+- [ ] `T1.2.1` Layout em `100vh`: HUD + 3 colunas + lateral (grid do protótipo) — **Higor** · M · ⛓ T0.2.11
+- [ ] `T1.2.2` HUD: `ScopeTabs` com contadores, barra de XP do dia e campo "Nova missão" com prioridade — **Higor** · M · ⛓ T1.2.1
+- [ ] `T1.2.3` Colunas Missões / Em batalha / Conquistas, com estados vazios — **Higor** · M · ⛓ T1.2.1
+- [ ] `T1.2.4` Densidade adaptativa: mais de 6 cartões → compactos; mais de 11 → "+N missões" com lista em popover — **Higor** · M · ⛓ T1.2.3
+- [ ] `T1.2.5` Ações no cartão: concluir, BATALHAR/RECUAR, editar inline e excluir com confirmação — **Higor** · M · ⛓ T1.1.3
+- [ ] `T1.2.6` Arrastar e soltar entre colunas, com alternativa por teclado — **Higor** · G · ⛓ T1.2.5
+- [ ] `T1.2.7` Painel Mapa ligado ao histórico do core — **Higor** · P · ⛓ T1.1.5
 
-```text
-                    TESTES
-                       │
-          ┌────────────┼────────────┐
-          ↓            ↓            ↓
-      Unitários    Integração      E2E
-```
+#### Épico 1.3 — Pomodoro e Modo foco
 
-#### Gustavo
-- [ ] Testes unitários
-- [ ] Testes de regras de negócio
-- [ ] Testes da API
-- [ ] Testes de integração
-- [ ] Testes de autenticação
-- [ ] Testes de permissões
-- [ ] Testes do Pomodoro
+> Como usuário, quero um timer que eu leia de longe e que me avise quando a fase virar.
 
-#### Higor
-- [ ] Testes de componentes
-- [ ] Testes de formulários
-- [ ] Testes de criação de tarefa
-- [ ] Testes de conclusão
-- [ ] Testes de filtros
-- [ ] Testes do Dashboard
+- [ ] `T1.3.1` Hook `usePomodoro` (tick com `PomodoroTimer`, continua certo após recarregar a página) — **Gustavo** · M · ⛓ T1.1.4
+- [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1
+- [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1
+- [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1
+- [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P
+- [ ] `T1.3.6` Configuração dos tempos (padrão 25/5/15, 4 ciclos), salva localmente — **Gustavo** · P
 
-#### Guilhermo
-- [ ] Configurar execução automática dos testes
-- [ ] Integrar testes ao CI
-- [ ] Gerar relatório dos testes
-- [ ] Registrar testes bem-sucedidos
-- [ ] Registrar testes malsucedidos
+#### Épico 1.4 — Temas, formatos de tela e acessibilidade
 
----
+> Como usuário, quero que o app funcione no meu monitor, seja ele pequeno, grande ou vertical, no tema que eu preferir.
 
-### ⚙️ FASE 4 — CI/CD
+- [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P
+- [ ] `T1.4.2` Layouts para telas de até 1280px, monitor vertical e celular (no celular a rolagem é aceita) — **Higor** · M · ⛓ T1.2.1
+- [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P
+- [ ] `T1.4.4` Auditoria automática com axe nas telas (zero violações sérias) — **Gustavo** · M
 
-**🎯 Objetivo:** Automatizar validação, build e deploy do projeto.
+#### Épico 1.5 — Desktop com a mesma interface
 
-```text
-Git Push / Pull Request
-          ↓
-    GitHub Actions
-          ↓
-       Install
-          ↓
-        Lint
-          ↓
-      Typecheck
-          ↓
-        Tests
-          ↓
-        SAST
-          ↓
-        Build
-          ↓
-    Docker Image
-          ↓
-       Release
-          ↓
-       Deploy
-```
+> Como usuário, quero o TasksOrg como janela própria no segundo monitor, sem depender de uma aba do navegador.
 
-#### Guilhermo
-- [ ] Criar `.github/workflows/ci.yml`
-- [ ] Criar workflow de CI
-- [ ] Configurar instalação de dependências
-- [ ] Configurar lint
-- [ ] Configurar typecheck
-- [ ] Configurar testes
-- [ ] Configurar build
-- [ ] Configurar Docker
-- [ ] Criar workflow de CD
-- [ ] Configurar deploy
-- [ ] Configurar Docker Registry
+- [ ] `T1.5.1` Renderer do Electron usando `packages/ui` e as mesmas telas do web — **Guilhermo** · M · ⛓ T1.2.1
+- [ ] `T1.5.2` Opção "sempre no topo" e lembrar posição, tamanho e monitor da janela — **Guilhermo** · M · ⛓ T1.5.1
+- [ ] `T1.5.3` Ícone na bandeja do sistema mostrando o tempo do Pomodoro — **Guilhermo** · M · ⛓ T1.3.1
+- [ ] `T1.5.4` Gerar instalador Windows (electron-builder) no CI como artefato — **Guilhermo** · M · ⛓ T1.5.1
 
-#### Higor
-- [ ] Corrigir problemas encontrados pelo CI
-- [ ] Garantir build correto do frontend
-- [ ] Validar comportamento após deploy
+#### Épico 1.6 — Qualidade e entrega do MVP 1
 
-#### Gustavo
-- [ ] Corrigir falhas de testes
-- [ ] Garantir compatibilidade da API
-- [ ] Validar build do backend
+> Como time, queremos garantir que o fluxo principal nunca quebre e que cada merge gere uma versão testável.
+
+- [ ] `T1.6.1` Testes E2E (Playwright): criar → batalhar → concluir; troca de fase do Pomodoro; tela sem rolagem em 1280×720, 1440×900 e 1920×1080 — **Gustavo** · G · ⛓ T1.2.5
+- [ ] `T1.6.2` Rodar unitários e E2E no CI, com relatório de sucesso/falha (base do KPI de testes) — **Guilhermo** · M · ⛓ T1.6.1
+- [ ] `T1.6.3` Publicar a imagem `tasksorg-web` no GHCR a cada merge na `main` — **Guilhermo** · M
+- [ ] `T1.6.4` Ambiente de homologação do web, com deploy automático — **Guilhermo** · M · ⛓ T1.6.3
+- [ ] `T1.6.5` Release `v0.1.0` com changelog e tag — **Guilhermo** · P · ⛓ T1.6.4
+
+**✔️ Critérios de aceite do MVP 1**
+- Nenhuma barra de rolagem na tela Quadro em 1280×720, 1440×900 e 1920×1080.
+- O Pomodoro credita o foco na missão em batalha, e o mapa reflete as conclusões do dia.
+- Web e desktop com o mesmo comportamento, garantido pelo core compartilhado.
+- Dados sobrevivem a recarregar a página e a reabrir o app.
 
 ---
 
-### 🔐 FASE 5 — DevSecOps / SAST
+### 🟨 MVP 2 — Conta e sincronização
 
-**🎯 Objetivo:** Adicionar segurança ao processo de desenvolvimento.
+**🎯 Objetivo:** substituir o armazenamento local por persistência real, com login, e sincronizar web e desktop.
+
+**🏁 Entrega:** usuário cria conta, faz login no web e no desktop e vê as mesmas missões nos dois.
 
 ```text
-Developer
-    ↓
-Git Push
-    ↓
-GitHub Actions
-    ↓
-   SAST
-    ↓
-Security Gate
-    ↓
- ┌───────┐
- │       │
- OK    Falha
- │       │
- ↓       ↓
-Build   Bloqueio
+Web / Desktop ──► TaskRepository (HTTP) ──► API ──► PostgreSQL
 ```
 
-**SAST — Static Application Security Testing:** responsável por analisar o código-fonte em busca de possíveis vulnerabilidades antes do deploy.
+#### Épico 2.1 — API e banco de dados
 
-#### Guilhermo
-- [ ] Escolher ferramenta SAST
-- [ ] Configurar SAST no GitHub Actions
-- [ ] Configurar Security Gate
-- [ ] Definir níveis de severidade
-- [ ] Gerar relatório de vulnerabilidades
-- [ ] Documentar processo de segurança
+> Como usuário, quero minhas missões salvas na nuvem para não perdê-las e acessá-las de qualquer lugar.
 
-#### Gustavo
-- [ ] Corrigir vulnerabilidades encontradas no backend
-- [ ] Revisar dependências
-- [ ] Validar segurança da API
+- [ ] `T2.1.1` Registrar a decisão de persistência (API + Postgres ou local-first com sync), pendente desde a POC — **Gustavo** · P
+- [ ] `T2.1.2` Estruturar `apps/api` reutilizando `@tasksorg/core` — **Gustavo** · M · ⛓ T2.1.1
+- [ ] `T2.1.3` Modelagem e migrations: `users`, `tasks`, `pomodoro_sessions`, `daily_progress` — **Gustavo** · M · ⛓ T2.1.2
+- [ ] `T2.1.4` CRUD de tarefas com validação — **Gustavo** · M · ⛓ T2.1.3
+- [ ] `T2.1.5` Sessões de Pomodoro e histórico diário (alimentam o mapa) — **Gustavo** · M · ⛓ T2.1.4
+- [ ] `T2.1.6` Autenticação e autorização (cada usuário só vê as próprias missões) — **Gustavo** · G · ⛓ T2.1.3
+- [ ] `T2.1.7` Adaptador `TaskRepository` HTTP no core (troca o local sem mudar as telas) — **Gustavo** · M · ⛓ T2.1.4
+- [ ] `T2.1.8` Testes de API e de integração com banco real em container — **Gustavo** · M
 
-#### Higor
-- [ ] Corrigir vulnerabilidades encontradas no frontend
-- [ ] Revisar dependências frontend
-- [ ] Validar entradas de usuário
+#### Épico 2.2 — Frontend integrado
+
+> Como usuário, quero entrar na minha conta e continuar de onde parei, mesmo se a internet cair.
+
+- [ ] `T2.2.1` Prototipar no canvas as telas de login e cadastro com o Design System — **Higor** · P
+- [ ] `T2.2.2` Implementar login e cadastro no estilo pixel — **Higor** · M · ⛓ T2.2.1, T2.1.6
+- [ ] `T2.2.3` Estados de carregamento e erro pixelados (blocos piscando em `steps()`, aviso de erro) — **Higor** · M
+- [ ] `T2.2.4` Modo offline: fila local de alterações, sincronizada ao reconectar — **Higor** · G · ⛓ T2.1.7
+- [ ] `T2.2.5` Migrar os dados locais do MVP 1 para a conta no primeiro login — **Higor** · M · ⛓ T2.2.2
+
+#### Épico 2.3 — Infraestrutura dos dados
+
+> Como time, queremos ambientes reproduzíveis e monitorados para API e banco.
+
+- [ ] `T2.3.1` Containers `api` e `postgres` no `docker-compose.yml`, com volumes — **Guilhermo** · M · ⛓ T2.1.2
+- [ ] `T2.3.2` `.env.example` e secrets no GitHub — **Guilhermo** · P
+- [ ] `T2.3.3` Endpoints `/health` e `/ready`, usados pelo Docker e pelo deploy — **Guilhermo** · P · ⛓ T2.1.2
+- [ ] `T2.3.4` Ambientes dev, homologação e produção — **Guilhermo** · M
+- [ ] `T2.3.5` Backup automático do banco — **Guilhermo** · P · ⛓ T2.3.4
 
 ---
 
-### 📊 FASE 6 — KPIs de DevOps
+### 🟥 MVP 3 — DevSecOps e KPIs
 
-**🎯 Objetivo:** Medir o desempenho e a qualidade do processo de desenvolvimento e entrega.
+**🎯 Objetivo:** adicionar segurança ao pipeline e medir o processo de entrega.
 
-#### 1. 🚀 Frequência de Implantação
-
-Mede quantas vezes o sistema é implantado em determinado período.
+**🏁 Entrega:** PR com vulnerabilidade grave é bloqueado; tela de KPIs de DevOps no estilo pixel dentro do TasksOrg.
 
 ```text
-Deployment Frequency = Quantidade de Deploys / Período
+Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──┬─► OK ────► Build
+                                                         └─► Falha ─► Bloqueio
 ```
 
-**Responsável:** Guilhermo
+#### Épico 3.1 — SAST e Security Gate
 
-- [ ] Registrar cada deploy
-- [ ] Armazenar data/hora
-- [ ] Identificar versão
-- [ ] Criar métrica semanal
-- [ ] Criar métrica mensal
+> Como time, queremos que vulnerabilidades sejam encontradas antes do deploy.
 
-#### 2. ⚠️ Taxa de Falha de Alterações
+- [ ] `T3.1.1` Escolher a ferramenta SAST e registrar a decisão — **Guilhermo** · P
+- [ ] `T3.1.2` SAST no GitHub Actions com relatório no PR — **Guilhermo** · M · ⛓ T3.1.1
+- [ ] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2
+- [ ] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P
+- [ ] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2
+- [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2
 
-Mede a proporção de alterações implantadas que resultaram em falha, rollback, hotfix ou incidente.
+#### Épico 3.2 — Coleta dos KPIs
 
-```text
-Change Failure Rate = Deployments com falha / Total de Deployments × 100
-```
+> Como time, queremos números reais sobre frequência de deploy, falhas, recuperação e testes.
 
-**Responsáveis:** Guilhermo + Gustavo
+- [ ] `T3.2.1` Registrar cada deploy (data/hora, versão, ambiente) — **Guilhermo** · M
+- [ ] `T3.2.2` Definir o que conta como falha e registrar falhas, rollbacks e hotfixes — **Guilhermo** · M
+- [ ] `T3.2.3` Registrar incidentes (início, identificação, correção, recuperação) para o MTTR — **Guilhermo** · M
+- [ ] `T3.2.4` Enviar o resultado dos testes do CI (aprovados/falhos) para a base de KPIs — **Guilhermo** · P · ⛓ T1.6.2
+- [ ] `T3.2.5` Modelo de dados e endpoints dos KPIs, com os cálculos validados por testes — **Gustavo** · M · ⛓ T2.1.2
 
-- [ ] Definir o que será considerado uma falha
-- [ ] Registrar falhas
-- [ ] Registrar rollbacks
-- [ ] Registrar hotfixes
-- [ ] Calcular percentual
-- [ ] Exibir no Dashboard
+#### Épico 3.3 — Tela de KPIs de DevOps
 
-#### 3. 🔄 Tempo Médio de Recuperação — MTTR
+> Como time, queremos ver os KPIs dentro do próprio TasksOrg, no mesmo visual.
 
-Mede o tempo necessário para restaurar o sistema após um incidente.
-
-```text
-MTTR = Tempo total de recuperação / Número de incidentes
-```
-
-**Responsável:** Guilhermo
-
-- [ ] Registrar início do incidente
-- [ ] Registrar identificação
-- [ ] Registrar correção
-- [ ] Registrar recuperação
-- [ ] Calcular MTTR
-- [ ] Exibir histórico
-
-#### 4. 🧪 Testes Bem-Sucedidos / Malsucedidos
-
-Mede a quantidade e proporção de testes executados com sucesso ou falha.
-
-```text
-Taxa de sucesso = Testes aprovados / Total de testes × 100
-```
-
-**Responsáveis:** Gustavo + Guilhermo
-
-- [ ] Registrar testes executados
-- [ ] Registrar testes aprovados
-- [ ] Registrar testes falhos
-- [ ] Calcular taxa de sucesso
-- [ ] Exibir histórico
-- [ ] Integrar ao CI/CD
+- [ ] `T3.3.1` Prototipar no canvas a tela de KPIs com o Design System (`StatBar` para taxas, `RoomMap` como calendário de deploys) — **Higor** · M
+- [ ] `T3.3.2` Implementar os cards de Deployments, Taxa de falha, MTTR e Testes — **Higor** · M · ⛓ T3.3.1, T3.2.5
+- [ ] `T3.3.3` Histórico e filtro por período — **Higor** · M · ⛓ T3.3.2
 
 ---
 
-### 📈 FASE 7 — Dashboard de DevOps
+### 🟪 MVP 4 — Evolução
 
-**🎯 Objetivo:** Criar uma área no TasksOrg para visualizar os KPIs.
+**🎯 Objetivo:** levar o TasksOrg para orquestração em Kubernetes e para o celular.
 
-```text
-┌───────────────────────────────────────────┐
-│              TasksOrg DevOps              │
-├────────────────┬───────────────┬──────────┤
-│  Deployments   │ Failure Rate  │   MTTR   │
-│       18       │      11%      │  32 min  │
-├────────────────┴───────────────┴──────────┤
-│                                           │
-│                  Testes                   │
-│        ████████████████████░ 94%          │
-│                                           │
-├───────────────────────────────────────────┤
-│           Deployment Frequency            │
-│                                           │
-│        ●                                  │
-│      ●   ●       ●                        │
-│    ●       ● ●                            │
-│                                           │
-└───────────────────────────────────────────┘
-```
-
-#### Higor
-- [ ] Criar tela de Dashboard
-- [ ] Criar cards dos KPIs
-- [ ] Criar gráficos
-- [ ] Criar filtros por período
-- [ ] Criar histórico
-
-#### Gustavo
-- [ ] Definir estrutura dos dados
-- [ ] Criar endpoints dos KPIs
-- [ ] Validar cálculos
-
-#### Guilhermo
-- [ ] Integrar dados do CI/CD
-- [ ] Automatizar coleta
-- [ ] Integrar dados de deploy
-- [ ] Integrar dados de testes
-
----
-
-### 🖥️ FASE 8 — Desktop
-
-A aplicação Desktop utilizará **Electron** e deverá reaproveitar a lógica existente em `@tasksorg/core`.
-
-```text
-              @tasksorg/core
-                    │
-             ┌──────┴──────┐
-             ↓             ↓
-           Web          Electron
-```
-
-#### Higor
-- [ ] Interface Desktop
-- [ ] Navegação
-- [ ] Integração com funcionalidades
-- [ ] Ajustes de UX
-
-#### Gustavo
-- [ ] Validar regras compartilhadas
-- [ ] Validar persistência
-- [ ] Testar funcionalidades
-
-#### Guilhermo
-- [ ] Configurar build do Electron
-- [ ] Integrar build ao CI
-- [ ] Gerar artefatos
-- [ ] Configurar release
-
----
-
-### ☸️ FASE 9 — Kubernetes
-
-Etapa posterior ao funcionamento do Docker + CI/CD.
-
-#### Estrutura
+#### Épico 4.1 — Kubernetes
 
 ```text
 k8s/
@@ -511,236 +299,137 @@ k8s/
 └── secret.yaml
 ```
 
-#### Guilhermo
-- [ ] Configurar Kubernetes
-- [ ] Criar Deployment
-- [ ] Criar Service
-- [ ] Criar ConfigMap
-- [ ] Criar Secrets
-- [ ] Configurar health checks
-- [ ] Integrar Kubernetes ao CD
-- [ ] Testar deploy local
+- [ ] `T4.1.1` Manifests de web, api e banco (`deployment`, `service`, `configmap`, `secret`) — **Guilhermo** · G
+- [ ] `T4.1.2` Health checks via `/health` e `/ready` — **Guilhermo** · P · ⛓ T2.3.3
+- [ ] `T4.1.3` Stage `kubectl apply` no CD — **Guilhermo** · M · ⛓ T4.1.1
+- [ ] `T4.1.4` Validar API e banco no cluster — **Gustavo** · P · ⛓ T4.1.3
+- [ ] `T4.1.5` Validar frontend e acesso no cluster — **Higor** · P · ⛓ T4.1.3
 
-#### Gustavo
-- [ ] Validar aplicação no ambiente Kubernetes
-- [ ] Validar banco
-- [ ] Validar API
+#### Épico 4.2 — Mobile (Expo)
 
-#### Higor
-- [ ] Validar frontend
-- [ ] Validar acesso
-- [ ] Testar comportamento da aplicação
-
----
-
-### 📱 FASE 10 — Mobile
-
-Etapa futura.
-
-A aplicação Mobile será desenvolvida utilizando **Expo / React Native**, reaproveitando `@tasksorg/core`.
-
-```text
-                 @tasksorg/core
-                       │
-          ┌────────────┼────────────┐
-          ↓            ↓            ↓
-         Web        Desktop       Mobile
-       Next.js      Electron       Expo
-```
-
-#### Higor
-- [ ] Interface Mobile
-- [ ] Navegação
-- [ ] Responsividade
-- [ ] UX Mobile
-
-#### Gustavo
-- [ ] Integração com API
-- [ ] Autenticação
-- [ ] Testes
-
-#### Guilhermo
-- [ ] CI Mobile
-- [ ] Build
-- [ ] Release
-- [ ] Automação
+- [ ] `T4.2.1` Criar `apps/mobile` com Expo, consumindo `@tasksorg/core` — **Gustavo** · M
+- [ ] `T4.2.2` Adaptar `packages/ui` para React Native (tokens + componentes principais) — **Higor** · G
+- [ ] `T4.2.3` Tela Quadro mobile (uma coluna por aba) e Pomodoro — **Higor** · G · ⛓ T4.2.2
+- [ ] `T4.2.4` Login e sincronização no mobile — **Gustavo** · M · ⛓ T4.2.1
+- [ ] `T4.2.5` Build e release mobile no CI (EAS) — **Guilhermo** · M · ⛓ T4.2.1
 
 ---
 
 ## 📅 Cronograma de Sprints
 
-| Sprint | Objetivo | Principais entregas |
-|---|---|---|
-| Sprint 1 | Planejamento | Requisitos + arquitetura + wireframes |
-| Sprint 2 | Estrutura | UI + banco + Docker |
-| Sprint 3 | Tarefas | CRUD completo |
-| Sprint 4 | Backend | API + autenticação + persistência |
-| Sprint 5 | Qualidade | Testes + Pomodoro |
-| Sprint 6 | CI/CD | GitHub Actions + Build |
-| Sprint 7 | DevSecOps | SAST + Security Gate |
-| Sprint 8 | KPIs | Coleta + Dashboard |
-| Sprint 9 | Deploy | Docker + Deploy + Monitoramento |
-| Sprint 10 | Finalização | Kubernetes + documentação + apresentação |
+Sprints de 2 semanas.
+
+| Sprint | MVP | Épicos | Meta da sprint |
+|---|---|---|---|
+| 1 | MVP 0 | 0.1, 0.2 (início) | Repositório limpo, CI rodando, `packages/ui` criado com tokens |
+| 2 | MVP 0 | 0.2 | Componentes prontos e rota `/design` no ar |
+| 3 | MVP 1 | 1.1, 1.2 | Regras novas no core e tela Quadro montada |
+| 4 | MVP 1 | 1.2, 1.3, 1.4 | Pomodoro integrado, Modo foco, temas e layouts |
+| 5 | MVP 1 | 1.5, 1.6 | Desktop com a nova UI, E2E e release `v0.1.0` |
+| 6 | MVP 2 | 2.1, 2.3 | API, banco e containers |
+| 7 | MVP 2 | 2.1, 2.2 | Login, sincronização e modo offline |
+| 8 | MVP 3 | 3.1, 3.2 | SAST, Security Gate e coleta dos KPIs |
+| 9 | MVP 3 | 3.3 | Tela de KPIs de DevOps |
+| 10 | MVP 4 | 4.1 | Kubernetes, documentação e apresentação |
+| 11+ | MVP 4 | 4.2 | Mobile |
+
+## ⚖️ Carga por pessoa
+
+| MVP | Higor | Gustavo | Guilhermo |
+|---|---|---|---|
+| MVP 0 | 7 tasks · ~5 dias | 5 tasks · ~4.5 dias | 6 tasks · ~4 dias |
+| MVP 1 | 14 tasks · ~12.5 dias | 11 tasks · ~10.5 dias | 8 tasks · ~7.5 dias |
+| MVP 2 | 5 tasks · ~5.5 dias | 8 tasks · ~8.5 dias | 5 tasks · ~3.5 dias |
+| MVP 3 | 4 tasks · ~4 dias | 2 tasks · ~2 dias | 8 tasks · ~6 dias |
+| MVP 4 | 3 tasks · ~4.5 dias | 3 tasks · ~2.5 dias | 4 tasks · ~4.5 dias |
+| **Total** | **33 tasks · ~31.5 dias** | **29 tasks · ~28 dias** | **31 tasks · ~25.5 dias** |
+
+> Estimativa pelo tamanho das tasks (P = ½ dia, M = 1 dia, G = 2 dias). Se alguém ficar livre na sprint, puxa a próxima task sem dependência pendente, mesmo de outra área, e o dono da área revisa.
 
 ---
 
-## 🔄 Fluxo de Desenvolvimento
-
-Toda funcionalidade deve seguir o seguinte processo:
+## 🏗️ Arquitetura
 
 ```text
-┌──────────────┐
-│     PLAN     │
-└──────┬───────┘
-       ↓
-┌──────────────┐
-│     CODE     │
-└──────┬───────┘
-       ↓
-┌──────────────┐
-│     BUILD    │
-└──────┬───────┘
-       ↓
-┌──────────────┐
-│     TEST     │
-└──────┬───────┘
-       ↓
-┌──────────────┐
-│     SAST     │
-└──────┬───────┘
-       ↓
-┌──────────────┐
-│    RELEASE   │
-└──────┬───────┘
-       ↓
-┌──────────────┐
-│    DEPLOY    │
-└──────┬───────┘
-       ↓
-┌──────────────┐
-│    OPERATE   │
-└──────┬───────┘
-       ↓
-┌──────────────┐
-│    MONITOR   │
-└──────┬───────┘
-       ↓
-      KPIs
-       │
-       └──────────────→ PLAN
+        Web App            Desktop             Mobile (MVP 4)
+        Next.js            Electron            Expo
+           │                  │                   │
+           └─────────┬────────┴─────────┬─────────┘
+                     ↓                  ↓
+              packages/ui        @tasksorg/core
+         (Design System pixel)   (Task, Pomodoro, TaskRepository)
+                                        │
+                                        ↓
+                                apps/api (MVP 2)
+                                        │
+                                        ↓
+                                   PostgreSQL
 ```
 
+| Camada | Tecnologia |
+|---|---|
+| Linguagem | TypeScript |
+| Monorepo | pnpm Workspaces + Turborepo |
+| Web | Next.js 14 + React 18 |
+| Desktop | Electron 32 |
+| Mobile | Expo / React Native — MVP 4 |
+| Regras de negócio | `@tasksorg/core` |
+| Interface | `packages/ui` (Design System pixel) — MVP 0 |
+| API + banco | `apps/api` + PostgreSQL — MVP 2 |
+| Testes | Vitest, Testing Library, Playwright, axe |
+| Containers | Docker + Docker Compose |
+| CI/CD | GitHub Actions |
+| Segurança | SAST + Security Gate — MVP 3 |
+| Orquestração | Kubernetes — MVP 4 |
+
 ---
+
+## 📊 KPIs do Projeto
+
+| KPI | Fórmula | Fonte | Responsável | Task |
+|---|---|---|---|---|
+| 🚀 Frequência de implantação | Deploys / período | CI/CD | Guilhermo | `T3.2.1` |
+| ⚠️ Taxa de falha de alterações | Deploys com falha / total × 100 | CI/CD + incidentes | Guilhermo + Gustavo | `T3.2.2` |
+| 🔄 MTTR | Tempo total de recuperação / nº de incidentes | Incidentes | Guilhermo | `T3.2.3` |
+| 🧪 Testes sucesso/falha | Testes aprovados / total × 100 | CI/CD | Gustavo + Guilhermo | `T3.2.4` |
+| 🔐 SAST | Vulnerabilidades por severidade | SAST | Guilhermo | `T3.1.2` |
+
+---
+
+## 📥 Definition of Ready
+
+Uma task só entra em **A fazer** quando:
+
+- [ ] Tem ID, responsável e tamanho (`P`, `M` ou `G`)
+- [ ] As dependências (`⛓`) estão concluídas
+- [ ] Se é de tela: existe protótipo no canvas usando o Design System
+- [ ] Se muda uma regra ou a arquitetura: a decisão está registrada em `docs/Decisões/`
 
 ## 📋 Definition of Done
 
-Uma funcionalidade só será considerada concluída quando:
+Uma task só vai para **Concluído** quando:
 
-- [ ] Requisito documentado
-- [ ] Implementação concluída
-- [ ] Código revisado
-- [ ] Testes implementados
-- [ ] Testes passando
-- [ ] Lint passando
-- [ ] Typecheck passando
-- [ ] SAST sem bloqueios
-- [ ] Build funcionando
-- [ ] Docker funcionando
-- [ ] Deploy realizado
-- [ ] Monitoramento validado
-- [ ] Documentação atualizada
+- [ ] Código revisado e aprovado em PR por outro integrante
+- [ ] Testes implementados e passando
+- [ ] Lint e typecheck passando
+- [ ] SAST sem bloqueios (a partir do MVP 3)
+- [ ] Build e imagem Docker funcionando
+- [ ] Se é de tela: usa só tokens do Design System, foi conferida nos temas Castelo e Pergaminho e não cria rolagem na tela Quadro
+- [ ] Documentação e Log de Atualizações atualizados
 
 ---
 
 ## 🛡️ Pipeline Final
 
 ```text
-                         DEVELOPER
-                             │
-                             ↓
-                         Git / PR
-                             │
-                             ↓
-                    ┌─────────────────┐
-                    │ GitHub Actions  │
-                    └────────┬────────┘
-                             ↓
-                    Install Dependencies
-                             ↓
-                            Lint
-                             ↓
-                          Typecheck
-                             ↓
-                           Tests
-                             ↓
-                            SAST
-                             ↓
-                           BUILD
-                             ↓
-                        Docker Image
-                             ↓
-                          RELEASE
-                             ↓
-                           DEPLOY
-                             ↓
-                          OPERATE
-                             ↓
-                          MONITOR
-                             ↓
-                            KPIs
-                             │
-                             ↓
-                         Dashboard
+DEVELOPER ─► Git / PR ─► GitHub Actions
+                              │
+     Install ─► Lint ─► Typecheck ─► Tests ─► SAST ─► Build ─► Docker Image
+                                                                    │
+                     KPIs ◄─ MONITOR ◄─ OPERATE ◄─ DEPLOY ◄─ RELEASE
+                       │
+                       ↓
+              Tela de KPIs no TasksOrg
 ```
 
----
-
-## 📊 KPIs do Projeto
-
-| KPI | Descrição | Fonte | Responsável |
-|---|---|---|---|
-| 🚀 Frequência de implantação | Quantidade de deploys por período | CI/CD | Guilhermo |
-| ⚠️ Taxa de falha de alterações | Alterações que resultaram em falha | CI/CD + Incidentes | Guilhermo + Gustavo |
-| 🔄 MTTR | Tempo médio para recuperação | Incidentes | Guilhermo |
-| 🧪 Testes sucesso/falha | Resultado dos testes automatizados | CI/CD | Gustavo + Guilhermo |
-| 🔐 SAST | Vulnerabilidades encontradas no código | SAST | Guilhermo |
-
----
-
-## 🎯 Resultado Final
-
-Ao final do projeto, o TasksOrg deverá demonstrar:
-
-- [ ] Aplicação Web funcional
-- [ ] Aplicação Desktop funcional
-- [ ] Backend funcional
-- [ ] Banco de dados
-- [ ] Docker
-- [ ] CI/CD com GitHub Actions
-- [ ] Testes automatizados
-- [ ] SAST / DevSecOps
-- [ ] Deploy automatizado
-- [ ] Monitoramento
-- [ ] Dashboard de KPIs
-- [ ] Frequência de implantação
-- [ ] Taxa de falha de alterações
-- [ ] MTTR
-- [ ] Testes bem-sucedidos/malsucedidos
-- [ ] Documentação técnica
-- [ ] Kubernetes como etapa de evolução
-
----
-
-## 👨‍💻 Responsabilidade Final
-
-| Higor | Gustavo | Guilhermo |
-|---|---|---|
-| Produto | Backend | DevOps |
-| Frontend | Banco | CI/CD |
-| UX/UI | API | Docker |
-| Dashboard | Regras | SAST |
-| Web | Testes | Deploy |
-| Desktop | Qualidade | Monitoramento |
-| | | KPIs |
-
-> **Regra do projeto:** cada integrante possui uma área principal de responsabilidade, mas todas as entregas devem passar por integração e revisão dos demais integrantes.
+> **Regra do projeto:** pensar → documentar → desenvolver. Cada integrante tem uma área principal, mas toda entrega passa por revisão e integração dos demais.
