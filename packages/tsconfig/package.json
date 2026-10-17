@@ -1,0 +1,9 @@
+{
+  "name": "@tasksorg/tsconfig",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Presets de tsconfig compartilhados do monorepo TasksOrg.",
+  "files": [
+    "*.json"
+  ]
+}

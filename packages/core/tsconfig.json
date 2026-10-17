@@ -1,8 +1,14 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@tasksorg/tsconfig/library.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src"
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "src/**/__tests__/**",
+    "src/**/*.test.ts"
+  ]
 }

@@ -8,8 +8,10 @@
 FROM node:20-bullseye AS deps
 RUN corepack enable
 WORKDIR /app
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json tsconfig.base.json ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
 COPY packages/core/package.json ./packages/core/package.json
+COPY packages/tsconfig/package.json ./packages/tsconfig/package.json
+COPY packages/eslint-config/package.json ./packages/eslint-config/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY apps/desktop/package.json ./apps/desktop/package.json
 RUN pnpm install --frozen-lockfile
