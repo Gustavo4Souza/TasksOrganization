@@ -10,7 +10,8 @@ Electron 32 em `apps/desktop`, consumindo `@tasksorg/core` (mesma lógica da web
 
 ## Consequências / Próximos passos
 
-O Jenkinsfile continua buildando e validando o desktop, mas não gera uma "imagem Docker do desktop".
+O workflow do GitHub Actions continua buildando e validando o desktop, mas não
+gera uma "imagem Docker do desktop".
 
 ---
 Voltar para [[🗳️ Decisões]]

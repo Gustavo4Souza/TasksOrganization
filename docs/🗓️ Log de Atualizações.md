@@ -1,5 +1,14 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 11/10/2026 — GitHub Actions e consolidação do Docker
+
+Definido o `apps/web` como frontend oficial, com `docker-compose.yml` para
+desenvolvimento e `apps/web/Dockerfile` para produção. Criado o workflow
+`.github/workflows/ci.yml` para lint, typecheck, testes, builds e imagem Docker.
+Jenkins foi removido do projeto, GitLab não será implementado e a antiga pasta
+`frontend/` foi removida. Backend, banco, health checks e deploy permanecem para
+as fases futuras.
+
 ## 13/09/2026 — Troca do Jenkins pelo GitLab + equipe formalizada
 
 Duas atualizações do grupo: (1) equipe formalizada na página Visão Geral — Gustavo, Guilhermo e Higor; (2) decidido trocar o **Jenkins** pelo **GitLab CI/CD auto-hospedado** (GitLab CE em Docker, não o GitLab.com na nuvem). Por enquanto é só documentação (decisão registrada, seção "GitLab CI/CD" adicionada na página DevOps) — a implementação no código (subir GitLab CE, Runner, `.gitlab-ci.yml`, remover Jenkins) fica pro próximo passo. Seguindo o fluxo pensar → documentar → desenvolver.

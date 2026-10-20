@@ -62,6 +62,10 @@ MVP ──► entrega que dá para demonstrar e usar
 - [x] `@tasksorg/core` com `Task`, `TaskStore` e `PomodoroTimer` (13 testes com Vitest)
 - [x] `apps/web` (Next.js 14) e `apps/desktop` (Electron 32) consumindo o core
 - [x] Docker com bind mount para desenvolvimento do web + Dockerfile de produção
+- [x] GitHub Actions como CI/CD oficial
+- [x] Jenkins removido da configuração ativa
+- [x] `apps/web` definido como frontend oficial
+- [x] Roadmap consolidado em `docs/`
 - [x] Base de Decisões (ADR) no cofre e em `docs/`
 - [x] Identidade visual: Design System pixel/Metroidvania (paleta Castelo/Pergaminho, fontes, 8 componentes)
 - [x] Protótipo interativo das telas (Quadro, Modo foco, tema claro, escopo Ano, monitor vertical)
@@ -90,12 +94,12 @@ MVP ──► entrega que dá para demonstrar e usar
 
 > Como time, queremos um repositório sem duplicidades e com CI confiável, para que todo PR seja validado automaticamente.
 
-- [ ] `T0.1.1` Registrar a decisão "GitHub Actions de volta como CI/CD" no cofre e em `docs/Decisões/` — **Guilhermo** · P
-- [ ] `T0.1.2` Remover `Jenkinsfile`, `devops/jenkins/` e o serviço `jenkins` do `docker-compose.yml` — **Guilhermo** · P · ⛓ T0.1.1
-- [ ] `T0.1.3` Remover arquivos soltos da raiz (`teste.js`, `Claude outputs/`) — **Guilhermo** · P
-- [ ] `T0.1.4` Decidir entre `frontend/` e `apps/web` (hoje existem dois apps Next.js), migrar o que for útil e apagar o outro; registrar a decisão — **Higor** · M
-- [ ] `T0.1.5` Revisar `.github/workflows/ci.yml`: install → lint → typecheck → test → build, com cache do pnpm e do Turborepo — **Guilhermo** · M · ⛓ T0.1.4
-- [ ] `T0.1.6` Proteger a `main`: merge só por PR, com 1 aprovação e CI verde — **Guilhermo** · P · ⛓ T0.1.5
+- [x] `T0.1.1` Registrar a decisão "GitHub Actions de volta como CI/CD" no cofre e em `docs/Decisões/` — **Guilhermo** · P
+- [x] `T0.1.2` Remover `Jenkinsfile`, `devops/jenkins/` e o serviço `jenkins` do `docker-compose.yml` — **Guilhermo** · P · ⛓ T0.1.1
+- [x] `T0.1.3` Remover arquivos soltos da raiz (`teste.js`, `Claude outputs/`) — **Guilhermo** · P
+- [x] `T0.1.4` Decidir entre `frontend/` e `apps/web` (hoje existem dois apps Next.js), migrar o que for útil e apagar o outro; registrar a decisão — **Higor** · M
+- [x] `T0.1.5` Revisar `.github/workflows/ci.yml`: install → lint → typecheck → test → build, com cache do pnpm — **Guilhermo** · M · ⛓ T0.1.4
+- [x] `T0.1.6` Proteger a `main`: merge só por PR, com 1 aprovação e CI verde — **Guilhermo** · P · ⛓ T0.1.5
 - [ ] `T0.1.7` Criar `packages/eslint-config` e `packages/tsconfig` compartilhados e trocar os lints placeholder de `core` e `desktop` — **Gustavo** · M
 
 #### Épico 0.2 — Design System no código (`packages/ui`)
@@ -274,6 +278,12 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 - [ ] `T3.2.3` Registrar incidentes (início, identificação, correção, recuperação) para o MTTR — **Guilhermo** · M
 - [ ] `T3.2.4` Enviar o resultado dos testes do CI (aprovados/falhos) para a base de KPIs — **Guilhermo** · P · ⛓ T1.6.2
 - [ ] `T3.2.5` Modelo de dados e endpoints dos KPIs, com os cálculos validados por testes — **Gustavo** · M · ⛓ T2.1.2
+- [ ] `T3.2.6` Registrar Lead Time, sucesso e duração dos pipelines — **Guilhermo** · M · ⛓ T1.6.2
+- [ ] `T3.2.7` Registrar cobertura, defeitos escapados e testes instáveis — **Gustavo** · M · ⛓ T1.6.2
+- [ ] `T3.2.8` Registrar o catálogo completo de KPIs e o contrato de dados — **Guilhermo** · P
+
+> Fórmulas, fontes, dependências, periodicidade e contrato de dados estão no
+> [catálogo de KPIs](KPIs%20de%20DevOps%20e%20DevSecOps.md).
 
 #### Épico 3.3 — Tela de KPIs de DevOps
 
@@ -370,12 +380,12 @@ Sprints de 2 semanas.
 |---|---|
 | Linguagem | TypeScript |
 | Monorepo | pnpm Workspaces + Turborepo |
-| Web | Next.js 14 + React 18 |
+| Web | Vercel + Next.js 14 + React 18 |
 | Desktop | Electron 32 |
 | Mobile | Expo / React Native — MVP 4 |
 | Regras de negócio | `@tasksorg/core` |
 | Interface | `packages/ui` (Design System pixel) — MVP 0 |
-| API + banco | `apps/api` + PostgreSQL — MVP 2 |
+| API + banco | Render + `apps/api` + Neon PostgreSQL — MVP 2 |
 | Testes | Vitest, Testing Library, Playwright, axe |
 | Containers | Docker + Docker Compose |
 | CI/CD | GitHub Actions |
@@ -389,10 +399,24 @@ Sprints de 2 semanas.
 | KPI | Fórmula | Fonte | Responsável | Task |
 |---|---|---|---|---|
 | 🚀 Frequência de implantação | Deploys / período | CI/CD | Guilhermo | `T3.2.1` |
+| ⏱️ Lead Time for Changes | Deploy concluído - primeiro commit | Git + CI/CD | Guilhermo + Gustavo | `T3.2.6` |
 | ⚠️ Taxa de falha de alterações | Deploys com falha / total × 100 | CI/CD + incidentes | Guilhermo + Gustavo | `T3.2.2` |
-| 🔄 MTTR | Tempo total de recuperação / nº de incidentes | Incidentes | Guilhermo | `T3.2.3` |
-| 🧪 Testes sucesso/falha | Testes aprovados / total × 100 | CI/CD | Gustavo + Guilhermo | `T3.2.4` |
+| 🔄 MTTR | Tempo detecção→recuperação / incidentes | Incidentes | Guilhermo | `T3.2.3` |
+| ✅ Taxa de sucesso do pipeline | Workflows aprovados / executados × 100 | GitHub Actions | Guilhermo + Gustavo | `T3.2.6` |
+| ⏲️ Duração do pipeline | Fim - início, total e por etapa | GitHub Actions | Guilhermo | `T3.2.6` |
+| 🧪 Taxa de sucesso dos testes | Testes aprovados / executados × 100 | Vitest + CI | Gustavo + Guilhermo | `T3.2.4` |
+| 📈 Cobertura de testes | Código coberto / executável × 100 | Coverage | Gustavo + Guilhermo | `T3.2.7` |
+| 🐛 Taxa de defeitos escapados | Defeitos após CI / alterações entregues | Issues + incidentes | Gustavo + Higor | `T3.2.7` |
+| 🔁 Taxa de rollback/hotfix | Deploys com correção / total × 100 | Deploy + incidentes | Guilhermo | `T3.2.2` |
+| 🎲 Taxa de testes instáveis | Execuções instáveis / totais × 100 | GitHub Actions | Gustavo + Guilhermo | `T3.2.7` |
 | 🔐 SAST | Vulnerabilidades por severidade | SAST | Guilhermo | `T3.1.2` |
+| 🛡️ Correção de vulnerabilidades | Correção - identificação | SAST/SCA + issues | Guilhermo + responsável técnico | Catálogo |
+| 📦 Vulnerabilidades de dependências | Contagem por severidade | SCA/pnpm audit | Guilhermo | `T3.1.4` |
+| 🔑 Secret scanning | Segredos expostos | Secret scanning | Guilhermo | Catálogo |
+| 🟢 Disponibilidade | Tempo disponível / observado × 100 | Monitoramento | Guilhermo | MVP futuro |
+| ⚠️ Taxa de erro | Erros / requisições × 100 | Logs/APM | Guilhermo + Gustavo | MVP futuro |
+| ⚡ Latência P50/P95/P99 | Percentis de resposta | APM/web/API | Guilhermo | MVP futuro |
+| 🎯 Operações críticas | Operações sucesso / total × 100 | API + frontend | Gustavo + Higor | MVP futuro |
 
 ---
 

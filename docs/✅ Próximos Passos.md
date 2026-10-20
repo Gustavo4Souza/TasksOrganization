@@ -2,13 +2,12 @@ Lista viva — marca como feito conforme avança, e adiciona itens novos conform
 
 ## DevOps
 
-- [ ] Subir o GitLab CE (auto-hospedado) via `docker-compose.yml`, substituindo o serviço `jenkins`
-- [ ] Configurar um GitLab Runner com acesso ao Docker do host (padrão DooD, igual o Jenkins tinha)
-- [ ] Escrever o `.gitlab-ci.yml` espelhando os stages do antigo `Jenkinsfile` (deps → qualidade → build → build da imagem Docker)
-- [ ] Remover `Jenkinsfile` e `devops/jenkins/` do repositório
+- [x] Adotar GitHub Actions como CI/CD oficial
+- [x] Remover Jenkins e GitLab da configuração ativa do projeto
+- [x] Criar workflow de CI com qualidade, build e imagem Docker do web
 - [ ] Publicar a imagem `tasksorg-web` num registry (Docker Hub, GHCR ou o próprio GitLab Container Registry)
 - [ ] Escrever manifests do Kubernetes (`k8s/deployment.yaml`, `k8s/service.yaml`)
-- [ ] Adicionar stage de `kubectl apply` no `.gitlab-ci.yml`
+- [ ] Adicionar etapa de deploy ao workflow do GitHub Actions
 
 ## Produto / Plataformas
 

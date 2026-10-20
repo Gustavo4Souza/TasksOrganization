@@ -14,7 +14,7 @@ DevOps (CI) já configurado desde o início do projeto.
 - **Lógica compartilhada**: pacote `@tasksorg/core`, sem nenhuma dependência de UI — é usado tanto pela web quanto pelo desktop.
 - **Testes**: [Vitest](https://vitest.dev/) no pacote `core`.
 - **Containers**: [Docker](https://www.docker.com/) + Docker Compose — o app web roda em container tanto em desenvolvimento (com bind mount) quanto em produção (imagem multi-stage).
-- **CI/CD**: [Jenkins](https://www.jenkins.io/) (`Jenkinsfile`), também rodando em container. Kubernetes entra numa próxima etapa, para orquestrar o deploy dessas imagens.
+- **CI/CD**: [GitHub Actions](https://github.com/features/actions) (`.github/workflows/ci.yml`). Kubernetes entra numa próxima etapa, para orquestrar o deploy dessas imagens.
 
 Tudo em JavaScript/TypeScript, como decidido pelo grupo — isso permite
 compartilhar lógica, tipos e (no futuro) até componentes de UI entre as
@@ -31,10 +31,8 @@ TasksOrganization/
 │   └── desktop/     → Electron (empacota a web/lógica num app nativo)
 ├── packages/
 │   └── core/         → Regras de negócio compartilhadas (tasks + pomodoro)
-├── devops/
-│   └── jenkins/       → imagem custom do Jenkins (Docker CLI + plugins)
-├── docker-compose.yml → sobe o app web (bind mount) + o Jenkins
-├── Jenkinsfile        → pipeline de CI/CD (substitui o antigo GitHub Actions)
+├── docker-compose.yml → sobe o app web em desenvolvimento (bind mount)
+├── .github/workflows/ → pipeline de CI/CD com GitHub Actions
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
@@ -121,7 +119,7 @@ incompatíveis.
 ### Produção (imagem final, sem bind mount)
 
 `apps/web/Dockerfile` faz um build multi-stage (deps → builder → runner) e
-gera uma imagem enxuta e autossuficiente — essa é a imagem que o Jenkins
+gera uma imagem enxuta e autossuficiente — essa é a imagem que o GitHub Actions
 constrói no pipeline:
 
 ```bash
@@ -129,93 +127,23 @@ docker build -f apps/web/Dockerfile -t tasksorg-web .
 docker run -p 3000:3000 tasksorg-web
 ```
 
-## Jenkins
+## GitHub Actions
 
-O Jenkins também roda em container (`devops/jenkins/Dockerfile`), já com o
-Docker CLI instalado e os plugins necessários (`devops/jenkins/plugins.txt`).
-Ele recebe, via bind mount, o **socket do Docker do host**
-(`/var/run/docker.sock`) — é assim que um Jenkins "de dentro de um
-container" consegue mandar buildar outras imagens Docker (chamado de
-*Docker outside of Docker*, ou DooD).
+O workflow `.github/workflows/ci.yml` instala as dependências, executa lint,
+typecheck e testes, builda web e desktop e constrói a imagem Docker de produção
+do web. O desktop é validado no CI, mas não gera uma imagem Docker.
 
-```bash
-docker compose up -d --build jenkins
-```
-
-1. Abra `http://localhost:7000` (esse é o valor atual em `docker-compose.yml`
-   — o Jenkins escuta na 8080 *dentro* do container, mas mapeamos pra 7000
-   na sua máquina. Se você mudar esse mapeamento, é só trocar a porta aqui
-   também).
-2. Pegue a senha inicial de admin:
-   ```bash
-   docker compose exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
-   ```
-3. Como os plugins já vêm pré-instalados, pode pular a tela de seleção de
-   plugins e ir direto pra criação do usuário admin.
-4. Crie um job do tipo **Pipeline**. Pro primeiro teste, o mais simples é
-   colar o conteúdo do `Jenkinsfile` direto no campo "Pipeline script" (sem
-   precisar configurar Git ainda). Depois que o projeto estiver num
-   repositório remoto (GitHub, por exemplo), troque pra "Pipeline script
-   from SCM" apontando pro repositório — aí o Jenkins passa a ler o
-   `Jenkinsfile` direto do código.
-
-### Problemas comuns
-
-- **`ports are not available` / erro de bind na porta ao subir o Jenkins**
-  — algum outro processo já está usando a porta do host (ex: 7000). No
-  Windows, descubra quem é com `netstat -ano | findstr :7000` (pega o PID
-  na última coluna) e depois `Get-CimInstance Win32_Process -Filter
-  "ProcessId = <PID>"` pra ver o nome do processo. Se for um Jenkins
-  instalado nativamente (fora do Docker), o mais comum é ele estar
-  registrado como serviço do Windows chamado `Jenkins`
-  (`Get-Service Jenkins`) — pare com `Stop-Service -Name "Jenkins"` num
-  PowerShell **como administrador** (`Stop-Service` sem privilégio de admin
-  falha com `CouldNotStopService`) e, se não for mais usar o nativo,
-  `Set-Service -Name "Jenkins" -StartupType Manual` pra ele não voltar a
-  subir sozinho.
-- **`docker volume rm ... no such volume`** — o nome do volume pode não
-  bater com `tasksorg_jenkins_home` dependendo da versão do Docker Compose.
-  Em vez de adivinhar o nome, use `docker compose down -v` (remove os
-  volumes do projeto atual automaticamente) ou confira o nome real com
-  `docker volume ls`.
-- **Esqueceu a senha do admin do Jenkins** — mais simples pra um ambiente
-  de estudo/POC sem jobs importantes ainda: `docker compose down -v` seguido
-  de `docker compose up -d --build jenkins` reseta tudo e gera uma senha
-  inicial nova. Pra resetar a senha SEM perder jobs já configurados, dá pra
-  desligar a segurança temporariamente:
-  ```bash
-  docker compose exec jenkins sh -c "sed -i 's#<useSecurity>true</useSecurity>#<useSecurity>false</useSecurity>#' /var/jenkins_home/config.xml"
-  docker compose restart jenkins
-  ```
-  Isso deixa o Jenkins acessível sem login por um tempo — entre e reconfigure
-  em Manage Jenkins → Security assim que possível.
-
-### O que o `Jenkinsfile` faz
-
-Substitui o antigo `.github/workflows/ci.yml`. Cada stage roda num container
-`node:20` efêmero, pedido pelo Jenkins ao Docker do host:
-
-1. **Instalar dependências** — `pnpm install --frozen-lockfile`.
-2. **Qualidade** — `lint`, `typecheck` e `test` em todo o monorepo.
-3. **Build (web + desktop)** — `turbo run build` nos dois pacotes.
-4. **Build da imagem Docker (web)** — roda no próprio container do Jenkins
-   (não num `node:20` efêmero), porque é ele quem tem acesso ao Docker do
-   host: `docker build -f apps/web/Dockerfile ...`.
-
-> Nota: a **pasta `apps/desktop` (Electron) não é containerizada** — Electron
-> precisa de interface gráfica pra rodar de verdade, o que não faz sentido
-> dentro de um container de CI. O pipeline continua buildando e validando o
-> desktop (stage 3), só não gera uma "imagem Docker do desktop".
+O catálogo de KPIs e o contrato de dados para futuras coletas estão em
+[docs/KPIs de DevOps e DevSecOps.md](<docs/KPIs de DevOps e DevSecOps.md>).
 
 ## Próximos passos sugeridos
 
-- **Testar Docker/Jenkins de ponta a ponta** — o que está aqui foi escrito e
-  revisado com cuidado, mas não pôde ser executado no ambiente onde essa POC
-  foi gerada (sem acesso ao Docker Hub). É o primeiro próximo passo real.
-- **Kubernetes**: depois que o fluxo Docker + Jenkins estiver validado, o
+- **Testar Docker e GitHub Actions de ponta a ponta** — o Compose é voltado ao
+  desenvolvimento local; o workflow é executado no GitHub.
+- **Kubernetes**: depois que o fluxo Docker + GitHub Actions estiver validado, o
   passo natural é escrever manifests (`k8s/deployment.yaml`, `k8s/service.yaml`)
   pra imagem `tasksorg-web` e adicionar um stage `kubectl apply` no final do
-  `Jenkinsfile`. Pra desenvolvimento local de k8s, dá pra usar Docker Desktop
+  workflow. Pra desenvolvimento local de k8s, dá pra usar Docker Desktop
   (tem Kubernetes embutido) ou k3d/kind.
 - **Mobile**: adicionar `apps/mobile` com [Expo](https://expo.dev/) (React
   Native), reaproveitando `@tasksorg/core`. Isso fecha o tripé
@@ -223,7 +151,7 @@ Substitui o antigo `.github/workflows/ci.yml`. Cada stage roda num container
 - **Persistência real**: hoje `TaskStore` é só em memória. Próximo passo
   natural é um backend (ex. API em Fastify/Next API routes + Postgres) ou
   sincronização local-first (ex. IndexedDB/SQLite + sync).
-- **Registry de imagens**: hoje o Jenkins builda a imagem localmente
+- **Registry de imagens**: hoje o GitHub Actions builda a imagem localmente
   (`docker build`) mas não publica em nenhum lugar. Pra Kubernetes puxar
   essa imagem de verdade, ela precisa ir pra um registry (Docker Hub, GHCR,
   etc.) — um stage `docker push` depois do `docker build`.
