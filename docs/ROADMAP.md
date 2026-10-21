@@ -74,6 +74,17 @@ MVP ──► entrega que dá para demonstrar e usar
 
 ## 🗺️ Roadmap
 
+### Estado das entregas do Higor — 20/10/2026
+
+| Status | Tasks | Situação |
+|---|---|---|
+| Concluída | `T0.1.4` | `apps/web` definido como frontend oficial e a decisão foi registrada. |
+| Implementada, aguardando revisão | `T0.2.5` | Fontes carregadas localmente no Web e Desktop; lint e typecheck do Web e build do Desktop passaram. |
+| Parcialmente implementadas | `T1.3.5`, `T1.4.1`, `T1.4.3` | Atalhos existentes, tema persistido no Web e base de acessibilidade já estão no código. Restam a rota `/foco`, integração dos tokens e Desktop, e os futuros botões de ícone. |
+| Bloqueadas por pré-requisito | `T0.2.4`, `T0.2.6`–`T0.2.8`, `T0.2.11`, `T1.2.*`, `T1.3.2`–`T1.3.4`, `T1.4.2` | Aguardam `packages/ui`, tokens, componentes, regras do core ou `usePomodoro`. |
+
+> As tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done.
+
 | MVP | Nome | O que dá para demonstrar no fim | Sprints |
 |---|---|---|---|
 | 🟦 **MVP 0** | Fundação | Página `/design` com todos os componentes pixel nos dois temas, CI verde | 1–2 |
@@ -110,7 +121,7 @@ MVP ──► entrega que dá para demonstrar e usar
 - [ ] `T0.2.2` Gerar `tokens.css` dos temas Castelo e Pergaminho a partir do `tokens.json` do Design System (script versionado) — **Gustavo** · M · ⛓ T0.2.1
 - [ ] `T0.2.3` Teste automatizado de contraste: falha se algum par texto/fundo dos tokens ficar abaixo de 4.5:1 — **Gustavo** · P · ⛓ T0.2.2
 - [ ] `T0.2.4` Portar as classes `px-*` do `bundle.css` do Design System para `packages/ui/styles` — **Higor** · P · ⛓ T0.2.2
-- [ ] `T0.2.5` Fontes Silkscreen, Pixelify Sans e Jersey 10 (via `next/font` no web e arquivos locais no Electron) — **Higor** · P
+- [ ] `T0.2.5` Fontes Silkscreen, Pixelify Sans e Jersey 10 (via `next/font` no web e arquivos locais no Electron) — **Higor** · P · implementação local pronta, aguardando revisão do PR
 - [ ] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4
 - [ ] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6
 - [ ] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6
@@ -163,16 +174,16 @@ MVP ──► entrega que dá para demonstrar e usar
 - [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1
 - [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1
 - [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1
-- [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P
+- [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · atalhos das ações atuais no Web prontos; `F` aguarda a tela `/foco`
 - [ ] `T1.3.6` Configuração dos tempos (padrão 25/5/15, 4 ciclos), salva localmente — **Gustavo** · P
 
 #### Épico 1.4 — Temas, formatos de tela e acessibilidade
 
 > Como usuário, quero que o app funcione no meu monitor, seja ele pequeno, grande ou vertical, no tema que eu preferir.
 
-- [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P
+- [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P · funcional no Web; aguarda integração aos tokens compartilhados e ao Desktop
 - [ ] `T1.4.2` Layouts para telas de até 1280px, monitor vertical e celular (no celular a rolagem é aceita) — **Higor** · M · ⛓ T1.2.1
-- [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P
+- [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P · base de movimento/foco no Web e Desktop pronta; rótulos dos futuros botões de ícone pendentes
 - [ ] `T1.4.4` Auditoria automática com axe nas telas (zero violações sérias) — **Gustavo** · M
 
 #### Épico 1.5 — Desktop com a mesma interface

@@ -2,26 +2,80 @@
   box-sizing: border-box;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:where(button, input, select):focus-visible {
+  outline: 3px solid Highlight;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #fafafa;
-  color: #111;
+  font-family: var(--font-pixelify), sans-serif;
+  background: #0e0c1d;
+  color: #f1e9d2;
 }
 
 main {
+  --bg: #0e0c1d;
+  --surface: #1b1733;
+  --ink: #f1e9d2;
+  --gold: #f4c542;
+  --mana: #4fd3e3;
+  --moss: #93dd62;
+  --muted: #b9b0cd;
+  --border: #4b4269;
   max-width: 720px;
+  min-height: 100vh;
   margin: 0 auto;
   padding: 2rem 1.5rem;
+  background: var(--bg);
+}
+
+main[data-theme="parchment"] {
+  --bg: #e6d8b5;
+  --surface: #f4ecd5;
+  --ink: #231933;
+  --gold: #7f5200;
+  --mana: #075f6b;
+  --moss: #30631a;
+  --muted: #655a71;
+  --border: #aa9670;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 h1 {
+  font-family: var(--font-silkscreen), sans-serif;
   font-size: 1.5rem;
   margin-bottom: 0.25rem;
 }
 
 .subtitle {
-  color: #666;
+  color: var(--muted);
   margin-top: 0;
   margin-bottom: 2rem;
 }
@@ -29,9 +83,9 @@ h1 {
 section {
   margin-bottom: 2.5rem;
   padding: 1.25rem;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--border);
   border-radius: 12px;
-  background: white;
+  background: var(--surface);
 }
 
 .task-form {
@@ -43,22 +97,27 @@ section {
 .task-form input[type="text"] {
   flex: 1;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 8px;
+  background: var(--bg);
+  color: var(--ink);
 }
 
 .task-form select {
   padding: 0.5rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 8px;
+  background: var(--bg);
+  color: var(--ink);
 }
 
 button {
+  font-family: var(--font-silkscreen), sans-serif;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 8px;
-  background: #111;
-  color: white;
+  background: var(--gold);
+  color: var(--bg);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -68,8 +127,9 @@ button:hover {
 }
 
 button.secondary {
-  background: #eee;
-  color: #111;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--ink);
 }
 
 ul.task-list {
@@ -83,7 +143,7 @@ ul.task-list {
   align-items: center;
   justify-content: space-between;
   padding: 0.6rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .task-item:last-child {
@@ -92,12 +152,12 @@ ul.task-list {
 
 .task-item.done .task-title {
   text-decoration: line-through;
-  color: #999;
+  color: var(--muted);
 }
 
 .task-meta {
   font-size: 0.75rem;
-  color: #888;
+  color: var(--muted);
   margin-left: 0.5rem;
 }
 
@@ -106,6 +166,7 @@ ul.task-list {
 }
 
 .pomodoro .time {
+  font-family: var(--font-jersey), sans-serif;
   font-size: 3rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -115,7 +176,7 @@ ul.task-list {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.8rem;
-  color: #666;
+  color: var(--mana);
   margin-bottom: 0.5rem;
 }
 

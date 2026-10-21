@@ -1,5 +1,28 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 20/10/2026 — Fontes do Design System no Web e Desktop
+
+Implementada localmente a `T0.2.5`: Silkscreen para títulos e botões, Pixelify Sans
+para texto e Jersey 10 para o relógio. O Web carrega arquivos locais por `next/font`
+e o Electron usa `@font-face`; as licenças OFL acompanham as duas cópias dos arquivos.
+Typecheck e lint do Web passaram; o Desktop compilou e empacotou. O build Web
+compilou e gerou páginas, mas a etapa `standalone` falhou no Windows por falta de
+permissão para criar symlinks (`EPERM`). A revisão por outro integrante ainda falta.
+
+Iniciada também a `T1.4.3`: o Web e o Desktop agora exibem foco de teclado,
+respeitam `prefers-reduced-motion` e têm rótulos associados aos campos das
+formas atuais. Os botões existentes têm texto; os futuros botões só com ícone
+precisarão de `aria-label` quando forem criados.
+
+Na `T1.3.5`, o Web passou a aceitar Espaço para iniciar/pausar o Pomodoro,
+`N` para focar a nova tarefa e `1`/`2`/`3` para trocar o escopo, sem capturar
+teclas enquanto o usuário digita num campo. O atalho `F` aguarda a rota `/foco`.
+
+A `T1.4.1` está funcional no Web: o usuário pode alternar entre Castelo e
+Pergaminho, a escolha fica salva no navegador e a primeira visita respeita a
+preferência de cor do sistema. A versão compartilhada dos tokens e a aplicação
+no Desktop dependem de `packages/ui`.
+
 ## 11/10/2026 — GitHub Actions e consolidação do Docker
 
 Definido o `apps/web` como frontend oficial, com `docker-compose.yml` para
