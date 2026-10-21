@@ -117,7 +117,7 @@ MVP ──► entrega que dá para demonstrar e usar
 
 > Como dev, quero importar tokens e componentes pixel de um único pacote, para que web e desktop fiquem idênticos ao protótipo.
 
-- [ ] `T0.2.1` Criar `packages/ui` no workspace (build, export de CSS e de componentes, tarefas no `turbo.json`) — **Guilhermo** · M
+- [x] `T0.2.1` Criar `packages/ui` no workspace (build, export de CSS e de componentes, tarefas no `turbo.json`) — **Guilhermo** · M
 - [ ] `T0.2.2` Gerar `tokens.css` dos temas Castelo e Pergaminho a partir do `tokens.json` do Design System (script versionado) — **Gustavo** · M · ⛓ T0.2.1
 - [ ] `T0.2.3` Teste automatizado de contraste: falha se algum par texto/fundo dos tokens ficar abaixo de 4.5:1 — **Gustavo** · P · ⛓ T0.2.2
 - [ ] `T0.2.4` Portar as classes `px-*` do `bundle.css` do Design System para `packages/ui/styles` — **Higor** · P · ⛓ T0.2.2

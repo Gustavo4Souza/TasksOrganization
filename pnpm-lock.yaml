@@ -116,6 +116,33 @@ importers:
 
   packages/tsconfig: {}
 
+  packages/ui:
+    devDependencies:
+      '@tasksorg/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config
+      '@tasksorg/tsconfig':
+        specifier: workspace:^
+        version: link:../tsconfig
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.31
+      '@types/react-dom':
+        specifier: ^18.3.1
+        version: 18.3.7(@types/react@18.3.31)
+      eslint:
+        specifier: ^9
+        version: 9.39.5
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
 packages:
 
   '@electron/get@2.0.3':

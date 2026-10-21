@@ -1,5 +1,16 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 21/10/2026 — Fundação do pacote compartilhado de UI
+
+Implementada a `T0.2.1`: criado o pacote `@tasksorg/ui` no workspace, com build
+TypeScript, declarações de tipo e exports públicos para componentes e CSS.
+Também foram configurados lint, typecheck, integração com pnpm/Turborepo e a
+geração de `dist/styles.css` a partir da entrada `styles/index.css`.
+
+O pacote está pronto para receber os tokens dos temas Castelo e Pergaminho,
+as classes `px-*` e os componentes React nas próximas tasks do épico 0.2.
+O build, lint e typecheck do pacote passaram localmente.
+
 ## 20/10/2026 — Fontes do Design System no Web e Desktop
 
 Implementada localmente a `T0.2.5`: Silkscreen para títulos e botões, Pixelify Sans

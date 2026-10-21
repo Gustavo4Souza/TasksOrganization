@@ -155,9 +155,10 @@ O catálogo de KPIs e o contrato de dados para futuras coletas estão em
   (`docker build`) mas não publica em nenhum lugar. Pra Kubernetes puxar
   essa imagem de verdade, ela precisa ir pra um registry (Docker Hub, GHCR,
   etc.) — um stage `docker push` depois do `docker build`.
-- **Design system compartilhado**: extrair um `packages/ui` com componentes
-  visuais reaproveitáveis entre web e (futuramente) mobile via React Native
-  Web, para chegar mais perto da experiência do Notion.
+- **Design system compartilhado**: o pacote `packages/ui` já foi criado como
+  base para componentes visuais reaproveitáveis entre web e (futuramente)
+  mobile via React Native Web. Tokens, estilos `px-*` e componentes entram nas
+  próximas tasks do épico 0.2.
 - **Lint compartilhado**: hoje `core` e `desktop` têm lint placeholder;
   vale configurar um `packages/eslint-config` compartilhado.
 - **Requisitos do produto**: esta POC cobre só tarefas (diária/semanal/anual)
