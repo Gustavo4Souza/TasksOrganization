@@ -4,15 +4,65 @@
     <meta charset="utf-8" />
     <title>TasksOrg — Desktop (POC)</title>
     <style>
+      @font-face {
+        font-family: "Silkscreen";
+        src: url("./fonts/Silkscreen-Regular.ttf") format("truetype");
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Silkscreen";
+        src: url("./fonts/Silkscreen-Bold.ttf") format("truetype");
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Pixelify Sans";
+        src: url("./fonts/PixelifySans%5Bwght%5D.ttf") format("truetype");
+        font-style: normal;
+        font-weight: 400 700;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Jersey 10";
+        src: url("./fonts/Jersey10-Regular.ttf") format("truetype");
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+      }
       * { box-sizing: border-box; }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      :where(button, input, select):focus-visible {
+        outline: 3px solid Highlight;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
       body {
         margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-family: "Pixelify Sans", sans-serif;
         background: #fafafa;
         color: #111;
         padding: 1.5rem 2rem;
       }
-      h1 { font-size: 1.4rem; margin-bottom: 0; }
+      h1 { font-family: "Silkscreen", sans-serif; font-size: 1.4rem; margin-bottom: 0; }
       .subtitle { color: #666; margin-top: 0.25rem; }
       section {
         margin-top: 1.5rem;
@@ -24,6 +74,7 @@
       .task-form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
       .task-form input { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 8px; }
       button {
+        font-family: "Silkscreen", sans-serif;
         padding: 0.5rem 1rem;
         border: none;
         border-radius: 8px;
@@ -41,7 +92,7 @@
       }
       li.done .title { text-decoration: line-through; color: #999; }
       .pomodoro { text-align: center; }
-      .time { font-size: 2.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .time { font-family: "Jersey 10", sans-serif; font-size: 2.5rem; font-weight: 400; font-variant-numeric: tabular-nums; }
       .phase { text-transform: uppercase; font-size: 0.75rem; color: #666; letter-spacing: 0.08em; }
       .controls { margin-top: 0.75rem; display: flex; gap: 0.5rem; justify-content: center; }
     </style>
@@ -53,6 +104,7 @@
     <section>
       <h2>Tarefas</h2>
       <form class="task-form" id="task-form">
+        <label class="sr-only" for="task-input">Título da nova tarefa</label>
         <input type="text" id="task-input" placeholder="Nova tarefa..." />
         <button type="submit">Adicionar</button>
       </form>
