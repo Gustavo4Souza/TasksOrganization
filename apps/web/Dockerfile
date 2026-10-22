@@ -12,6 +12,7 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
 COPY packages/core/package.json ./packages/core/package.json
 COPY packages/tsconfig/package.json ./packages/tsconfig/package.json
 COPY packages/eslint-config/package.json ./packages/eslint-config/package.json
+COPY packages/ui/package.json ./packages/ui/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY apps/desktop/package.json ./apps/desktop/package.json
 RUN pnpm install --frozen-lockfile
@@ -22,6 +23,7 @@ RUN corepack enable
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages/core/node_modules ./packages/core/node_modules
+COPY --from=deps /app/packages/ui/node_modules ./packages/ui/node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY . .
 RUN pnpm turbo run build --filter=@tasksorg/web

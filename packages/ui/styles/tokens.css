@@ -1,0 +1,116 @@
+/* Gerado por scripts/build-tokens.mjs a partir de tokens/tokens.json. Não edite à mão:
+ * altere o tokens.json (fonte: Design System TasksOrg) e rode `pnpm --filter @tasksorg/ui tokens`. */
+
+/* Tema Castelo (escuro) */
+:root,
+[data-theme="castelo"] {
+  color-scheme: dark;
+  --bg: #0e0c1d;
+  --surface: #1b1733;
+  --surface-raised: #272144;
+  --surface-sunken: #0a0916;
+  --edge: #8a7fc4;
+  --edge-soft: #3d355f;
+  --ink: #f1e9d2;
+  --ink-muted: #aba2c9;
+  --gold: #f4c542;
+  --mana: #4fd3e3;
+  --moss: #93dd62;
+  --crimson: #ff6b78;
+  --arcane: #b897ff;
+  --on-accent: #120e22;
+  --shadow-ink: #06050d;
+  --focus-ring: var(--gold);
+  --shadow-drop: 4px 4px 0 0 #06050d;
+  --shadow-press: 0 0 0 0 #06050d;
+  --shadow-bevel: inset -4px -4px 0 0 rgba(0, 0, 0, 0.28), inset 4px 4px 0 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Tema Pergaminho (claro) */
+[data-theme="pergaminho"] {
+  color-scheme: light;
+  --bg: #e6d8b5;
+  --surface: #f4ecd5;
+  --surface-raised: #fffaeb;
+  --surface-sunken: #d9c99f;
+  --edge: #6b5a3e;
+  --edge-soft: #c4b28a;
+  --ink: #231933;
+  --ink-muted: #5a4c68;
+  --gold: #7f5200;
+  --mana: #075f6b;
+  --moss: #30631a;
+  --crimson: #b01f3a;
+  --arcane: #6a3cc2;
+  --on-accent: #fffaeb;
+  --shadow-ink: #3b2f22;
+  --focus-ring: var(--gold);
+  --shadow-drop: 4px 4px 0 0 #3b2f22;
+  --shadow-press: 0 0 0 0 #3b2f22;
+  --shadow-bevel: inset -4px -4px 0 0 rgba(0, 0, 0, 0.28), inset 4px 4px 0 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Medidas e famílias (iguais nos dois temas) */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-0: 0px;
+  --border-px: 3px;
+  --border-thin: 2px;
+  --hud-height: 64px;
+  --sidebar-width: 376px;
+  --card-min-height: 56px;
+  --font-display: "Silkscreen", "Courier New", monospace;
+  --font-body: "Pixelify Sans", "Courier New", monospace;
+  --font-digits: "Jersey 10", "Courier New", monospace;
+}
+
+/* Estilos de texto: aplique com class="px-type-<nome>" */
+.px-type-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 32px;
+  font-weight: 700;
+}
+.px-type-heading {
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+.px-type-body {
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 400;
+}
+.px-type-body-sm {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+}
+.px-type-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.px-type-timer {
+  font-family: var(--font-digits);
+  font-size: 112px;
+  line-height: 88px;
+  font-weight: 400;
+}
+.px-type-counter {
+  font-family: var(--font-digits);
+  font-size: 40px;
+  line-height: 32px;
+  font-weight: 400;
+}

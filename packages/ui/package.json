@@ -15,20 +15,24 @@
       "types": "./dist/components.d.ts",
       "import": "./dist/components.js"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.json": "./dist/tokens.json"
   },
   "files": [
     "dist"
   ],
   "sideEffects": [
-    "./dist/styles.css"
+    "./dist/styles.css",
+    "./dist/tokens.css"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && node scripts/copy-css.mjs",
+    "build": "node scripts/build-tokens.mjs --check && tsc -p tsconfig.json && node scripts/copy-css.mjs",
     "dev": "tsc -p tsconfig.json --watch",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "echo \"(testes de componentes entram na T0.2.10)\" && exit 0"
+    "test": "vitest run",
+    "tokens": "node scripts/build-tokens.mjs"
   },
   "peerDependencies": {
     "react": "^18.3.1",
@@ -42,6 +46,7 @@
     "eslint": "^9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
   }
 }
