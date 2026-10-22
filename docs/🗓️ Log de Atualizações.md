@@ -1,5 +1,14 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 22/10/2026 — Integração dos temas Web aos tokens compartilhados
+
+Avançada a `T1.4.1` do Higor: o Web passa a importar `@tasksorg/ui/tokens.css`,
+removendo as paletas duplicadas. O tema é aplicado ao documento inteiro, inclusive
+ao fundo e ao texto, com os identificadores `castelo`/`pergaminho` do pacote.
+A preferência salva anteriormente continua válida; armazenamento indisponível
+não impede a troca de tema durante a sessão. Botões usam `--on-accent` e o foco
+usa `--focus-ring`. Integração Desktop e validação visual permanecem pendentes.
+
 ## 21/10/2026 — Lint compartilhado e regras novas do core
 
 Concluída a `T0.1.7`: criados `packages/eslint-config` (ESLint 9 + typescript-eslint,

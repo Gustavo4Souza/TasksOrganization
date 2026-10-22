@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import "@tasksorg/ui/tokens.css";
 import "./globals.css";
 
 const silkscreen = localFont({
