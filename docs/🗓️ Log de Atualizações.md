@@ -1,5 +1,20 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 21/10/2026 — Lint compartilhado e regras novas do core
+
+Concluída a `T0.1.7`: criados `packages/eslint-config` (ESLint 9 + typescript-eslint,
+presets `base`, `node` e `browser`) e `packages/tsconfig` (presets `base`, `library`,
+`node` e `nextjs`), substituindo o `tsconfig.base.json` da raiz. Core e desktop
+trocaram o lint placeholder por ESLint de verdade. O preset do core não inclui DOM
+nem tipos do Node, então usar `window` ou `process` no core quebra o typecheck.
+
+Adiantadas do MVP 1 as `T1.1.1`, `T1.1.2`, `T1.1.3` e `T1.1.6` no `@tasksorg/core`:
+`pomodoros` e `completedAt` no `Task`, regra de uma única missão em batalha para o
+app inteiro (`startBattle` devolve a anterior para "todo"), `TaskStore.update` e
+ordenação por prioridade, e a interface `TaskRepository` com adaptadores para
+localStorage (web) e arquivo JSON (desktop). O core passou de 13 para 45 testes.
+Tudo revisado e mergeado no PR #5.
+
 ## 21/10/2026 — Fundação do pacote compartilhado de UI
 
 Implementada a `T0.2.1`: criado o pacote `@tasksorg/ui` no workspace, com build
