@@ -46,7 +46,12 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    let savedTheme: string | null = null;
+    try {
+      savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    } catch {
+      // A preferência do sistema funciona mesmo quando o armazenamento é bloqueado.
+    }
     if (savedTheme === "castle" || savedTheme === "parchment") {
       setTheme(savedTheme);
     } else {
@@ -56,7 +61,13 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (themeIsReady) window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    if (!themeIsReady) return;
+    document.documentElement.dataset.theme = theme === "castle" ? "castelo" : "pergaminho";
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // A troca continua funcionando nesta sessão sem persistência.
+    }
   }, [theme, themeIsReady]);
 
   useEffect(() => {
@@ -107,7 +118,7 @@ export default function HomePage() {
   const scopeLabel: Record<TaskScope, string> = { daily: "Diária", weekly: "Semanal", yearly: "Anual" };
 
   return (
-    <main data-theme={theme}>
+    <main>
       <header className="app-header">
         <h1>TasksOrg</h1>
         <button

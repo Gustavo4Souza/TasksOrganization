@@ -189,7 +189,7 @@ MVP ──► entrega que dá para demonstrar e usar
 
 > Como usuário, quero que o app funcione no meu monitor, seja ele pequeno, grande ou vertical, no tema que eu preferir.
 
-- [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P · funcional no Web; aguarda integração aos tokens compartilhados e ao Desktop
+- [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P · Web integrado aos tokens de `@tasksorg/ui`; aguarda validação visual, revisão e integração ao Desktop
 - [ ] `T1.4.2` Layouts para telas de até 1280px, monitor vertical e celular (no celular a rolagem é aceita) — **Higor** · M · ⛓ T1.2.1
 - [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P · base de movimento/foco no Web e Desktop pronta; rótulos dos futuros botões de ícone pendentes
 - [ ] `T1.4.4` Auditoria automática com axe nas telas (zero violações sérias) — **Gustavo** · M

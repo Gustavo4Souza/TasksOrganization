@@ -15,7 +15,7 @@
 }
 
 :where(button, input, select):focus-visible {
-  outline: 3px solid Highlight;
+  outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
 }
 
@@ -28,37 +28,23 @@
 }
 
 body {
+  --font-display: var(--font-silkscreen);
+  --font-body: var(--font-pixelify);
+  --font-digits: var(--font-jersey);
+  --muted: var(--ink-muted);
+  --border: var(--edge);
   margin: 0;
   font-family: var(--font-pixelify), sans-serif;
-  background: #0e0c1d;
-  color: #f1e9d2;
+  background: var(--bg);
+  color: var(--ink);
 }
 
 main {
-  --bg: #0e0c1d;
-  --surface: #1b1733;
-  --ink: #f1e9d2;
-  --gold: #f4c542;
-  --mana: #4fd3e3;
-  --moss: #93dd62;
-  --muted: #b9b0cd;
-  --border: #4b4269;
   max-width: 720px;
   min-height: 100vh;
   margin: 0 auto;
   padding: 2rem 1.5rem;
   background: var(--bg);
-}
-
-main[data-theme="parchment"] {
-  --bg: #e6d8b5;
-  --surface: #f4ecd5;
-  --ink: #231933;
-  --gold: #7f5200;
-  --mana: #075f6b;
-  --moss: #30631a;
-  --muted: #655a71;
-  --border: #aa9670;
 }
 
 .app-header {
@@ -117,7 +103,7 @@ button {
   border: none;
   border-radius: 8px;
   background: var(--gold);
-  color: var(--bg);
+  color: var(--on-accent);
   cursor: pointer;
   font-size: 0.9rem;
 }
