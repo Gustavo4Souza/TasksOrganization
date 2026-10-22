@@ -3,5 +3,6 @@ import { nodeGlobals } from "@tasksorg/eslint-config/globals";
 
 export default [
   ...base,
-  { files: ["scripts/*.mjs"], languageOptions: { globals: nodeGlobals } },
+  { files: ["scripts/*.mjs", "test/**/*.mjs"], languageOptions: { globals: nodeGlobals } },
+  { files: ["scripts/*.mjs"], rules: { "no-console": "off" } },
 ];
