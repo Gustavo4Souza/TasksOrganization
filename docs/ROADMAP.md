@@ -83,6 +83,14 @@ MVP ──► entrega que dá para demonstrar e usar
 | Parcialmente implementadas | `T1.3.5`, `T1.4.1`, `T1.4.3` | Atalhos existentes, tema persistido no Web e base de acessibilidade já estão no código. Restam a rota `/foco`, integração dos tokens e Desktop, e os futuros botões de ícone. |
 | Bloqueadas por pré-requisito | `T0.2.4`, `T0.2.6`–`T0.2.8`, `T0.2.11`, `T1.2.*`, `T1.3.2`–`T1.3.4`, `T1.4.2` | Aguardam `packages/ui`, tokens, componentes, regras do core ou `usePomodoro`. |
 
+### Estado das entregas do Gustavo — 21/10/2026
+
+| Status | Tasks | Situação |
+|---|---|---|
+| Concluídas | `T0.1.7` | `packages/eslint-config` (ESLint 9) e `packages/tsconfig` compartilhados; core e desktop com lint de verdade. O core não pode usar `window` nem `process`: o typecheck barra. Mergeado no PR #5. |
+| Concluídas | `T1.1.1`, `T1.1.2`, `T1.1.3`, `T1.1.6` | `pomodoros` e `completedAt` no `Task`, uma única missão em batalha (`startBattle`), `update` e ordenação por prioridade, `TaskRepository` com adaptadores localStorage e arquivo JSON. Core com 45 testes. Mergeado no PR #5. |
+| Prontas para começar | `T0.2.2`, `T1.1.4`, `T1.1.5` | Dependências concluídas (`T0.2.1`, `T1.1.2`, `T1.1.1`). |
+
 > As tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done.
 
 | MVP | Nome | O que dá para demonstrar no fim | Sprints |
@@ -111,7 +119,7 @@ MVP ──► entrega que dá para demonstrar e usar
 - [x] `T0.1.4` Decidir entre `frontend/` e `apps/web` (hoje existem dois apps Next.js), migrar o que for útil e apagar o outro; registrar a decisão — **Higor** · M
 - [x] `T0.1.5` Revisar `.github/workflows/ci.yml`: install → lint → typecheck → test → build, com cache do pnpm — **Guilhermo** · M · ⛓ T0.1.4
 - [x] `T0.1.6` Proteger a `main`: merge só por PR, com 1 aprovação e CI verde — **Guilhermo** · P · ⛓ T0.1.5
-- [ ] `T0.1.7` Criar `packages/eslint-config` e `packages/tsconfig` compartilhados e trocar os lints placeholder de `core` e `desktop` — **Gustavo** · M
+- [x] `T0.1.7` Criar `packages/eslint-config` e `packages/tsconfig` compartilhados e trocar os lints placeholder de `core` e `desktop` — **Gustavo** · M
 
 #### Épico 0.2 — Design System no código (`packages/ui`)
 
@@ -146,12 +154,12 @@ MVP ──► entrega que dá para demonstrar e usar
 
 > Como usuário, quero que o Pomodoro conte para a missão em que estou trabalhando e que meu progresso fique registrado.
 
-- [ ] `T1.1.1` Adicionar `pomodoros` (focos gastos) e `completedAt` ao `Task` — **Gustavo** · P
-- [ ] `T1.1.2` Regra "só uma missão em batalha": `TaskStore.startBattle(id)` devolve a anterior para `todo` — **Gustavo** · M
-- [ ] `T1.1.3` `TaskStore.update` (título, prioridade, escopo, prazo) e ordenação por prioridade — **Gustavo** · P
+- [x] `T1.1.1` Adicionar `pomodoros` (focos gastos) e `completedAt` ao `Task` — **Gustavo** · P
+- [x] `T1.1.2` Regra "só uma missão em batalha": `TaskStore.startBattle(id)` devolve a anterior para `todo` — **Gustavo** · M
+- [x] `T1.1.3` `TaskStore.update` (título, prioridade, escopo, prazo) e ordenação por prioridade — **Gustavo** · P
 - [ ] `T1.1.4` `PomodoroTimer` emite evento de troca de fase; ao fim de um Foco, credita +1 à missão em batalha — **Gustavo** · M · ⛓ T1.1.2
 - [ ] `T1.1.5` Histórico diário de conclusões, com nível de 0 a 3 por dia e por mês (alimenta o `RoomMap`) — **Gustavo** · M · ⛓ T1.1.1
-- [ ] `T1.1.6` Interface `TaskRepository` + adaptadores `localStorage` (web) e arquivo JSON (desktop) — **Gustavo** · M
+- [x] `T1.1.6` Interface `TaskRepository` + adaptadores `localStorage` (web) e arquivo JSON (desktop) — **Gustavo** · M
 - [ ] `T1.1.7` Testes unitários das regras acima (meta: ≥ 90% de cobertura no core) — **Gustavo** · M
 
 #### Épico 1.2 — Tela Quadro
