@@ -68,6 +68,31 @@ import { type PolymorphicProps } from "@tasksorg/ui";
 import { type PolymorphicProps } from "@tasksorg/ui/components";
 ```
 
+## Pomodoro: `usePomodoro` e `usePomodoroSettings` (T1.3.1 e T1.3.6)
+
+```tsx
+"use client";
+import { TaskStore, creditFocusToBattle } from "@tasksorg/core";
+import { usePomodoro, usePomodoroSettings } from "@tasksorg/ui/hooks";
+
+const { config, update, restoreDefaults } = usePomodoroSettings();
+const { snapshot, toggle, reset, skip } = usePomodoro({
+  config,
+  // Liga o Pomodoro às tarefas antes de descontar o tempo em que o app ficou fechado.
+  attach: (timer) => creditFocusToBattle(timer, store, (task) => repository.save(task)),
+  onPhaseChange: (change) => tocarSom(change.to), // T1.3.4
+});
+// snapshot: { phase, state, remainingSeconds, completedFocusCycles }
+```
+
+- **Relógio real:** o tempo é medido pelo relógio do sistema, não pela contagem do `setInterval`. Em aba de segundo plano o navegador atrasa o intervalo, e mesmo assim o relógio fica certo.
+- **Recarregar a página:** o estado fica salvo no `localStorage` (`tasksorg:pomodoro`). Ao abrir de novo, o tempo que passou é descontado, **no máximo até o fim da fase em que parou**. Quem fecha o app no meio de um Foco e volta horas depois recebe aquele Foco concluído, não vários ciclos que não fez.
+- **`attach`:** é lido só na montagem. Use para `creditFocusToBattle`: assim o Foco concluído enquanto o app estava fechado também é creditado.
+- **`skip`:** pula a fase. Um Foco pulado não conta ciclo nem credita pomodoro.
+- **`usePomodoroSettings`:** guarda os tempos em `tasksorg:pomodoro-config`. Os valores são normalizados (Foco de 1 a 120 min, pausa curta de 1 a 60, pausa longa de 1 a 90, de 1 a 12 ciclos) e passar `config` para o `usePomodoro` aplica a mudança na próxima fase.
+- **SSR:** funcionam no servidor (Next). O primeiro render mostra 25:00 e o estado salvo entra logo depois.
+- **Sem persistência:** `storage: null` desliga o salvamento; testes podem passar um `storage` e um `now` falsos.
+
 ## Desenvolvimento
 
 Na raiz do monorepo:
