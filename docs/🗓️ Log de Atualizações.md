@@ -1,5 +1,15 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 23/10/2026 — Componentes pixel e catálogo do MVP 0
+
+Branch `Higor` atualizada com a main. Implementados Panel, Button, Tag,
+PixelIcon, TaskCard, StatBar e ScopeTabs em `@tasksorg/ui`, com estados,
+contadores, foco e navegação por teclado. Nova rota `/design` mostra os
+componentes nos temas Castelo/Pergaminho e permite experimentar as ações.
+Fontes locais existentes preservadas. Estilos usam os tokens compartilhados.
+A comparação com o bundle original e a revisão por PR permanecem pendentes.
+Detalhes em [MVP0-Higor](MVP0-Higor.md).
+
 ## 22/10/2026 — Integração dos temas Web aos tokens compartilhados
 
 Avançada a `T1.4.1` do Higor: o Web passa a importar `@tasksorg/ui/tokens.css`,
