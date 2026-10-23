@@ -1,0 +1,77 @@
+.design-root {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+}
+.design-catalog {
+  max-width: 1200px;
+  padding: var(--space-8);
+}
+.design-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+}
+.design-header a {
+  color: var(--mana);
+}
+.design-eyebrow {
+  color: var(--gold);
+  font: 400 12px/20px var(--font-display);
+  margin-top: var(--space-8);
+}
+.design-header h1 {
+  font-size: clamp(24px, 4vw, 40px);
+}
+.design-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+.design-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+.design-stack {
+  display: grid;
+  gap: var(--space-3);
+}
+.design-icons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+.design-icons > div {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.design-tab-panel {
+  padding: var(--space-4) 0;
+  margin-bottom: var(--space-4);
+}
+.design-catalog footer {
+  color: var(--ink-muted);
+  margin-top: var(--space-8);
+}
+.design-catalog :where(a, [role="tabpanel"]):focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+@media (max-width: 760px) {
+  .design-grid {
+    grid-template-columns: 1fr;
+  }
+  .design-catalog {
+    padding: var(--space-4);
+  }
+  .design-icons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

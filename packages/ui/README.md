@@ -13,8 +13,11 @@ A `T0.2.1` estabelece a infraestrutura do pacote:
 - integração com o workspace pnpm e as tarefas do Turborepo;
 - entrada CSS preparada para receber tokens e estilos dos componentes.
 
-Os tokens, as classes `px-*` e os componentes visuais serão adicionados nas
-tasks seguintes do épico 0.2.
+O pacote também oferece tokens, classes `px-*` e os componentes `Panel`,
+`Button`, `Tag`, `PixelIcon`, `TaskCard`, `StatBar` e `ScopeTabs`.
+Veja `/design` no Web para exemplos interativos nos dois temas e
+[`docs/MVP0-Higor.md`](../../docs/MVP0-Higor.md) para contratos de acessibilidade
+e pendências de comparação com a referência visual original.
 
 ## Tokens (T0.2.2 e T0.2.3)
 

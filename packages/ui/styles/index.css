@@ -1,4 +1,185 @@
-/*
- * Public stylesheet entry point for @tasksorg/ui.
- * Design tokens and pixel component styles are added by the following tasks.
- */
+/* Based on committed tokens; comparison with the original bundle is pending. */
+.px-panel,
+.px-button,
+.px-tag,
+.px-task-card,
+.px-scope-tabs,
+.px-stat {
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+.px-panel {
+  padding: var(--space-6);
+  margin: 0;
+  border: var(--border-px) solid var(--edge);
+  border-radius: var(--radius-0);
+  background: var(--surface);
+  box-shadow: var(--shadow-drop);
+}
+.px-panel-title {
+  margin: 0 0 var(--space-4);
+  font: 400 16px/24px var(--font-display);
+}
+.px-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-thin) solid var(--edge);
+  border-radius: var(--radius-0);
+  background: var(--gold);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-drop), var(--shadow-bevel);
+  font: 400 13px/20px var(--font-display);
+  cursor: pointer;
+}
+.px-button--secondary {
+  background: var(--surface-raised);
+  color: var(--ink);
+}
+.px-button--danger {
+  background: var(--crimson);
+}
+.px-button:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+.px-button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-press);
+}
+.px-button:disabled {
+  cursor: not-allowed;
+  border-style: dashed;
+  background: var(--surface-sunken);
+  color: var(--ink-muted);
+  box-shadow: none;
+}
+:where(.px-button, .px-scope-tabs button):focus-visible {
+  outline: var(--border-px) solid var(--focus-ring);
+  outline-offset: 4px;
+}
+.px-tone--gold {
+  --px-accent: var(--gold);
+}
+.px-tone--mana {
+  --px-accent: var(--mana);
+}
+.px-tone--moss {
+  --px-accent: var(--moss);
+}
+.px-tone--crimson {
+  --px-accent: var(--crimson);
+}
+.px-tone--arcane {
+  --px-accent: var(--arcane);
+}
+.px-tag {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-thin) solid var(--px-accent);
+  color: var(--px-accent);
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 16px;
+}
+.px-icon {
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.px-task-card {
+  min-height: var(--card-min-height);
+  padding: var(--space-3);
+  border: var(--border-thin) solid var(--edge);
+  background: var(--surface-raised);
+}
+.px-task-card--doing {
+  border-color: var(--mana);
+  box-shadow: inset 4px 0 0 var(--mana);
+}
+.px-task-card--done {
+  border-color: var(--moss);
+}
+.px-task-card--done h3 {
+  text-decoration: line-through;
+}
+.px-task-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.px-task-heading h3 {
+  margin: 0;
+  font: 400 18px/24px var(--font-body);
+  overflow-wrap: anywhere;
+}
+.px-task-meta,
+.px-task-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+.px-task-meta {
+  color: var(--ink-muted);
+}
+.px-task-card--compact {
+  min-height: 36px;
+  padding: var(--space-1) var(--space-2);
+}
+.px-task-card--compact .px-task-meta {
+  display: none;
+}
+.px-stat-label {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.px-stat-track {
+  height: 20px;
+  border: var(--border-thin) solid var(--edge);
+  background: var(--surface-sunken);
+}
+.px-stat-fill {
+  height: 100%;
+  background: var(--px-accent);
+}
+.px-scope-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.px-scope-tabs button {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-thin) solid var(--edge);
+  border-radius: var(--radius-0);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 13px;
+  cursor: pointer;
+}
+.px-scope-tabs button:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+.px-scope-tabs [aria-selected="true"] {
+  background: var(--gold);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-drop);
+}
+.px-tab-count {
+  font-family: var(--font-digits);
+  font-size: 24px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .px-button:active:not(:disabled) {
+    transform: none;
+  }
+}
