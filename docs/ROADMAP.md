@@ -74,14 +74,18 @@ MVP ──► entrega que dá para demonstrar e usar
 
 ## 🗺️ Roadmap
 
-### Estado das entregas do Higor — 20/10/2026
+### Estado das entregas do Higor — 23/10/2026
 
 | Status | Tasks | Situação |
 |---|---|---|
-| Concluída | `T0.1.4` | `apps/web` definido como frontend oficial e a decisão foi registrada. |
-| Implementada, aguardando revisão | `T0.2.5` | Fontes carregadas localmente no Web e Desktop; lint e typecheck do Web e build do Desktop passaram. |
-| Parcialmente implementadas | `T1.3.5`, `T1.4.1`, `T1.4.3` | Atalhos existentes, tema persistido no Web e base de acessibilidade já estão no código. Restam a rota `/foco`, integração dos tokens e Desktop, e os futuros botões de ícone. |
-| Bloqueadas por pré-requisito | `T0.2.4`, `T0.2.6`–`T0.2.8`, `T0.2.11`, `T1.2.*`, `T1.3.2`–`T1.3.4`, `T1.4.2` | Aguardam `packages/ui`, tokens, componentes, regras do core ou `usePomodoro`. |
+| Concluída e integrada à `main` | `T0.1.4`, `T0.2.5` | Web definido como frontend oficial; fontes locais carregadas no Web e Desktop. |
+| Implementadas na branch `Higor`, aguardando PR e revisão | `T0.2.6`, `T0.2.7`, `T0.2.8`, `T0.2.11` | Componentes pixel, cartões, barras, abas acessíveis e catálogo `/design` nos dois temas. |
+| Parcialmente implementada | `T0.2.4` | Classes `px-*` construídas com os tokens versionados; falta comparar e ajustar contra o `bundle.css` original, que não está acessível sem login. |
+| Implementadas anteriormente, aguardando trabalho dependente | `T1.3.5`, `T1.4.1`, `T1.4.3` | Atalhos existentes, tema persistido no Web e base de acessibilidade já estão no código. |
+
+Validação da branch: lint e typecheck aprovados; 88 testes passaram; builds de
+core, UI e Desktop aprovados. O Web compilou, mas seu empacotamento `standalone`
+falhou no Windows ao criar links simbólicos. Veja [escopo e validação do MVP 0](MVP0-Higor.md).
 
 ### Estado das entregas do Gustavo — 23/10/2026
 
@@ -133,14 +137,14 @@ MVP ──► entrega que dá para demonstrar e usar
 - [x] `T0.2.1` Criar `packages/ui` no workspace (build, export de CSS e de componentes, tarefas no `turbo.json`) — **Guilhermo** · M
 - [x] `T0.2.2` Gerar `tokens.css` dos temas Castelo e Pergaminho a partir do `tokens.json` do Design System (script versionado) — **Gustavo** · M · ⛓ T0.2.1
 - [x] `T0.2.3` Teste automatizado de contraste: falha se algum par texto/fundo dos tokens ficar abaixo de 4.5:1 — **Gustavo** · P · ⛓ T0.2.2
-- [ ] `T0.2.4` Portar as classes `px-*` do `bundle.css` do Design System para `packages/ui/styles` — **Higor** · P · ⛓ T0.2.2
-- [ ] `T0.2.5` Fontes Silkscreen, Pixelify Sans e Jersey 10 (via `next/font` no web e arquivos locais no Electron) — **Higor** · P · implementação local pronta, aguardando revisão do PR
-- [ ] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4
-- [ ] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6
-- [ ] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6
+- [ ] `T0.2.4` Portar as classes `px-*` do `bundle.css` do Design System para `packages/ui/styles` — **Higor** · P · ⛓ T0.2.2 · estilos-base implementados; falta a comparação com o `bundle.css` original
+- [x] `T0.2.5` Fontes Silkscreen, Pixelify Sans e Jersey 10 (via `next/font` no web e arquivos locais no Electron) — **Higor** · P · integrada à `main`
+- [ ] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4 · implementada na branch `Higor`, aguardando revisão
+- [ ] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6 · implementada na branch `Higor`, aguardando revisão
+- [ ] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6 · implementada na branch `Higor`, aguardando revisão
 - [ ] `T0.2.9` Componentes React `PomodoroHUD` e `RoomMap`, recebendo o `PomodoroSnapshot` do core como prop — **Gustavo** · M · ⛓ T0.2.6
 - [ ] `T0.2.10` Testes de componentes (Vitest + Testing Library): estados, props e acessibilidade básica — **Gustavo** · M · ⛓ T0.2.7
-- [ ] `T0.2.11` Rota `/design` no `apps/web` com o catálogo de componentes e alternância de tema — **Higor** · P · ⛓ T0.2.7
+- [ ] `T0.2.11` Rota `/design` no `apps/web` com o catálogo de componentes e alternância de tema — **Higor** · P · ⛓ T0.2.7 · implementada na branch `Higor`, aguardando revisão
 
 **✔️ Critérios de aceite do MVP 0**
 - Componentes iguais aos previews do Design System nos dois temas.

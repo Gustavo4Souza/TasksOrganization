@@ -1,5 +1,14 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 23/10/2026 — Componentes pixel e catálogo do MVP 0
+
+Na branch `Higor`, foram implementados Panel, Button, Tag, PixelIcon, TaskCard,
+StatBar e ScopeTabs em `@tasksorg/ui`, com estados, contadores, foco e navegação
+por teclado. A nova rota `/design` mostra os componentes nos temas Castelo e
+Pergaminho e permite experimentar as ações. As fontes locais existentes foram
+preservadas e os estilos usam os tokens compartilhados. A comparação com o bundle
+original e a revisão por PR permanecem pendentes. Detalhes em [MVP0-Higor](MVP0-Higor.md).
+
 ## 23/10/2026 — Tokens do Design System e regras do Pomodoro no core
 
 Concluídas a `T0.2.2` e a `T0.2.3` (PR #9): o `packages/ui` guarda o `tokens.json`
