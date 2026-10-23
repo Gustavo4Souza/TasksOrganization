@@ -88,9 +88,9 @@ describe("evento de troca de fase (T1.1.4)", () => {
     timer.tick(60); // foco -> pausa longa
 
     expect(changes).toEqual([
-      { from: "focus", to: "shortBreak", completedFocusCycles: 1 },
-      { from: "shortBreak", to: "focus", completedFocusCycles: 1 },
-      { from: "focus", to: "longBreak", completedFocusCycles: 2 },
+      { from: "focus", to: "shortBreak", reason: "completed", completedFocusCycles: 1 },
+      { from: "shortBreak", to: "focus", reason: "completed", completedFocusCycles: 1 },
+      { from: "focus", to: "longBreak", reason: "completed", completedFocusCycles: 2 },
     ]);
   });
 

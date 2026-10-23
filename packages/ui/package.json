@@ -17,7 +17,11 @@
     },
     "./styles.css": "./dist/styles.css",
     "./tokens.css": "./dist/tokens.css",
-    "./tokens.json": "./dist/tokens.json"
+    "./tokens.json": "./dist/tokens.json",
+    "./hooks": {
+      "types": "./dist/hooks.d.ts",
+      "import": "./dist/hooks.js"
+    }
   },
   "files": [
     "dist"
@@ -30,7 +34,7 @@
     "build": "node scripts/build-tokens.mjs --check && tsc -p tsconfig.json && node scripts/copy-css.mjs",
     "dev": "tsc -p tsconfig.json --watch",
     "lint": "eslint . --max-warnings 0",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
     "test": "vitest run",
     "tokens": "node scripts/build-tokens.mjs"
   },
@@ -41,12 +45,18 @@
   "devDependencies": {
     "@tasksorg/eslint-config": "workspace:^",
     "@tasksorg/tsconfig": "workspace:^",
+    "@testing-library/dom": "^10",
+    "@testing-library/react": "^16",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "eslint": "^9",
+    "jsdom": "^25",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.6.3",
     "vitest": "^2.1.4"
+  },
+  "dependencies": {
+    "@tasksorg/core": "workspace:^"
   }
 }

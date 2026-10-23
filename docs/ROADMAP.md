@@ -83,13 +83,18 @@ MVP ──► entrega que dá para demonstrar e usar
 | Parcialmente implementadas | `T1.3.5`, `T1.4.1`, `T1.4.3` | Atalhos existentes, tema persistido no Web e base de acessibilidade já estão no código. Restam a rota `/foco`, integração dos tokens e Desktop, e os futuros botões de ícone. |
 | Bloqueadas por pré-requisito | `T0.2.4`, `T0.2.6`–`T0.2.8`, `T0.2.11`, `T1.2.*`, `T1.3.2`–`T1.3.4`, `T1.4.2` | Aguardam `packages/ui`, tokens, componentes, regras do core ou `usePomodoro`. |
 
-### Estado das entregas do Gustavo — 21/10/2026
+### Estado das entregas do Gustavo — 23/10/2026
 
 | Status | Tasks | Situação |
 |---|---|---|
 | Concluídas | `T0.1.7` | `packages/eslint-config` (ESLint 9) e `packages/tsconfig` compartilhados; core e desktop com lint de verdade. O core não pode usar `window` nem `process`: o typecheck barra. Mergeado no PR #5. |
-| Concluídas | `T1.1.1`, `T1.1.2`, `T1.1.3`, `T1.1.6` | `pomodoros` e `completedAt` no `Task`, uma única missão em batalha (`startBattle`), `update` e ordenação por prioridade, `TaskRepository` com adaptadores localStorage e arquivo JSON. Core com 45 testes. Mergeado no PR #5. |
-| Prontas para começar | `T0.2.2`, `T1.1.4`, `T1.1.5` | Dependências concluídas (`T0.2.1`, `T1.1.2`, `T1.1.1`). |
+| Concluídas | `T1.1.1`, `T1.1.2`, `T1.1.3`, `T1.1.6` | `pomodoros` e `completedAt` no `Task`, uma única missão em batalha (`startBattle`), `update` e ordenação por prioridade, `TaskRepository` com adaptadores localStorage e arquivo JSON. Mergeado no PR #5. |
+| Concluídas | `T0.2.2`, `T0.2.3` | `tokens.css` gerado do `tokens.json` do Design System (temas Castelo e Pergaminho) e teste de contraste WCAG nos dois temas, rodando no CI. Mergeado no PR #9. |
+| Concluídas | `T1.1.4`, `T1.1.5` | `PomodoroTimer.onPhaseChange` e `creditFocusToBattle` (fim do Foco credita +1 na missão em batalha); `weekProgress` e `yearProgress` com níveis 0–3 para o mapa. Core com 68 testes. Mergeado no PR #10. |
+| Concluídas, aguardando merge | `T1.3.1`, `T1.3.6` | Hooks `usePomodoro` e `usePomodoroSettings` em `@tasksorg/ui/hooks`: relógio pelo tempo real (aba em segundo plano continua certa), retoma ao recarregar descontando só até o fim da fase, `skip` sem crédito e tempos validados e salvos localmente. Core com 92 testes e `packages/ui` com 25. PR aberto. Ao entrar, liberam `T1.3.2`–`T1.3.4` (Higor) e `T1.5.3` (Guilhermo). |
+| Correção, aguardando merge | — | `output: "standalone"` do Next só no build do Docker (`NEXT_OUTPUT=standalone`). No Windows, os links do standalone faziam o build seguinte esvaziar o `next` no `node_modules`. PR aberto. |
+| Prontas para começar | `T1.1.7`, `T2.1.1` | Cobertura ≥ 90% no core; proposta da decisão de persistência para o grupo. |
+| Bloqueadas por pré-requisito | `T0.2.9`, `T0.2.10`, `T1.6.1` | Aguardam os componentes `T0.2.6`/`T0.2.7` e a tela `T1.2.5`. |
 
 > As tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done.
 
@@ -126,8 +131,8 @@ MVP ──► entrega que dá para demonstrar e usar
 > Como dev, quero importar tokens e componentes pixel de um único pacote, para que web e desktop fiquem idênticos ao protótipo.
 
 - [x] `T0.2.1` Criar `packages/ui` no workspace (build, export de CSS e de componentes, tarefas no `turbo.json`) — **Guilhermo** · M
-- [ ] `T0.2.2` Gerar `tokens.css` dos temas Castelo e Pergaminho a partir do `tokens.json` do Design System (script versionado) — **Gustavo** · M · ⛓ T0.2.1
-- [ ] `T0.2.3` Teste automatizado de contraste: falha se algum par texto/fundo dos tokens ficar abaixo de 4.5:1 — **Gustavo** · P · ⛓ T0.2.2
+- [x] `T0.2.2` Gerar `tokens.css` dos temas Castelo e Pergaminho a partir do `tokens.json` do Design System (script versionado) — **Gustavo** · M · ⛓ T0.2.1
+- [x] `T0.2.3` Teste automatizado de contraste: falha se algum par texto/fundo dos tokens ficar abaixo de 4.5:1 — **Gustavo** · P · ⛓ T0.2.2
 - [ ] `T0.2.4` Portar as classes `px-*` do `bundle.css` do Design System para `packages/ui/styles` — **Higor** · P · ⛓ T0.2.2
 - [ ] `T0.2.5` Fontes Silkscreen, Pixelify Sans e Jersey 10 (via `next/font` no web e arquivos locais no Electron) — **Higor** · P · implementação local pronta, aguardando revisão do PR
 - [ ] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4
@@ -157,8 +162,8 @@ MVP ──► entrega que dá para demonstrar e usar
 - [x] `T1.1.1` Adicionar `pomodoros` (focos gastos) e `completedAt` ao `Task` — **Gustavo** · P
 - [x] `T1.1.2` Regra "só uma missão em batalha": `TaskStore.startBattle(id)` devolve a anterior para `todo` — **Gustavo** · M
 - [x] `T1.1.3` `TaskStore.update` (título, prioridade, escopo, prazo) e ordenação por prioridade — **Gustavo** · P
-- [ ] `T1.1.4` `PomodoroTimer` emite evento de troca de fase; ao fim de um Foco, credita +1 à missão em batalha — **Gustavo** · M · ⛓ T1.1.2
-- [ ] `T1.1.5` Histórico diário de conclusões, com nível de 0 a 3 por dia e por mês (alimenta o `RoomMap`) — **Gustavo** · M · ⛓ T1.1.1
+- [x] `T1.1.4` `PomodoroTimer` emite evento de troca de fase; ao fim de um Foco, credita +1 à missão em batalha — **Gustavo** · M · ⛓ T1.1.2
+- [x] `T1.1.5` Histórico diário de conclusões, com nível de 0 a 3 por dia e por mês (alimenta o `RoomMap`) — **Gustavo** · M · ⛓ T1.1.1
 - [x] `T1.1.6` Interface `TaskRepository` + adaptadores `localStorage` (web) e arquivo JSON (desktop) — **Gustavo** · M
 - [ ] `T1.1.7` Testes unitários das regras acima (meta: ≥ 90% de cobertura no core) — **Gustavo** · M
 
@@ -178,12 +183,12 @@ MVP ──► entrega que dá para demonstrar e usar
 
 > Como usuário, quero um timer que eu leia de longe e que me avise quando a fase virar.
 
-- [ ] `T1.3.1` Hook `usePomodoro` (tick com `PomodoroTimer`, continua certo após recarregar a página) — **Gustavo** · M · ⛓ T1.1.4
+- [x] `T1.3.1` Hook `usePomodoro` (tick com `PomodoroTimer`, continua certo após recarregar a página) — **Gustavo** · M · ⛓ T1.1.4
 - [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1
 - [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1
 - [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1
 - [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · atalhos das ações atuais no Web prontos; `F` aguarda a tela `/foco`
-- [ ] `T1.3.6` Configuração dos tempos (padrão 25/5/15, 4 ciclos), salva localmente — **Gustavo** · P
+- [x] `T1.3.6` Configuração dos tempos (padrão 25/5/15, 4 ciclos), salva localmente — **Gustavo** · P
 
 #### Épico 1.4 — Temas, formatos de tela e acessibilidade
 
@@ -242,7 +247,7 @@ Web / Desktop ──► TaskRepository (HTTP) ──► API ──► PostgreSQL
 - [ ] `T2.1.5` Sessões de Pomodoro e histórico diário (alimentam o mapa) — **Gustavo** · M · ⛓ T2.1.4
 - [ ] `T2.1.6` Autenticação e autorização (cada usuário só vê as próprias missões) — **Gustavo** · G · ⛓ T2.1.3
 - [ ] `T2.1.7` Adaptador `TaskRepository` HTTP no core (troca o local sem mudar as telas) — **Gustavo** · M · ⛓ T2.1.4
-- [ ] `T2.1.8` Testes de API e de integração com banco real em container — **Gustavo** · M
+- [ ] `T2.1.8` Testes de API e de integração com banco real em container — **Gustavo** · M · ⛓ T2.1.4
 
 #### Épico 2.2 — Frontend integrado
 

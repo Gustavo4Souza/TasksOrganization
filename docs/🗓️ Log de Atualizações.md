@@ -1,5 +1,38 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 23/10/2026 — Tokens do Design System e regras do Pomodoro no core
+
+Concluídas a `T0.2.2` e a `T0.2.3` (PR #9): o `packages/ui` guarda o `tokens.json`
+do Design System e gera `styles/tokens.css` com os temas Castelo e Pergaminho,
+sombras, medidas, fontes e classes `.px-type-*`. O arquivo gerado fica commitado e
+o build falha se ele divergir do JSON. Um teste confere o contraste WCAG de texto,
+bordas e foco nos dois temas e roda no CI.
+
+Concluídas a `T1.1.4` e a `T1.1.5` (PR #10): o `PomodoroTimer` avisa cada troca de
+fase e `creditFocusToBattle` credita +1 pomodoro na missão em batalha quando um Foco
+termina. `weekProgress` e `yearProgress` calculam os níveis 0 a 3 do mapa a partir
+das conclusões, no fuso local. O core passou de 45 para 68 testes.
+
+Com isso ficam liberadas a `T0.2.4` e a `T1.2.5` (Higor) e a `T1.3.1` (Gustavo).
+
+Feitas a `T1.3.1` e a `T1.3.6` (PR aberto): o core passou a salvar e retomar o
+Pomodoro (ao recarregar, desconta o tempo fechado só até o fim da fase em que parou,
+então um app fechado por horas credita 1 Foco, não vários), ganhou `skip()` (Foco
+pulado não credita) e valida os tempos (Foco de 1 a 120 min, pausas, de 1 a 12 ciclos). O
+`@tasksorg/ui/hooks` traz `usePomodoro` e `usePomodoroSettings`: o relógio segue o
+tempo real, então a aba em segundo plano no monitor secundário continua certa;
+funcionam no SSR do Next e não creditam em dobro no StrictMode. Core com 92 testes,
+`packages/ui` com 25.
+
+Encontrada a causa do `next` sumindo do `node_modules` no Windows (PR aberto): o
+`output: "standalone"` cria em `.next/standalone` links simbólicos para os pacotes
+reais do pnpm, e o build seguinte, ao apagar o `.next` antigo, esvaziava esses
+pacotes. O standalone agora só é ligado no build do Docker (`NEXT_OUTPUT=standalone`).
+Deve explicar também o `EPERM` registrado em 20/10.
+
+Corrigida no roadmap a dependência da `T2.1.8` (testes de API), que passa a
+depender da `T2.1.4`.
+
 ## 22/10/2026 — Integração dos temas Web aos tokens compartilhados
 
 Avançada a `T1.4.1` do Higor: o Web passa a importar `@tasksorg/ui/tokens.css`,
