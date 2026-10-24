@@ -6,8 +6,10 @@ Na branch `Higor`, foram implementados Panel, Button, Tag, PixelIcon, TaskCard,
 StatBar e ScopeTabs em `@tasksorg/ui`, com estados, contadores, foco e navegação
 por teclado. A nova rota `/design` mostra os componentes nos temas Castelo e
 Pergaminho e permite experimentar as ações. As fontes locais existentes foram
-preservadas e os estilos usam os tokens compartilhados. A comparação com o bundle
-original e a revisão por PR permanecem pendentes. Detalhes em [MVP0-Higor](MVP0-Higor.md).
+preservadas e os estilos usam os tokens compartilhados. O
+`components/bundle.css` foi conferido e portado para alinhar molduras, sombras,
+botões, tags, cartões, barras e abas à referência. A revisão por PR permanece
+pendente. Detalhes em [MVP0-Higor](MVP0-Higor.md).
 
 ## 23/10/2026 — Tokens do Design System e regras do Pomodoro no core
 
