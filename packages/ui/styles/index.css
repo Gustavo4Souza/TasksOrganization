@@ -183,3 +183,120 @@
     transform: none;
   }
 }
+
+/* ---------- Texto só para leitores de tela ---------- */
+.px-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- PomodoroHUD (T0.2.9) ---------- */
+.px-pomo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+.px-pomo-phase {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--px-accent);
+  font: 400 16px/24px var(--font-display);
+  text-transform: uppercase;
+}
+.px-pomo-time {
+  margin: 0;
+  font: 400 112px/88px var(--font-digits);
+  color: var(--ink);
+  text-shadow: var(--space-1) var(--space-1) 0 var(--shadow-ink);
+  font-variant-numeric: tabular-nums;
+}
+.px-pomo-orbs {
+  display: flex;
+  gap: var(--space-2);
+}
+.px-pomo-orb {
+  width: 16px;
+  height: 16px;
+  border: var(--border-thin) solid var(--edge);
+  background: var(--surface-sunken);
+}
+.px-pomo-orb--on {
+  background: var(--gold);
+  box-shadow: var(--shadow-bevel);
+}
+.px-pomo-bar {
+  width: 100%;
+}
+.px-pomo-battle {
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--ink-muted);
+  font-size: 15px;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.px-pomo-battle strong {
+  color: var(--ink);
+  font-weight: 400;
+}
+.px-pomo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+/* ---------- RoomMap (T0.2.9) ----------
+ * Texto sobre cada nível conferido >= 4.5:1 nos dois temas; "hoje" é um contorno
+ * por fora da sala, que contrasta com o painel e não com o preenchimento. */
+.px-map {
+  display: grid;
+  grid-template-columns: repeat(var(--px-map-cols, 7), minmax(0, 1fr));
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.px-room {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: var(--border-thin) solid var(--edge);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  font: 400 20px/1 var(--font-digits);
+}
+.px-room[data-level="1"] {
+  background: color-mix(in srgb, var(--moss) 35%, var(--surface-sunken));
+}
+.px-room[data-level="2"] {
+  background: color-mix(in srgb, var(--moss) 75%, var(--surface-sunken));
+  color: var(--on-accent);
+}
+.px-room[data-level="3"] {
+  background: var(--moss);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-bevel);
+}
+.px-room--future {
+  border-style: dashed;
+  color: var(--ink-muted);
+}
+.px-room--current {
+  outline: var(--border-px) solid var(--gold);
+  outline-offset: 2px;
+}

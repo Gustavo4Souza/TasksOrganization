@@ -1,16 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Button,
   Panel,
   PixelIcon,
+  PomodoroHUD,
+  RoomMap,
   ScopeTabs,
   StatBar,
   Tag,
   TaskCard,
+  roomsFromWeek,
+  roomsFromYear,
+  usePomodoro,
 } from "@tasksorg/ui";
+import { type Task, createTask, weekProgress, yearProgress } from "@tasksorg/core";
 import type { Accent, PixelIconName, Scope } from "@tasksorg/ui";
 import "@tasksorg/ui/styles.css";
 import "./design.css";
@@ -27,10 +33,33 @@ const names = ["Caveira", "Coração", "Espada", "Estrela", "Check", "Bandeira"]
 const tones: Accent[] = ["gold", "mana", "moss", "crimson", "arcane"];
 const scopes: Scope[] = ["daily", "weekly", "yearly"];
 
+/** Tempos curtos para ver a troca de fase no catálogo sem esperar 25 minutos. */
+const demoConfig = { focusMinutes: 1, shortBreakMinutes: 1, longBreakMinutes: 2, cyclesBeforeLongBreak: 4 };
+
+/** Conclusões de exemplo, relativas a hoje, para desenhar o mapa. */
+function sampleTasks(today: Date): Task[] {
+  const doneDaysAgo = (days: number, count: number) =>
+    Array.from({ length: count }, () => ({
+      ...createTask({ title: "Exemplo" }),
+      status: "done" as const,
+      completedAt: new Date(today.getFullYear(), today.getMonth(), today.getDate() - days, 12).toISOString(),
+    }));
+  return [0, 1, 2, 3, 5, 8, 13, 21, 34, 40, 55, 70, 90, 120, 150, 200, 240].flatMap((days, i) => doneDaysAgo(days, (i % 5) + 1));
+}
+
 export default function DesignPage() {
   const [theme, setTheme] = useState<"castelo" | "pergaminho">("castelo");
   const [scope, setScope] = useState<Scope>("daily");
   const [status, setStatus] = useState<"todo" | "doing" | "done">("todo");
+  const pomodoro = usePomodoro({ storage: null, config: demoConfig });
+  // A data entra no efeito para o HTML do servidor e o do navegador serem iguais.
+  const [today, setToday] = useState<Date | null>(null);
+  useEffect(() => setToday(new Date()), []);
+  const maps = useMemo(() => {
+    if (!today) return null;
+    const tasks = sampleTasks(today);
+    return { week: roomsFromWeek(weekProgress(tasks, today)), year: roomsFromYear(yearProgress(tasks, today.getFullYear(), today)) };
+  }, [today]);
   return (
     <div className="design-root" data-theme={theme}>
       <main className="design-catalog">
@@ -168,6 +197,27 @@ export default function DesignPage() {
             </p>
             <p className="px-type-timer">25:00</p>
             <p className="px-type-label">Jersey 10 / Relógio e contadores</p>
+          </Panel>
+          <PomodoroHUD
+            title="06 / Pomodoro (demo: Foco de 1 min)"
+            snapshot={pomodoro.snapshot}
+            config={demoConfig}
+            battleTitle={status === "doing" ? "Explorar o Design System" : null}
+            onToggle={pomodoro.toggle}
+            onSkip={pomodoro.skip}
+            onReset={pomodoro.reset}
+          />
+          <Panel title="07 / Mapa de progresso">
+            {maps ? (
+              <div className="design-stack">
+                <p className="px-type-label">Semana</p>
+                <RoomMap label="Semana" rooms={maps.week} columns={7} />
+                <p className="px-type-label">Ano</p>
+                <RoomMap label="Ano" rooms={maps.year} columns={6} />
+              </div>
+            ) : (
+              <p>Carregando mapa…</p>
+            )}
           </Panel>
         </div>
         <footer>
