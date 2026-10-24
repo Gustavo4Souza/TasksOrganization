@@ -1,4 +1,28 @@
-/* Based on committed tokens; comparison with the original bundle is pending. */
+/* Ported from components/bundle.css in the Design System reference. */
+.px-root,
+.px-root * {
+  box-sizing: border-box;
+}
+.px-root {
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 18px/24px var(--font-body);
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  image-rendering: pixelated;
+}
+.px-frame {
+  position: relative;
+  margin: var(--border-px);
+  background: var(--surface);
+  box-shadow:
+    0 calc(-1 * var(--border-px)) 0 0 var(--edge),
+    0 var(--border-px) 0 0 var(--edge),
+    calc(-1 * var(--border-px)) 0 0 0 var(--edge),
+    var(--border-px) 0 0 0 var(--edge),
+    calc(var(--border-px) + 4px) calc(var(--border-px) + 4px) 0 0
+      var(--shadow-ink);
+}
 .px-panel,
 .px-button,
 .px-tag,
@@ -10,31 +34,59 @@
   color: var(--ink);
 }
 .px-panel {
-  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
   margin: 0;
-  border: var(--border-px) solid var(--edge);
-  border-radius: var(--radius-0);
-  background: var(--surface);
-  box-shadow: var(--shadow-drop);
+  border: 0;
+  box-shadow: none;
 }
 .px-panel-title {
-  margin: 0 0 var(--space-4);
+  margin: 0;
+}
+.px-panel__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: var(--border-px) solid var(--edge-soft);
   font: 400 16px/24px var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.px-panel__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  overflow: hidden;
 }
 .px-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 44px;
-  padding: var(--space-2) var(--space-4);
-  border: var(--border-thin) solid var(--edge);
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  margin: var(--border-px);
+  border: 0;
   border-radius: var(--radius-0);
   background: var(--gold);
   color: var(--on-accent);
-  box-shadow: var(--shadow-drop), var(--shadow-bevel);
-  font: 400 13px/20px var(--font-display);
+  box-shadow:
+    0 -3px 0 0 var(--edge),
+    0 3px 0 0 var(--edge),
+    -3px 0 0 0 var(--edge),
+    3px 0 0 0 var(--edge),
+    7px 7px 0 0 var(--shadow-ink),
+    var(--shadow-bevel);
+  font: 400 16px/16px var(--font-display);
+  text-transform: uppercase;
   cursor: pointer;
+  transition: transform 60ms steps(1);
 }
 .px-button--secondary {
   background: var(--surface-raised);
@@ -44,12 +96,16 @@
   background: var(--crimson);
 }
 .px-button:hover {
-  opacity: 1;
-  text-decoration: underline;
+  filter: brightness(1.12);
 }
 .px-button:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: var(--shadow-press);
+  transform: translate(4px, 4px);
+  box-shadow:
+    0 -3px 0 0 var(--edge),
+    0 3px 0 0 var(--edge),
+    -3px 0 0 0 var(--edge),
+    3px 0 0 0 var(--edge),
+    var(--shadow-bevel);
 }
 .px-button:disabled {
   cursor: not-allowed;
@@ -60,7 +116,7 @@
 }
 :where(.px-button, .px-scope-tabs button):focus-visible {
   outline: var(--border-px) solid var(--focus-ring);
-  outline-offset: 4px;
+  outline-offset: 5px;
 }
 .px-tone--gold {
   --px-accent: var(--gold);
@@ -78,13 +134,26 @@
   --px-accent: var(--arcane);
 }
 .px-tag {
-  display: inline-block;
-  padding: var(--space-1) var(--space-2);
-  border: var(--border-thin) solid var(--px-accent);
-  color: var(--px-accent);
-  background: var(--surface);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  color: var(--ink-muted);
   font-size: 13px;
+  font-weight: 600;
   line-height: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: inset 0 0 0 var(--border-thin) currentColor;
+}
+.px-tag--high {
+  color: var(--crimson);
+}
+.px-tag--medium {
+  color: var(--gold);
+}
+.px-tag--low {
+  color: var(--ink-muted);
 }
 .px-icon {
   flex-shrink: 0;
@@ -95,6 +164,52 @@
   padding: var(--space-3);
   border: var(--border-thin) solid var(--edge);
   background: var(--surface-raised);
+}
+.px-task {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: start;
+  gap: var(--space-2) var(--space-3);
+  min-height: var(--card-min-height);
+  padding: var(--space-3);
+  background: var(--surface-raised);
+  cursor: grab;
+}
+.px-task--doing {
+  box-shadow:
+    0 -3px 0 0 var(--mana),
+    0 3px 0 0 var(--mana),
+    -3px 0 0 0 var(--mana),
+    3px 0 0 0 var(--mana),
+    7px 7px 0 0 var(--shadow-ink);
+}
+.px-task--done {
+  background: var(--surface);
+}
+.px-task--done .px-task__title {
+  color: var(--ink-muted);
+  text-decoration-thickness: 2px;
+}
+.px-task__title {
+  font-size: 18px;
+  line-height: 24px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.px-task__meta {
+  grid-column: 2 / 4;
+  font-size: 15px;
+  line-height: 20px;
+}
+.px-task--compact {
+  min-height: 36px;
+  padding: 6px var(--space-3);
+  grid-template-columns: 20px 1fr auto;
+}
+.px-task--compact .px-task__title {
+  font-size: 16px;
+  line-height: 22px;
 }
 .px-task-card--doing {
   border-color: var(--mana);
@@ -145,6 +260,32 @@
   border: var(--border-thin) solid var(--edge);
   background: var(--surface-sunken);
 }
+.px-bar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-2);
+}
+.px-bar__label {
+  font: 400 16px/16px var(--font-display);
+}
+.px-bar__track {
+  height: 16px;
+  padding: 2px;
+  display: flex;
+  gap: 2px;
+  box-shadow:
+    0 -2px 0 0 var(--edge),
+    0 2px 0 0 var(--edge),
+    -2px 0 0 0 var(--edge),
+    2px 0 0 0 var(--edge);
+}
+.px-bar__value {
+  min-width: 3ch;
+  color: var(--ink-muted);
+  font: 400 28px/20px var(--font-digits);
+  text-align: right;
+}
 .px-stat-fill {
   height: 100%;
   background: var(--px-accent);
@@ -154,25 +295,50 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+.px-tabs {
+  display: flex;
+  gap: var(--space-2);
+}
 .px-scope-tabs button {
-  min-height: 44px;
-  padding: var(--space-2) var(--space-3);
-  border: var(--border-thin) solid var(--edge);
+  height: 40px;
+  min-height: 0;
+  padding: 0 var(--space-4);
+  margin: 3px;
+  border: 0;
   border-radius: var(--radius-0);
-  background: var(--surface);
-  color: var(--ink);
+  background: transparent;
+  color: var(--ink-muted);
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 16px;
+  text-transform: uppercase;
+  box-shadow:
+    0 -3px 0 0 var(--edge-soft),
+    0 3px 0 0 var(--edge-soft),
+    -3px 0 0 0 var(--edge-soft),
+    3px 0 0 0 var(--edge-soft);
   cursor: pointer;
 }
 .px-scope-tabs button:hover {
-  opacity: 1;
-  text-decoration: underline;
+  filter: brightness(1.12);
 }
 .px-scope-tabs [aria-selected="true"] {
-  background: var(--gold);
+  background: var(--tab-color, var(--gold));
   color: var(--on-accent);
-  box-shadow: var(--shadow-drop);
+  box-shadow:
+    0 -3px 0 0 var(--edge),
+    0 3px 0 0 var(--edge),
+    -3px 0 0 0 var(--edge),
+    3px 0 0 0 var(--edge),
+    7px 7px 0 0 var(--shadow-ink);
+}
+.px-scope-tabs button:nth-child(1) {
+  --tab-color: var(--mana);
+}
+.px-scope-tabs button:nth-child(2) {
+  --tab-color: var(--moss);
+}
+.px-scope-tabs button:nth-child(3) {
+  --tab-color: var(--arcane);
 }
 .px-tab-count {
   font-family: var(--font-digits);

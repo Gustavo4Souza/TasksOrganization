@@ -18,14 +18,14 @@ export function Panel({
     <section
       aria-labelledby={title ? id : undefined}
       {...props}
-      className={classes("px-panel", className)}
+      className={classes("px-frame", "px-panel", className)}
     >
       {title && (
-        <h2 id={id} className="px-panel-title">
+        <h2 id={id} className="px-panel__head px-panel-title">
           {title}
         </h2>
       )}
-      {children}
+      <div className="px-panel__body">{children}</div>
     </section>
   );
 }
@@ -44,7 +44,15 @@ export const Button = forwardRef<
       {...props}
       ref={ref}
       type={type}
-      className={classes("px-button", `px-button--${variant}`, className)}
+      className={classes(
+        "px-btn",
+        "px-button",
+        variant === "primary" && "px-btn--primary",
+        variant === "secondary" && "px-btn--ghost",
+        variant === "danger" && "px-btn--danger",
+        `px-button--${variant}`,
+        className,
+      )}
     />
   );
 });
@@ -57,7 +65,14 @@ export function Tag({
   return (
     <span
       {...props}
-      className={classes("px-tag", `px-tone--${tone}`, className)}
+      className={classes(
+        "px-tag",
+        `px-tone--${tone}`,
+        tone === "crimson" && "px-tag--high",
+        tone === "gold" && "px-tag--medium",
+        tone === "moss" && "px-tag--low",
+        className,
+      )}
     />
   );
 }
@@ -93,7 +108,7 @@ export function PixelIcon({
       role={label ? "img" : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
-      className={classes("px-icon", className)}
+      className={classes("px-ico", "px-icon", className)}
     >
       <path d={icons[name]} />
     </svg>
@@ -130,8 +145,12 @@ export function TaskCard({
       aria-labelledby={id}
       {...props}
       className={classes(
+        "px-task",
         "px-task-card",
+        status === "doing" && "px-task--doing",
+        status === "done" && "px-task--done",
         `px-task-card--${status}`,
+        compact && "px-task--compact",
         compact && "px-task-card--compact",
         className,
       )}
@@ -143,9 +162,11 @@ export function TaskCard({
           }
           label={statusLabel}
         />
-        <h3 id={id}>{title}</h3>
+        <h3 id={id} className="px-task__title">
+          {title}
+        </h3>
       </div>
-      <div className="px-task-meta">
+      <div className="px-task-meta px-task__meta">
         <Tag
           tone={
             priority === "high"
@@ -180,15 +201,10 @@ export function StatBar({
     ? Math.min(limit, Math.max(0, value))
     : 0;
   return (
-    <div className={classes("px-stat", `px-tone--${tone}`)}>
-      <div className="px-stat-label">
-        <span>{label}</span>
-        <span>
-          {amount}/{limit}
-        </span>
-      </div>
+    <div className={classes("px-bar", "px-stat", `px-tone--${tone}`)}>
+      <span className="px-bar__label">{label}</span>
       <div
-        className="px-stat-track"
+        className="px-bar__track px-stat-track"
         role="progressbar"
         aria-label={label}
         aria-valuemin={0}
@@ -200,6 +216,9 @@ export function StatBar({
           style={{ width: `${(amount / limit) * 100}%` }}
         />
       </div>
+      <span className="px-bar__value">
+        {amount}/{limit}
+      </span>
     </div>
   );
 }
@@ -223,7 +242,7 @@ export function ScopeTabs({
   label = "Escopo das missões",
 }: ScopeTabsProps) {
   return (
-    <div className="px-scope-tabs" role="tablist" aria-label={label}>
+    <div className="px-tabs px-scope-tabs" role="tablist" aria-label={label}>
       {scopes.map((scope, index) => (
         <button
           key={scope}
@@ -248,7 +267,10 @@ export function ScopeTabs({
             if (next < 0) return;
             event.preventDefault();
             onChange(scopes[next]);
-            const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+            const tabs =
+              event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+                '[role="tab"]',
+              );
             tabs?.[next]?.focus();
           }}
         >
