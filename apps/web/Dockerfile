@@ -26,6 +26,7 @@ COPY --from=deps /app/packages/core/node_modules ./packages/core/node_modules
 COPY --from=deps /app/packages/ui/node_modules ./packages/ui/node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY . .
+ENV NEXT_OUTPUT=standalone
 RUN pnpm turbo run build --filter=@tasksorg/web
 
 # ---- runner: imagem final, enxuta, só com o output "standalone" ----
