@@ -1,5 +1,21 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 23/10/2026 — PomodoroHUD, RoomMap e suíte de componentes
+
+Feitas a `T0.2.9` e a `T0.2.10` (PR aberto). O `PomodoroHUD` recebe o
+`PomodoroSnapshot` do core e mostra fase com ícone e cor, relógio, orbes de ciclos,
+barra do tempo restante, missão em batalha e controles opcionais (inclusive "Pular
+fase", para o Modo foco). O `RoomMap` desenha as salas da semana e do ano a partir de
+`weekProgress`/`yearProgress` (`roomsFromWeek`/`roomsFromYear`); o nível de cada sala
+está em texto para leitores de tela, e o texto sobre cada nível foi conferido ≥ 4.5:1
+nos dois temas. O `/design` ganhou os painéis 06 (HUD funcionando) e 07 (mapas).
+A suíte de componentes cobre estados, props, clique e teclado de todos os componentes
+do Design System: `packages/ui` com 105 testes.
+
+As `T0.2.6`, `T0.2.7`, `T0.2.8` e `T0.2.11` do Higor (PR #14), a `T1.3.1` e a
+`T1.3.6` (PR #12) e a correção do standalone (PR #15) foram marcadas como concluídas.
+Para fechar o MVP 0 falta a `T0.2.4`.
+
 ## 23/10/2026 — Componentes pixel e catálogo do MVP 0
 
 Na branch `Higor`, foram implementados Panel, Button, Tag, PixelIcon, TaskCard,

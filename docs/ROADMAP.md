@@ -95,10 +95,11 @@ falhou no Windows ao criar links simbólicos. Veja [escopo e validação do MVP 
 | Concluídas | `T1.1.1`, `T1.1.2`, `T1.1.3`, `T1.1.6` | `pomodoros` e `completedAt` no `Task`, uma única missão em batalha (`startBattle`), `update` e ordenação por prioridade, `TaskRepository` com adaptadores localStorage e arquivo JSON. Mergeado no PR #5. |
 | Concluídas | `T0.2.2`, `T0.2.3` | `tokens.css` gerado do `tokens.json` do Design System (temas Castelo e Pergaminho) e teste de contraste WCAG nos dois temas, rodando no CI. Mergeado no PR #9. |
 | Concluídas | `T1.1.4`, `T1.1.5` | `PomodoroTimer.onPhaseChange` e `creditFocusToBattle` (fim do Foco credita +1 na missão em batalha); `weekProgress` e `yearProgress` com níveis 0–3 para o mapa. Core com 68 testes. Mergeado no PR #10. |
-| Concluídas, aguardando merge | `T1.3.1`, `T1.3.6` | Hooks `usePomodoro` e `usePomodoroSettings` em `@tasksorg/ui/hooks`: relógio pelo tempo real (aba em segundo plano continua certa), retoma ao recarregar descontando só até o fim da fase, `skip` sem crédito e tempos validados e salvos localmente. Core com 92 testes e `packages/ui` com 25. PR aberto. Ao entrar, liberam `T1.3.2`–`T1.3.4` (Higor) e `T1.5.3` (Guilhermo). |
-| Correção, aguardando merge | — | `output: "standalone"` do Next só no build do Docker (`NEXT_OUTPUT=standalone`). No Windows, os links do standalone faziam o build seguinte esvaziar o `next` no `node_modules`. PR aberto. |
+| Concluídas | `T1.3.1`, `T1.3.6` | Hooks `usePomodoro` e `usePomodoroSettings` em `@tasksorg/ui/hooks`: relógio pelo tempo real (aba em segundo plano continua certa), retoma ao recarregar descontando só até o fim da fase, `skip` sem crédito e tempos validados e salvos localmente. Core com 92 testes e `packages/ui` com 25. Mergeado no PR #12. Liberou `T1.3.2`–`T1.3.4` (Higor) e `T1.5.3` (Guilhermo). |
+| Correção concluída | — | `output: "standalone"` do Next só no build do Docker (`NEXT_OUTPUT=standalone`). No Windows, os links do standalone faziam o build seguinte esvaziar o `next` no `node_modules`. Mergeado no PR #15. |
 | Prontas para começar | `T1.1.7`, `T2.1.1` | Cobertura ≥ 90% no core; proposta da decisão de persistência para o grupo. |
-| Bloqueadas por pré-requisito | `T0.2.9`, `T0.2.10`, `T1.6.1` | Aguardam os componentes `T0.2.6`/`T0.2.7` e a tela `T1.2.5`. |
+| Concluídas, aguardando merge | `T0.2.9`, `T0.2.10` | `PomodoroHUD` (recebe o `PomodoroSnapshot`) e `RoomMap` (com `roomsFromWeek`/`roomsFromYear`), no `/design` nos painéis 06 e 07; texto das salas ≥ 4.5:1 em todos os níveis. Suíte de componentes em jsdom com clique e teclado: `packages/ui` com 105 testes. PR aberto. Com a `T0.2.4` (Higor), fecha o MVP 0. |
+| Bloqueadas por pré-requisito | `T1.6.1` | Aguarda a tela `T1.2.5`. |
 
 > As tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done.
 
@@ -139,12 +140,12 @@ falhou no Windows ao criar links simbólicos. Veja [escopo e validação do MVP 
 - [x] `T0.2.3` Teste automatizado de contraste: falha se algum par texto/fundo dos tokens ficar abaixo de 4.5:1 — **Gustavo** · P · ⛓ T0.2.2
 - [ ] `T0.2.4` Portar as classes `px-*` do `bundle.css` do Design System para `packages/ui/styles` — **Higor** · P · ⛓ T0.2.2 · estilos-base implementados; falta a comparação com o `bundle.css` original
 - [x] `T0.2.5` Fontes Silkscreen, Pixelify Sans e Jersey 10 (via `next/font` no web e arquivos locais no Electron) — **Higor** · P · integrada à `main`
-- [ ] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4 · implementada na branch `Higor`, aguardando revisão
-- [ ] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6 · implementada na branch `Higor`, aguardando revisão
-- [ ] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6 · implementada na branch `Higor`, aguardando revisão
-- [ ] `T0.2.9` Componentes React `PomodoroHUD` e `RoomMap`, recebendo o `PomodoroSnapshot` do core como prop — **Gustavo** · M · ⛓ T0.2.6
-- [ ] `T0.2.10` Testes de componentes (Vitest + Testing Library): estados, props e acessibilidade básica — **Gustavo** · M · ⛓ T0.2.7
-- [ ] `T0.2.11` Rota `/design` no `apps/web` com o catálogo de componentes e alternância de tema — **Higor** · P · ⛓ T0.2.7 · implementada na branch `Higor`, aguardando revisão
+- [x] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4 · implementada na branch `Higor`, aguardando revisão
+- [x] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6 · implementada na branch `Higor`, aguardando revisão
+- [x] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6 · implementada na branch `Higor`, aguardando revisão
+- [x] `T0.2.9` Componentes React `PomodoroHUD` e `RoomMap`, recebendo o `PomodoroSnapshot` do core como prop — **Gustavo** · M · ⛓ T0.2.6
+- [x] `T0.2.10` Testes de componentes (Vitest + Testing Library): estados, props e acessibilidade básica — **Gustavo** · M · ⛓ T0.2.7
+- [x] `T0.2.11` Rota `/design` no `apps/web` com o catálogo de componentes e alternância de tema — **Higor** · P · ⛓ T0.2.7 · implementada na branch `Higor`, aguardando revisão
 
 **✔️ Critérios de aceite do MVP 0**
 - Componentes iguais aos previews do Design System nos dois temas.
