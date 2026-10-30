@@ -14,14 +14,17 @@ export default function FocusPage() {
   const [notifications, setNotifications] = useState(false);
   const storeRef = useRef(new TaskStore());
   const repoRef = useRef<ReturnType<typeof createLocalStorageTaskRepository> | null>(null);
+  const loadedRef = useRef(false);
+  const pendingCreditsRef = useRef(0);
   const { config } = usePomodoroSettings();
   const attach = useCallback((timer: PomodoroTimer) => timer.onPhaseChange((change) => {
     if (change.from !== "focus" || change.reason !== "completed") return;
+    if (!loadedRef.current) { pendingCreditsRef.current += 1; return; }
     const battle = storeRef.current.getBattle();
     if (!battle) return;
     const task = storeRef.current.addPomodoro(battle.id);
     setTasks(storeRef.current.list());
-    void repoRef.current?.save(task);
+    void repoRef.current?.save(task).catch(() => undefined);
   }), []);
   const onPhaseChange = useCallback((change: { to: keyof typeof labels }) => {
     if (notifications && typeof Notification !== "undefined" && Notification.permission === "granted") new Notification("TasksOrg", { body: `Hora de ${labels[change.to].toLowerCase()}.` });
@@ -39,7 +42,18 @@ export default function FocusPage() {
   const pomo = usePomodoro({ config, attach, onPhaseChange });
   useEffect(() => {
     try { const theme = window.localStorage.getItem("tasksorg:theme"); if (theme === "castelo" || theme === "pergaminho") document.documentElement.dataset.theme = theme; } catch { /* tema padrão */ }
-    try { const repo = createLocalStorageTaskRepository(window.localStorage); repoRef.current = repo; void repo.list().then((items) => { storeRef.current = new TaskStore(items); setTasks(items); }); } catch { /* modo foco continua sem armazenamento */ }
+    try { const repo = createLocalStorageTaskRepository(window.localStorage); repoRef.current = repo; void repo.list().then((items) => {
+      storeRef.current = new TaskStore(items);
+      loadedRef.current = true;
+      const battle = storeRef.current.getBattle();
+      if (battle && pendingCreditsRef.current) {
+        let updated = battle;
+        for (let i = 0; i < pendingCreditsRef.current; i++) updated = storeRef.current.addPomodoro(battle.id);
+        void repo.save(updated).catch(() => undefined);
+      }
+      pendingCreditsRef.current = 0;
+      setTasks(storeRef.current.list());
+    }).catch(() => { loadedRef.current = true; pendingCreditsRef.current = 0; }); } catch { loadedRef.current = true; pendingCreditsRef.current = 0; }
   }, []);
   useEffect(() => {
     function shortcut(event: KeyboardEvent) {

@@ -28,9 +28,12 @@ export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const storeRef = useRef(new TaskStore());
   const repoRef = useRef<ReturnType<typeof createLocalStorageTaskRepository> | null>(null);
+  const loadedRef = useRef(false);
+  const pendingCreditsRef = useRef(0);
   const { config } = usePomodoroSettings();
   const attach = useCallback((timer: import("@tasksorg/core").PomodoroTimer) => timer.onPhaseChange((change) => {
     if (change.from !== "focus" || change.reason !== "completed") return;
+    if (!loadedRef.current) { pendingCreditsRef.current += 1; return; }
     const battle = storeRef.current.getBattle();
     if (!battle) return;
     const updated = storeRef.current.addPomodoro(battle.id);
@@ -44,7 +47,18 @@ export default function HomePage() {
     try {
       const repo = createLocalStorageTaskRepository(window.localStorage);
       repoRef.current = repo;
-      void repo.list().then((items) => { if (active) { storeRef.current = new TaskStore(items); setTasks(storeRef.current.list()); setReady(true); } }).catch(() => { if (active) { setError("Não foi possível carregar as missões."); setReady(true); } });
+      void repo.list().then((items) => { if (active) {
+        storeRef.current = new TaskStore(items);
+        loadedRef.current = true;
+        const battle = storeRef.current.getBattle();
+        if (battle && pendingCreditsRef.current) {
+          let updated = battle;
+          for (let i = 0; i < pendingCreditsRef.current; i++) updated = storeRef.current.addPomodoro(battle.id);
+          void repo.save(updated).catch(() => setError("Não foi possível salvar o foco."));
+        }
+        pendingCreditsRef.current = 0;
+        setTasks(storeRef.current.list()); setReady(true);
+      } }).catch(() => { if (active) { loadedRef.current = true; pendingCreditsRef.current = 0; setError("Não foi possível carregar as missões."); setReady(true); } });
       const saved = window.localStorage.getItem("tasksorg:theme");
       setTheme(saved === "castelo" || saved === "pergaminho" ? saved : window.matchMedia("(prefers-color-scheme: light)").matches ? "pergaminho" : "castelo");
     } catch { setError("Armazenamento local indisponível."); setReady(true); }

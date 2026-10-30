@@ -2,6 +2,10 @@ Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisõe
 
 ## 30/10/2026 — Quadro e Modo foco do MVP 1
 
+Adicionado teste de integração do Quadro para criar, iniciar batalha, concluir e
+restaurar uma missão do armazenamento local. Corrigida a restauração do Pomodoro
+para creditar o foco concluído mesmo quando as missões ainda estão carregando.
+
 Na branch `Higor`, a POC do Web foi substituída pelo Quadro com HUD, três colunas,
 ações de missão, densidade adaptativa, lista de excedentes, arrastar e soltar,
 Pomodoro e Mapa. As missões usam `TaskStore` e `TaskRepository` no armazenamento

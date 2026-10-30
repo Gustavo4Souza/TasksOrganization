@@ -79,7 +79,7 @@ MVP ──► entrega que dá para demonstrar e usar
 | Status | Tasks | Situação |
 |---|---|---|
 | Concluídas e integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11` | Web oficial, fontes, componentes pixel e catálogo `/design` integrados pelos PRs #14 e #16. |
-| Implementadas na branch `Higor`, aguardando validação e revisão | `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro e Modo foco com tarefas salvas localmente, Pomodoro, mapa, ações, densidade, arrastar e soltar, atalhos, temas e layouts responsivos. Build do Web e Desktop passou; faltam testes de interface, validação nas resoluções alvo e PR. |
+| Implementadas na branch `Higor`, aguardando validação e revisão | `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro e Modo foco com tarefas salvas localmente, Pomodoro, mapa, ações, densidade, arrastar e soltar, atalhos, temas e layouts responsivos. Build do Web e Desktop e teste do fluxo criar → batalhar → concluir → recarregar passaram; faltam validação nas resoluções alvo, cobertura complementar e PR. |
 
 Validação atual da UI: lint e typecheck aprovados e 34 testes passaram. Veja
 [escopo e validação do MVP 0](MVP0-Higor.md).
