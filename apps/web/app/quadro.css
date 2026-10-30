@@ -1,0 +1,45 @@
+.board { width: 100%; max-width: none; height: 100dvh; min-height: 600px; padding: 16px 24px; display: flex; flex-direction: column; gap: 16px; overflow: hidden; }
+.board-header, .board-header-actions, .board-hud, .board-create, .board-actions, .board-edit { display: flex; align-items: center; gap: 12px; }
+.board-header { justify-content: space-between; min-height: 58px; }
+.board-header h1 { margin: 0; font-size: 24px; }
+.board-eyebrow, .board-count, .board-phase { margin: 0; color: var(--ink-muted); }
+.board-eyebrow { font-size: 12px; text-transform: uppercase; }
+.board-header a { color: var(--mana); }
+.board-hud { flex-wrap: wrap; background: var(--surface); border: 2px solid var(--edge); padding: 8px 12px; }
+.board-hud .px-stat { min-width: 170px; flex: 1; }
+.board-create { flex: 2; min-width: 260px; }
+.board input, .board select { min-width: 0; padding: 9px; color: var(--ink); background: var(--surface-sunken); border: 2px solid var(--edge); font: inherit; }
+.board-create input { flex: 1; }
+.board-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(260px, var(--sidebar-width)); gap: 14px; }
+.board-column, .board-side { min-height: 0; min-width: 0; }
+.board .px-panel { border-radius: 0; background: var(--surface); }
+.board-column { display: flex; flex-direction: column; margin: 0; overflow: hidden; }
+.board-column .px-panel__body { min-height: 0; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.board-cards { min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px; }
+.board-card .px-task { margin: 0; }
+.board-card[draggable="true"] { cursor: grab; }
+.board-card[draggable="true"]:active { cursor: grabbing; }
+.board-overflow { position: relative; }
+.board-overflow summary { cursor: pointer; color: var(--mana); font-family: var(--font-silkscreen); font-size: 12px; }
+.board-overflow-list { position: absolute; z-index: 5; bottom: 100%; left: 0; right: 0; max-height: 220px; overflow: auto; padding: 8px; background: var(--surface-raised); border: 2px solid var(--edge); box-shadow: var(--shadow-drop); }
+.board-overflow-list button { display: block; width: 100%; text-align: left; color: var(--ink); background: transparent; border: 0; padding: 6px; font: inherit; cursor: pointer; }
+.board-overflow-list button:hover { background: var(--surface-sunken); }
+.board-more { max-height: 220px; }
+.board-card .px-task-actions { flex-wrap: wrap; }
+.board-card .px-btn, .board-actions .px-btn, .board-edit .px-btn { min-height: 30px; font-size: 10px; padding: 5px 7px; }
+.board-edit { flex-wrap: wrap; }
+.board-edit input { flex-basis: 100%; }
+.board-empty { color: var(--ink-muted); }
+.board-side { display: flex; flex-direction: column; gap: 14px; overflow: auto; }
+.board-side .px-panel { margin: 0; }
+.board-timer { font-family: var(--font-jersey); font-size: clamp(56px, 6vw, 96px); line-height: 1; margin: 12px 0; }
+.board-actions { flex-wrap: wrap; }
+.board-map { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.board-map-cell { aspect-ratio: 1; display: grid; place-items: center; background: var(--surface-sunken); border: 2px solid var(--edge-soft); font-family: var(--font-digits); font-size: 22px; }
+.board-map-cell.level-1 { background: var(--moss); color: var(--on-accent); opacity: .55; }
+.board-map-cell.level-2 { background: var(--moss); color: var(--on-accent); opacity: .8; }
+.board-map-cell.level-3 { background: var(--moss); color: var(--on-accent); }
+.board-error { color: var(--crimson); margin: 0; }
+@media (max-width: 1280px) { .board { padding: 10px; gap: 10px; } .board-grid { gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(220px, 25vw); } .board-card .px-btn { font-size: 9px; } }
+@media (max-width: 900px) { .board { height: auto; min-height: 100dvh; overflow: visible; } .board-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .board-column { min-height: 300px; } .board-cards, .board-side { overflow: visible; } }
+@media (max-width: 600px) { .board-grid { display: flex; flex-direction: column; } .board-header { align-items: flex-start; flex-direction: column; } .board-create { width: 100%; flex-wrap: wrap; } .board-create input { flex-basis: 100%; } }

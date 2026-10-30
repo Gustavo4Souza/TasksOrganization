@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>TasksOrg — Desktop (POC)</title>
+    <link rel="stylesheet" href="../dist/tokens.css" />
     <style>
       @font-face {
         font-family: "Silkscreen";
@@ -45,7 +46,7 @@
         border: 0;
       }
       :where(button, input, select):focus-visible {
-        outline: 3px solid Highlight;
+        outline: 3px solid var(--focus-ring);
         outline-offset: 3px;
       }
       @media (prefers-reduced-motion: reduce) {
@@ -58,47 +59,47 @@
       body {
         margin: 0;
         font-family: "Pixelify Sans", sans-serif;
-        background: #fafafa;
-        color: #111;
+        background: var(--bg);
+        color: var(--ink);
         padding: 1.5rem 2rem;
       }
       h1 { font-family: "Silkscreen", sans-serif; font-size: 1.4rem; margin-bottom: 0; }
-      .subtitle { color: #666; margin-top: 0.25rem; }
+      .subtitle { color: var(--ink-muted); margin-top: 0.25rem; }
       section {
         margin-top: 1.5rem;
         padding: 1rem 1.25rem;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
-        background: white;
+        border: 2px solid var(--edge);
+        background: var(--surface);
       }
       .task-form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-      .task-form input { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 8px; }
+      .task-form input { flex: 1; padding: 0.5rem; border: 1px solid var(--edge); background: var(--surface-sunken); color: var(--ink); }
       button {
         font-family: "Silkscreen", sans-serif;
         padding: 0.5rem 1rem;
         border: none;
         border-radius: 8px;
-        background: #111;
-        color: white;
+        background: var(--gold);
+        color: var(--on-accent);
         cursor: pointer;
       }
-      button.secondary { background: #eee; color: #111; }
+      button.secondary { background: var(--surface-raised); color: var(--ink); }
       ul { list-style: none; padding: 0; margin: 0; }
       li {
         display: flex;
         justify-content: space-between;
         padding: 0.4rem 0;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--edge-soft);
       }
-      li.done .title { text-decoration: line-through; color: #999; }
+      li.done .title { text-decoration: line-through; color: var(--ink-muted); }
       .pomodoro { text-align: center; }
       .time { font-family: "Jersey 10", sans-serif; font-size: 2.5rem; font-weight: 400; font-variant-numeric: tabular-nums; }
-      .phase { text-transform: uppercase; font-size: 0.75rem; color: #666; letter-spacing: 0.08em; }
+      .phase { text-transform: uppercase; font-size: 0.75rem; color: var(--mana); letter-spacing: 0.08em; }
       .controls { margin-top: 0.75rem; display: flex; gap: 0.5rem; justify-content: center; }
     </style>
   </head>
   <body>
     <h1>TasksOrg</h1>
+    <button id="theme-toggle" type="button" aria-label="Alternar tema">Alternar tema</button>
     <p class="subtitle">POC Desktop (Electron) — mesma lógica de @tasksorg/core usada na web</p>
 
     <section>

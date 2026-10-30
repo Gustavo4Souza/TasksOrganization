@@ -1,5 +1,18 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 30/10/2026 — Quadro e Modo foco do MVP 1
+
+Na branch `Higor`, a POC do Web foi substituída pelo Quadro com HUD, três colunas,
+ações de missão, densidade adaptativa, lista de excedentes, arrastar e soltar,
+Pomodoro e Mapa. As missões usam `TaskStore` e `TaskRepository` no armazenamento
+local. A rota `/foco` mostra relógio grande, missão atual e próximas três, com
+som e notificação opcionais. Os atalhos incluem `F` para alternar o Modo foco.
+O Desktop passou a carregar os tokens compartilhados e alternar os temas com
+preferência persistida. Build do Web, build e lint do Desktop passaram; a
+validação visual foi feita nos dois temas em viewport estreita. Ainda faltam
+testes de interface, validação nas resoluções de monitor do roadmap e revisão
+por PR antes de fechar as tasks.
+
 ## 23/10/2026 — Componentes pixel e catálogo do MVP 0
 
 Na branch `Higor`, foram implementados Panel, Button, Tag, PixelIcon, TaskCard,
