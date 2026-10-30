@@ -6,6 +6,7 @@ import { createLocalStorageTaskRepository, TaskStore, weekProgress, yearProgress
 import { Button, Panel, ScopeTabs, StatBar, TaskCard, usePomodoro, usePomodoroSettings } from "@tasksorg/ui";
 import "@tasksorg/ui/styles.css";
 import "./quadro.css";
+import { PhaseAlertOptions, usePhaseAlerts } from "./phase-alerts";
 
 const scopes: TaskScope[] = ["daily", "weekly", "yearly"];
 const phases = { focus: "Foco", shortBreak: "Pausa curta", longBreak: "Pausa longa" };
@@ -19,6 +20,7 @@ export default function HomePage() {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [theme, setTheme] = useState<"castelo" | "pergaminho">("castelo");
+  const [themeReady, setThemeReady] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -31,6 +33,7 @@ export default function HomePage() {
   const loadedRef = useRef(false);
   const pendingCreditsRef = useRef(0);
   const { config } = usePomodoroSettings();
+  const alerts = usePhaseAlerts();
   const attach = useCallback((timer: import("@tasksorg/core").PomodoroTimer) => timer.onPhaseChange((change) => {
     if (change.from !== "focus" || change.reason !== "completed") return;
     if (!loadedRef.current) { pendingCreditsRef.current += 1; return; }
@@ -40,7 +43,7 @@ export default function HomePage() {
     setTasks(storeRef.current.list());
     void repoRef.current?.save(updated).catch(() => setError("Não foi possível salvar o foco."));
   }), []);
-  const pomo = usePomodoro({ config, attach });
+  const pomo = usePomodoro({ config, attach, onPhaseChange: alerts.onPhaseChange });
 
   useEffect(() => {
     let active = true;
@@ -61,13 +64,14 @@ export default function HomePage() {
       } }).catch(() => { if (active) { loadedRef.current = true; pendingCreditsRef.current = 0; setError("Não foi possível carregar as missões."); setReady(true); } });
       const saved = window.localStorage.getItem("tasksorg:theme");
       setTheme(saved === "castelo" || saved === "pergaminho" ? saved : window.matchMedia("(prefers-color-scheme: light)").matches ? "pergaminho" : "castelo");
-    } catch { setError("Armazenamento local indisponível."); setReady(true); }
+      setThemeReady(true);
+    } catch { setError("Armazenamento local indisponível."); setReady(true); setThemeReady(true); }
     return () => { active = false; };
   }, []);
-  useEffect(() => { document.documentElement.dataset.theme = theme; try { window.localStorage.setItem("tasksorg:theme", theme); } catch { /* preferência só nesta sessão */ } }, [theme]);
+  useEffect(() => { if (!themeReady) return; document.documentElement.dataset.theme = theme; try { window.localStorage.setItem("tasksorg:theme", theme); } catch { /* preferência só nesta sessão */ } }, [theme, themeReady]);
   useEffect(() => {
     function shortcut(event: KeyboardEvent) {
-      if (event.altKey || event.ctrlKey || event.metaKey || event.repeat || (event.target instanceof HTMLElement && event.target.closest("input, textarea, select, button, a"))) return;
+      if (event.altKey || event.ctrlKey || event.metaKey || event.repeat || (event.target instanceof HTMLElement && event.target.closest("input, textarea, select, button, a, summary"))) return;
       if (event.code === "Space") { event.preventDefault(); pomo.toggle(); }
       if (event.key.toLowerCase() === "n") { event.preventDefault(); inputRef.current?.focus(); }
       if (["1", "2", "3"].includes(event.key)) setScope(scopes[Number(event.key) - 1]);
@@ -159,7 +163,7 @@ export default function HomePage() {
           </div>)}</div>}
         </Panel>;
       })}
-      <aside className="board-side"><Panel title="Pomodoro"><p className="board-phase">{phases[pomo.snapshot.phase]} · {battle?.title ?? "Sem missão em batalha"}</p><p className="board-timer">{time(pomo.snapshot.remainingSeconds)}</p><div className="board-actions"><Button onClick={pomo.toggle}>{pomo.snapshot.state === "running" ? "Pausar" : "Iniciar"}</Button><Button variant="secondary" onClick={pomo.reset}>Reiniciar</Button><Button variant="secondary" onClick={pomo.skip}>Pular</Button></div></Panel><Panel title="Mapa"><div className="board-map" aria-label={scope === "yearly" ? "Progresso do ano" : "Progresso da semana"}>{scope === "yearly" ? months.map((month) => <span key={month.month} className={`board-map-cell level-${month.level}`} title={`${month.month}: ${month.completed} conquistas`}>{month.month.slice(5)}</span>) : week.map((day) => <span key={day.date} className={`board-map-cell level-${day.level}`} title={`${day.date}: ${day.completed} conquistas`}>{day.date.slice(8)}</span>)}</div></Panel></aside>
+      <aside className="board-side"><Panel title="Pomodoro"><p className="board-phase">{phases[pomo.snapshot.phase]} · {battle?.title ?? "Sem missão em batalha"}</p><p className="board-timer">{time(pomo.snapshot.remainingSeconds)}</p><div className="board-actions"><Button onClick={pomo.toggle}>{pomo.snapshot.state === "running" ? "Pausar" : "Iniciar"}</Button><Button variant="secondary" onClick={pomo.reset}>Reiniciar</Button><Button variant="secondary" onClick={pomo.skip}>Pular</Button></div><PhaseAlertOptions alerts={alerts} /></Panel><Panel title="Mapa"><div className="board-map" role="list" aria-label={scope === "yearly" ? "Progresso do ano" : "Progresso da semana"}>{scope === "yearly" ? months.map((month) => <span key={month.month} role="listitem" aria-label={`${month.month}: ${month.completed} conquistas`} className={`board-map-cell level-${month.level}`} title={`${month.month}: ${month.completed} conquistas`}>{month.month.slice(5)}</span>) : week.map((day) => <span key={day.date} role="listitem" aria-label={`${day.date}: ${day.completed} conquistas`} className={`board-map-cell level-${day.level}`} title={`${day.date}: ${day.completed} conquistas`}>{day.date.slice(8)}</span>)}</div></Panel></aside>
     </div>
   </main>;
 }

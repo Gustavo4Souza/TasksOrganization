@@ -34,6 +34,7 @@
 .board-side .px-panel { margin: 0; }
 .board-timer { font-family: var(--font-jersey); font-size: clamp(56px, 6vw, 96px); line-height: 1; margin: 12px 0; }
 .board-actions { flex-wrap: wrap; }
+.board .phase-alert-options { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; }
 .board-map { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
 .board-map-cell { aspect-ratio: 1; display: grid; place-items: center; background: var(--surface-sunken); border: 2px solid var(--edge-soft); font-family: var(--font-digits); font-size: 22px; }
 .board-map-cell.level-1 { background: var(--moss); color: var(--on-accent); opacity: .55; }

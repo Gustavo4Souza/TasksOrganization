@@ -1,6 +1,7 @@
 # MVP 0 — componentes do Higor
 
-Implementação local em 23/10/2026, na branch `Higor`.
+Implementado inicialmente em 23/10/2026 na branch `Higor` e integrado à `main`
+pelos PRs #14 e #16.
 
 ## Escopo
 
@@ -16,8 +17,8 @@ Implementação local em 23/10/2026, na branch `Higor`.
 O `components/bundle.css` foi conferido no artefato do Design System em
 23/10/2026. A portabilidade preserva os tokens versionados e inclui as molduras
 chanfradas, sombras duras, botões, tags, cartões, barras e abas previstos pela
-referência. As implementações ainda precisam da revisão do PR e do aceite visual
-previsto na Definition of Done; por isso as tasks não são marcadas como concluídas.
+referência. As tasks do Higor deste MVP foram revisadas, integradas à `main` e
+marcadas como concluídas no roadmap.
 
 PomodoroHUD, RoomMap e a suíte completa de componentes são tarefas do Gustavo
 (T0.2.9/T0.2.10); o catálogo atual mostra os componentes entregues pelo Higor.
