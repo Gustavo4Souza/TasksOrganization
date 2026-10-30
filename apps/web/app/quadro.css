@@ -34,6 +34,7 @@
 .board-side .px-panel { margin: 0; }
 .board-timer { font-family: var(--font-jersey); font-size: clamp(56px, 6vw, 96px); line-height: 1; margin: 12px 0; }
 .board-actions { flex-wrap: wrap; }
+.board .phase-alert-options { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; }
 .board-map { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
 .board-map-cell { aspect-ratio: 1; display: grid; place-items: center; background: var(--surface-sunken); border: 2px solid var(--edge-soft); font-family: var(--font-digits); font-size: 22px; }
 .board-map-cell.level-1 { background: var(--moss); color: var(--on-accent); opacity: .55; }
@@ -41,5 +42,6 @@
 .board-map-cell.level-3 { background: var(--moss); color: var(--on-accent); }
 .board-error { color: var(--crimson); margin: 0; }
 @media (max-width: 1280px) { .board { padding: 10px; gap: 10px; } .board-grid { gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(220px, 25vw); } .board-card .px-btn { font-size: 9px; } }
+@media (min-width: 901px) and (orientation: portrait) { .board-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); } .board-column:nth-child(3) { grid-column: 1; grid-row: 2; } .board-side { grid-column: 2; grid-row: 2; } }
 @media (max-width: 900px) { .board { height: auto; min-height: 100dvh; overflow: visible; } .board-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .board-column { min-height: 300px; } .board-cards, .board-side { overflow: visible; } }
 @media (max-width: 600px) { .board-grid { display: flex; flex-direction: column; } .board-header { align-items: flex-start; flex-direction: column; } .board-create { width: 100%; flex-wrap: wrap; } .board-create input { flex-basis: 100%; } }

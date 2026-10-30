@@ -2,6 +2,52 @@ Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisõe
 
 ## 30/10/2026 — Quadro e Modo foco do MVP 1
 
+Complementada a validação do Quadro com 14 missões de exemplo nos temas Castelo e
+Pergaminho em 1280×720. Isso revelou títulos de cartões ocultos pela grade CSS;
+o layout dos cartões foi corrigido e as capturas refeitas, sem rolagem da página.
+A restauração do tema salvo também foi corrigida e recebeu teste. Os avisos de
+troca de fase, com som 8-bit opcional e notificação mediante permissão, agora
+compartilham a mesma implementação entre Quadro e Modo foco. Passaram 13 testes
+do Web e 34 do UI, além de lint, typecheck e build do Web e build do Desktop. A revisão
+por PR e os critérios finais da Definition of Done ainda estão pendentes; as
+alterações desta sessão permanecem locais na branch `Higor`.
+
+Foram acrescentados testes de edição, exclusão com confirmação e botões de
+movimentação como alternativa ao arrastar. Links e resumos da lista excedente
+receberam foco de teclado visível. No Modo foco, os atalhos agora respeitam as
+teclas modificadoras e não interceptam a digitação em controles. A primeira visita
+direta ao Modo foco agora respeita o tema claro do sistema; a exibição das próximas
+três missões recebeu teste. O Mapa recebeu descrições acessíveis de cada dia e mês,
+com teste para as sete posições semanais e os doze meses.
+
+O Modo foco foi conferido em Chrome com missões preenchidas nos temas Castelo e
+Pergaminho em 1280×720 e no celular em 390×844. Mesmo com títulos longos, relógio,
+controles e próximas três missões permaneceram visíveis. Um teste adicional
+verifica que Espaço inicia/pausa o relógio sem capturar a tecla em controles nem
+com `Ctrl` pressionado.
+
+A imagem Docker de produção do Web foi construída com o código local da branch
+`Higor`. O contêiner iniciou e respondeu HTTP 200 nas rotas `/`, `/foco` e
+`/design`; foi encerrado após a verificação. Resta a revisão por outro integrante
+em PR para concluir formalmente as tasks do MVP 1.
+
+Uma conferência task a task confirmou que as entregas do Higor no MVP 0 já foram
+integradas à `main`; a página `MVP0-Higor.md` foi corrigida para refletir isso.
+No MVP 1, a movimentação real por arrastar e soltar ganhou teste, elevando a
+suíte do Web a 14 testes. A `T1.3.2` foi separada das implementações prontas: a
+lateral atual funciona, mas a integração final depende do componente
+`PomodoroHUD` da `T0.2.9` (Gustavo), ainda ausente de `@tasksorg/ui`.
+
+Adicionado teste de integração do Quadro para criar, iniciar batalha, concluir e
+restaurar uma missão do armazenamento local. Corrigida a restauração do Pomodoro
+para creditar o foco concluído mesmo quando as missões ainda estão carregando.
+Ampliados os testes para lista excedente, troca de escopo, persistência e primeira
+visita no tema claro. O Quadro foi conferido em Chrome nas dimensões 1280×720,
+1440×900 e 1920×1080: as capturas completas têm exatamente essas alturas, sem
+rolagem da página. O monitor vertical (1080×1920) recebeu grade 2×2; no celular
+(390×844), a rolagem continua permitida. Essas verificações cobrem estados vazios;
+os testes E2E completos seguem com a task de qualidade do MVP 1.
+
 Na branch `Higor`, a POC do Web foi substituída pelo Quadro com HUD, três colunas,
 ações de missão, densidade adaptativa, lista de excedentes, arrastar e soltar,
 Pomodoro e Mapa. As missões usam `TaskStore` e `TaskRepository` no armazenamento
