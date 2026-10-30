@@ -1,218 +1,169 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  createTask,
-  PomodoroTimer,
-  type PomodoroSnapshot,
-  type Task,
-  type TaskScope,
-} from "@tasksorg/core";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { createLocalStorageTaskRepository, TaskStore, weekProgress, yearProgress, type Task, type TaskPriority, type TaskScope } from "@tasksorg/core";
+import { Button, Panel, ScopeTabs, StatBar, TaskCard, usePomodoro, usePomodoroSettings } from "@tasksorg/ui";
+import "@tasksorg/ui/styles.css";
+import "./quadro.css";
+import { PhaseAlertOptions, usePhaseAlerts } from "./phase-alerts";
 
-function formatTime(totalSeconds: number): string {
-  const minutes = Math.floor(totalSeconds / 60)
-    .toString()
-    .padStart(2, "0");
-  const seconds = (totalSeconds % 60).toString().padStart(2, "0");
-  return `${minutes}:${seconds}`;
-}
-
-const PHASE_LABEL: Record<PomodoroSnapshot["phase"], string> = {
-  focus: "Foco",
-  shortBreak: "Pausa curta",
-  longBreak: "Pausa longa",
-};
-
-type Theme = "castle" | "parchment";
-const THEME_STORAGE_KEY = "tasksorg:theme";
+const scopes: TaskScope[] = ["daily", "weekly", "yearly"];
+const phases = { focus: "Foco", shortBreak: "Pausa curta", longBreak: "Pausa longa" };
+const time = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
 export default function HomePage() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [title, setTitle] = useState("");
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState("");
   const [scope, setScope] = useState<TaskScope>("daily");
-  const [theme, setTheme] = useState<Theme>("castle");
-  const [themeIsReady, setThemeIsReady] = useState(false);
-  const titleInputRef = useRef<HTMLInputElement>(null);
-
-  const timerRef = useRef(new PomodoroTimer());
-  const [snapshot, setSnapshot] = useState<PomodoroSnapshot>(timerRef.current.getSnapshot());
+  const [title, setTitle] = useState("");
+  const [priority, setPriority] = useState<TaskPriority>("medium");
+  const [theme, setTheme] = useState<"castelo" | "pergaminho">("castelo");
+  const [themeReady, setThemeReady] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
+  const [draftPriority, setDraftPriority] = useState<TaskPriority>("medium");
+  const [draftScope, setDraftScope] = useState<TaskScope>("daily");
+  const [draftDueDate, setDraftDueDate] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const storeRef = useRef(new TaskStore());
+  const repoRef = useRef<ReturnType<typeof createLocalStorageTaskRepository> | null>(null);
+  const loadedRef = useRef(false);
+  const pendingCreditsRef = useRef(0);
+  const { config } = usePomodoroSettings();
+  const alerts = usePhaseAlerts();
+  const attach = useCallback((timer: import("@tasksorg/core").PomodoroTimer) => timer.onPhaseChange((change) => {
+    if (change.from !== "focus" || change.reason !== "completed") return;
+    if (!loadedRef.current) { pendingCreditsRef.current += 1; return; }
+    const battle = storeRef.current.getBattle();
+    if (!battle) return;
+    const updated = storeRef.current.addPomodoro(battle.id);
+    setTasks(storeRef.current.list());
+    void repoRef.current?.save(updated).catch(() => setError("Não foi possível salvar o foco."));
+  }), []);
+  const pomo = usePomodoro({ config, attach, onPhaseChange: alerts.onPhaseChange });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      timerRef.current.tick(1);
-      setSnapshot(timerRef.current.getSnapshot());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    let savedTheme: string | null = null;
+    let active = true;
     try {
-      savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-    } catch {
-      // A preferência do sistema funciona mesmo quando o armazenamento é bloqueado.
-    }
-    if (savedTheme === "castle" || savedTheme === "parchment") {
-      setTheme(savedTheme);
-    } else {
-      setTheme(window.matchMedia("(prefers-color-scheme: light)").matches ? "parchment" : "castle");
-    }
-    setThemeIsReady(true);
+      const repo = createLocalStorageTaskRepository(window.localStorage);
+      repoRef.current = repo;
+      void repo.list().then((items) => { if (active) {
+        storeRef.current = new TaskStore(items);
+        loadedRef.current = true;
+        const battle = storeRef.current.getBattle();
+        if (battle && pendingCreditsRef.current) {
+          let updated = battle;
+          for (let i = 0; i < pendingCreditsRef.current; i++) updated = storeRef.current.addPomodoro(battle.id);
+          void repo.save(updated).catch(() => setError("Não foi possível salvar o foco."));
+        }
+        pendingCreditsRef.current = 0;
+        setTasks(storeRef.current.list()); setReady(true);
+      } }).catch(() => { if (active) { loadedRef.current = true; pendingCreditsRef.current = 0; setError("Não foi possível carregar as missões."); setReady(true); } });
+      const saved = window.localStorage.getItem("tasksorg:theme");
+      setTheme(saved === "castelo" || saved === "pergaminho" ? saved : window.matchMedia("(prefers-color-scheme: light)").matches ? "pergaminho" : "castelo");
+      setThemeReady(true);
+    } catch { setError("Armazenamento local indisponível."); setReady(true); setThemeReady(true); }
+    return () => { active = false; };
   }, []);
-
+  useEffect(() => { if (!themeReady) return; document.documentElement.dataset.theme = theme; try { window.localStorage.setItem("tasksorg:theme", theme); } catch { /* preferência só nesta sessão */ } }, [theme, themeReady]);
   useEffect(() => {
-    if (!themeIsReady) return;
-    document.documentElement.dataset.theme = theme === "castle" ? "castelo" : "pergaminho";
+    function shortcut(event: KeyboardEvent) {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.repeat || (event.target instanceof HTMLElement && event.target.closest("input, textarea, select, button, a, summary"))) return;
+      if (event.code === "Space") { event.preventDefault(); pomo.toggle(); }
+      if (event.key.toLowerCase() === "n") { event.preventDefault(); inputRef.current?.focus(); }
+      if (["1", "2", "3"].includes(event.key)) setScope(scopes[Number(event.key) - 1]);
+      if (event.key.toLowerCase() === "f") window.location.assign("/foco");
+    }
+    window.addEventListener("keydown", shortcut);
+    return () => window.removeEventListener("keydown", shortcut);
+  }, [pomo]);
+
+  async function mutate(action: (store: TaskStore) => { save?: Task[]; remove?: string }) {
     try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch {
-      // A troca continua funcionando nesta sessão sem persistência.
-    }
-  }, [theme, themeIsReady]);
-
-  useEffect(() => {
-    function handleShortcut(event: KeyboardEvent) {
-      if (event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
-      const target = event.target;
-      if (target instanceof HTMLElement && (target.isContentEditable || target.closest("input, select, textarea, button, a, [role=button]"))) return;
-
-      if (event.code === "Space") {
-        event.preventDefault();
-        if (timerRef.current.getSnapshot().state === "running") timerRef.current.pause();
-        else timerRef.current.start();
-        setSnapshot(timerRef.current.getSnapshot());
-      } else if (event.key.toLowerCase() === "n") {
-        event.preventDefault();
-        titleInputRef.current?.focus();
-      } else if (event.key === "1" || event.key === "2" || event.key === "3") {
-        event.preventDefault();
-        if (event.key === "1") setScope("daily");
-        if (event.key === "2") setScope("weekly");
-        if (event.key === "3") setScope("yearly");
-      }
-    }
-
-    window.addEventListener("keydown", handleShortcut);
-    return () => window.removeEventListener("keydown", handleShortcut);
-  }, []);
-
-  const grouped = useMemo(() => {
-    const scopes: TaskScope[] = ["daily", "weekly", "yearly"];
-    return scopes.map((s) => ({ scope: s, items: tasks.filter((t) => t.scope === s) }));
-  }, [tasks]);
-
-  function handleAddTask(e: React.FormEvent) {
-    e.preventDefault();
-    if (!title.trim()) return;
-    const task = createTask({ title, scope });
-    setTasks((prev) => [...prev, task]);
-    setTitle("");
+      const result = action(storeRef.current);
+      setTasks(storeRef.current.list());
+      if (result.remove) await repoRef.current?.remove(result.remove);
+      for (const task of result.save ?? []) await repoRef.current?.save(task);
+      setError("");
+    } catch { setError("Não foi possível salvar. Recarregue a página antes de continuar."); }
   }
+  const visible = tasks.filter((task) => task.scope === scope);
+  const counts = Object.fromEntries(scopes.map((key) => [key, tasks.filter((task) => task.scope === key).length])) as Record<TaskScope, number>;
+  const battle = tasks.find((task) => task.status === "doing");
+  const week = weekProgress(tasks, new Date());
+  const months = yearProgress(tasks, new Date().getFullYear(), new Date());
 
-  function toggleDone(id: string) {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: t.status === "done" ? "todo" : "done" } : t)),
-    );
-  }
-
-  const scopeLabel: Record<TaskScope, string> = { daily: "Diária", weekly: "Semanal", yearly: "Anual" };
-
-  return (
-    <main>
-      <header className="app-header">
-        <h1>TasksOrg</h1>
-        <button
-          type="button"
-          className="theme-toggle"
-          aria-label={`Ativar tema ${theme === "castle" ? "Pergaminho" : "Castelo"}`}
-          onClick={() => setTheme((current) => (current === "castle" ? "parchment" : "castle"))}
+  return <main className="board">
+    <header className="board-header"><div><p className="board-eyebrow">TasksOrg / Quadro de missões</p><h1>Seu próximo passo</h1></div><div className="board-header-actions"><Link href="/foco">Modo foco</Link><Button variant="secondary" onClick={() => setTheme(theme === "castelo" ? "pergaminho" : "castelo")}>Tema {theme === "castelo" ? "Pergaminho" : "Castelo"}</Button></div></header>
+    <div className="board-hud"><ScopeTabs id="board-scope" value={scope} onChange={setScope} counts={counts} /><StatBar label="XP do dia" value={week.find((day) => day.isToday)?.completed ?? 0} max={5} /><form className="board-create" onSubmit={(event) => { event.preventDefault(); if (!title.trim() || !ready) return; void mutate((store) => ({ save: [store.add({ title, scope, priority })] })); setTitle(""); }}><label className="sr-only" htmlFor="new-task">Nova missão</label><input id="new-task" ref={inputRef} value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Nova missão..." required /><label className="sr-only" htmlFor="new-priority">Prioridade</label><select id="new-priority" value={priority} onChange={(event) => setPriority(event.target.value as TaskPriority)}><option value="low">Baixa</option><option value="medium">Média</option><option value="high">Alta</option></select><Button type="submit" disabled={!ready}>Criar</Button></form></div>
+    {error && <p className="board-error" role="alert">{error}</p>}
+    <div id={`board-scope-panel-${scope}`} role="tabpanel" aria-labelledby={`board-scope-tab-${scope}`} className="board-grid">
+      {(["todo", "doing", "done"] as const).map((status) => {
+        const items = visible.filter((task) => task.status === status);
+        const shown = items.slice(0, 11);
+        const hidden = items.slice(11);
+        const move = (id: string) => {
+          if (storeRef.current.get(id)?.status === status) return;
+          void mutate((store) => {
+            if (status === "doing") {
+              const { started, paused } = store.startBattle(id);
+              return { save: paused ? [paused, started] : [started] };
+            }
+            return { save: [store.updateStatus(id, status)] };
+          });
+        };
+        return <Panel
+          key={status}
+          title={{ todo: "Missões", doing: "Em batalha", done: "Conquistas" }[status]}
+          className="board-column"
+          onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }}
+          onDrop={(event) => { event.preventDefault(); const id = event.dataTransfer.getData("text/plain"); if (storeRef.current.get(id)) move(id); }}
         >
-          {theme === "castle" ? "Pergaminho" : "Castelo"}
-        </button>
-      </header>
-      <p className="subtitle">POC — organização de tarefas + timer Pomodoro (inspirado no Notion)</p>
-
-      <section>
-        <h2>Tarefas</h2>
-        <form className="task-form" onSubmit={handleAddTask}>
-          <label className="sr-only" htmlFor="task-title">Título da nova tarefa</label>
-          <input
-            id="task-title"
-            ref={titleInputRef}
-            type="text"
-            placeholder="Nova tarefa..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <label className="sr-only" htmlFor="task-scope">Escopo da nova tarefa</label>
-          <select id="task-scope" value={scope} onChange={(e) => setScope(e.target.value as TaskScope)}>
-            <option value="daily">Diária</option>
-            <option value="weekly">Semanal</option>
-            <option value="yearly">Anual</option>
-          </select>
-          <button type="submit">Adicionar</button>
-        </form>
-
-        {grouped.map(({ scope: s, items }) => (
-          <div key={s}>
-            <h3>{scopeLabel[s]}</h3>
-            {items.length === 0 ? (
-              <p className="task-meta">Nenhuma tarefa ainda.</p>
-            ) : (
-              <ul className="task-list">
-                {items.map((task) => (
-                  <li key={task.id} className={`task-item ${task.status === "done" ? "done" : ""}`}>
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={task.status === "done"}
-                        onChange={() => toggleDone(task.id)}
-                      />
-                      <span className="task-title"> {task.title}</span>
-                    </label>
-                    <span className="task-meta">{task.priority}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
-      </section>
-
-      <section className="pomodoro">
-        <h2>Pomodoro</h2>
-        <p className="phase">{PHASE_LABEL[snapshot.phase]}</p>
-        <p className="time">{formatTime(snapshot.remainingSeconds)}</p>
-        <p className="task-meta">Ciclos de foco concluídos: {snapshot.completedFocusCycles}</p>
-        <div className="controls">
-          <button
-            onClick={() => {
-              timerRef.current.start();
-              setSnapshot(timerRef.current.getSnapshot());
-            }}
+          <p className="board-count">{items.length} missões</p>
+          {items.length === 0 && <p className="board-empty">{status === "todo" ? "Crie sua primeira missão." : status === "doing" ? "Escolha uma missão para batalhar." : "Suas conquistas aparecerão aqui."}</p>}
+          <div className="board-cards">{shown.map((task) => <div
+            id={`board-task-${task.id}`}
+            key={task.id}
+            className="board-card"
+            draggable={editing !== task.id}
+            onDragStart={(event) => { event.dataTransfer.setData("text/plain", task.id); event.dataTransfer.effectAllowed = "move"; }}
           >
-            Iniciar
-          </button>
-          <button
-            className="secondary"
-            onClick={() => {
-              timerRef.current.pause();
-              setSnapshot(timerRef.current.getSnapshot());
-            }}
-          >
-            Pausar
-          </button>
-          <button
-            className="secondary"
-            onClick={() => {
-              timerRef.current.reset();
-              setSnapshot(timerRef.current.getSnapshot());
-            }}
-          >
-            Resetar
-          </button>
-        </div>
-      </section>
-    </main>
-  );
+            {editing === task.id
+              ? <form className="board-edit" onSubmit={(event) => { event.preventDefault(); if (!draft.trim()) return; void mutate((store) => ({ save: [store.update(task.id, { title: draft, priority: draftPriority, scope: draftScope, dueDate: draftDueDate || undefined })] })); setEditing(null); }}>
+                  <input aria-label="Editar missão" autoFocus value={draft} onChange={(event) => setDraft(event.target.value)} />
+                  <select aria-label="Prioridade da missão" value={draftPriority} onChange={(event) => setDraftPriority(event.target.value as TaskPriority)}><option value="low">Baixa</option><option value="medium">Média</option><option value="high">Alta</option></select>
+                  <select aria-label="Escopo da missão" value={draftScope} onChange={(event) => setDraftScope(event.target.value as TaskScope)}><option value="daily">Hoje</option><option value="weekly">Semana</option><option value="yearly">Ano</option></select>
+                  <input type="date" aria-label="Prazo da missão" value={draftDueDate} onChange={(event) => setDraftDueDate(event.target.value)} />
+                  <Button type="submit">Salvar</Button><Button variant="secondary" onClick={() => setEditing(null)}>Cancelar</Button>
+                </form>
+              : <TaskCard title={task.title} status={task.status} priority={task.priority} pomodoros={task.pomodoros} compact={items.length > 6} actions={<>
+                  {status !== "done" && <Button onClick={() => void mutate((store) => ({ save: [store.complete(task.id)] }))}>Concluir</Button>}
+                  {status === "todo" && <Button variant="secondary" onClick={() => void mutate((store) => { const { started, paused } = store.startBattle(task.id); return { save: paused ? [paused, started] : [started] }; })}>Batalhar</Button>}
+                  {status === "doing" && <Button variant="secondary" onClick={() => void mutate((store) => ({ save: [store.updateStatus(task.id, "todo")] }))}>Recuar</Button>}
+                  {status === "done" && <Button variant="secondary" onClick={() => void mutate((store) => ({ save: [store.updateStatus(task.id, "todo")] }))}>Reabrir</Button>}
+                  <Button variant="secondary" onClick={() => { setEditing(task.id); setDraft(task.title); setDraftPriority(task.priority); setDraftScope(task.scope); setDraftDueDate(task.dueDate ?? ""); }}>Editar</Button>
+                  <Button variant="danger" onClick={() => { if (window.confirm(`Excluir “${task.title}”?`)) void mutate((store) => { store.remove(task.id); return { remove: task.id }; }); }}>Excluir</Button>
+                </>} />}
+          </div>)}</div>
+          {hidden.length > 0 && <details className="board-overflow"><summary>+{hidden.length} missões</summary><div className="board-overflow-list">{hidden.map((task) => <button key={task.id} type="button" onClick={() => { setExpanded(status); requestAnimationFrame(() => document.getElementById(`board-task-${task.id}`)?.scrollIntoView?.({ block: "nearest" })); }}>{task.title}</button>)}</div></details>}
+          {expanded === status && hidden.length > 0 && <div className="board-cards board-more">{hidden.map((task) => <div key={task.id} id={`board-task-${task.id}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", task.id)}>
+            {editing === task.id
+              ? <form className="board-edit" onSubmit={(event) => { event.preventDefault(); if (!draft.trim()) return; void mutate((store) => ({ save: [store.update(task.id, { title: draft, priority: draftPriority, scope: draftScope, dueDate: draftDueDate || undefined })] })); setEditing(null); }}><input aria-label="Editar missão" autoFocus value={draft} onChange={(event) => setDraft(event.target.value)} /><select aria-label="Prioridade da missão" value={draftPriority} onChange={(event) => setDraftPriority(event.target.value as TaskPriority)}><option value="low">Baixa</option><option value="medium">Média</option><option value="high">Alta</option></select><select aria-label="Escopo da missão" value={draftScope} onChange={(event) => setDraftScope(event.target.value as TaskScope)}><option value="daily">Hoje</option><option value="weekly">Semana</option><option value="yearly">Ano</option></select><input type="date" aria-label="Prazo da missão" value={draftDueDate} onChange={(event) => setDraftDueDate(event.target.value)} /><Button type="submit">Salvar</Button><Button variant="secondary" onClick={() => setEditing(null)}>Cancelar</Button></form>
+              : <TaskCard title={task.title} status={task.status} priority={task.priority} pomodoros={task.pomodoros} compact actions={<>
+                {status !== "done" && <Button onClick={() => void mutate((store) => ({ save: [store.complete(task.id)] }))}>Concluir</Button>}
+                {status === "todo" && <Button variant="secondary" onClick={() => void mutate((store) => { const { started, paused } = store.startBattle(task.id); return { save: paused ? [paused, started] : [started] }; })}>Batalhar</Button>}
+                {status === "doing" && <Button variant="secondary" onClick={() => void mutate((store) => ({ save: [store.updateStatus(task.id, "todo")] }))}>Recuar</Button>}
+                {status === "done" && <Button variant="secondary" onClick={() => void mutate((store) => ({ save: [store.updateStatus(task.id, "todo")] }))}>Reabrir</Button>}
+                <Button variant="secondary" onClick={() => { setEditing(task.id); setDraft(task.title); setDraftPriority(task.priority); setDraftScope(task.scope); setDraftDueDate(task.dueDate ?? ""); }}>Editar</Button>
+                <Button variant="danger" onClick={() => { if (window.confirm(`Excluir “${task.title}”?`)) void mutate((store) => { store.remove(task.id); return { remove: task.id }; }); }}>Excluir</Button>
+              </>} />}
+          </div>)}</div>}
+        </Panel>;
+      })}
+      <aside className="board-side"><Panel title="Pomodoro"><p className="board-phase">{phases[pomo.snapshot.phase]} · {battle?.title ?? "Sem missão em batalha"}</p><p className="board-timer">{time(pomo.snapshot.remainingSeconds)}</p><div className="board-actions"><Button onClick={pomo.toggle}>{pomo.snapshot.state === "running" ? "Pausar" : "Iniciar"}</Button><Button variant="secondary" onClick={pomo.reset}>Reiniciar</Button><Button variant="secondary" onClick={pomo.skip}>Pular</Button></div><PhaseAlertOptions alerts={alerts} /></Panel><Panel title="Mapa"><div className="board-map" role="list" aria-label={scope === "yearly" ? "Progresso do ano" : "Progresso da semana"}>{scope === "yearly" ? months.map((month) => <span key={month.month} role="listitem" aria-label={`${month.month}: ${month.completed} conquistas`} className={`board-map-cell level-${month.level}`} title={`${month.month}: ${month.completed} conquistas`}>{month.month.slice(5)}</span>) : week.map((day) => <span key={day.date} role="listitem" aria-label={`${day.date}: ${day.completed} conquistas`} className={`board-map-cell level-${day.level}`} title={`${day.date}: ${day.completed} conquistas`}>{day.date.slice(8)}</span>)}</div></Panel></aside>
+    </div>
+  </main>;
 }

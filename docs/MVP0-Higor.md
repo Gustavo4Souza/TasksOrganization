@@ -1,24 +1,24 @@
 # MVP 0 — componentes do Higor
 
-Implementação local em 23/10/2026, na branch `Higor`.
+Implementado inicialmente em 23/10/2026 na branch `Higor` e integrado à `main`
+pelos PRs #14 e #16.
 
 ## Escopo
 
-- T0.2.4: classes `px-*` baseadas nos tokens e na decisão visual versionada.
+- T0.2.4: classes `px-*` portadas do `components/bundle.css` do Design System.
 - T0.2.5: fontes locais já integradas à main; mantidas.
 - T0.2.6: Panel, Button, Tag e PixelIcon (seis ícones).
 - T0.2.7: TaskCard nos estados normal, em batalha, conquistada e compacto; StatBar.
 - T0.2.8: ScopeTabs controlado, contadores, tabulação e setas/Home/End.
 - T0.2.11: catálogo interativo `/design`, nos temas Castelo e Pergaminho.
 
-## Limite da referência visual
+## Referência visual
 
-O `bundle.css` original não está no repositório e o artefato externo não pôde
-ser acessado nesta sessão. Os estilos foram implementados a partir do
-`tokens.json` e da decisão de identidade visual, sem introduzir novas cores.
-A T0.2.4 permanece parcial até comparar/ajustar as classes com o bundle original.
-As demais implementações precisam da revisão do PR e do aceite visual previsto
-na Definition of Done. Não são marcadas como concluídas automaticamente.
+O `components/bundle.css` foi conferido no artefato do Design System em
+23/10/2026. A portabilidade preserva os tokens versionados e inclui as molduras
+chanfradas, sombras duras, botões, tags, cartões, barras e abas previstos pela
+referência. As tasks do Higor deste MVP foram revisadas, integradas à `main` e
+marcadas como concluídas no roadmap.
 
 PomodoroHUD, RoomMap e a suíte completa de componentes são tarefas do Gustavo
 (T0.2.9/T0.2.10); o catálogo atual mostra os componentes entregues pelo Higor.
@@ -43,15 +43,15 @@ StatBar limita valores ao intervalo válido, inclusive para entradas não finita
 - Instalação concluída com `npx --yes pnpm@9.12.0 install --frozen-lockfile`.
 - `npx --yes pnpm@9.12.0 exec turbo run lint typecheck test build`: 15 de 16
   tarefas passaram. Lint e typecheck aprovados em todos os pacotes.
-- 88 testes passaram (68 core, 11 tokens e 9 contratos de componentes).
+- Após a atualização da main, a suíte de UI passou com 34 testes (tokens,
+  componentes e hooks).
 - Builds de core, UI e Desktop aprovados.
-- Web compilou e gerou as páginas, mas o empacotamento `standalone` falhou com
-  `EPERM` ao criar symlinks no Windows. O pacote Docker não foi validado nesta
-  sessão; não houve mudança na configuração de produção para ocultar a falha.
+- O Web havia compilado e gerado as páginas; a main posterior corrigiu o modo
+  `standalone` para que ele só seja usado no build do Docker.
 - Catálogo servido localmente: temas Castelo/Pergaminho, batalhar/concluir e
   abas por ArrowRight, Home e End conferidos no navegador. Na largura móvel,
   largura de conteúdo e viewport foram iguais (375px), sem rolagem horizontal.
-- A referência externa foi tentada também no navegador e exige login.
+- O `components/bundle.css` da referência externa foi comparado aos estilos do pacote.
 
 ## Roteiro de revisão visual
 

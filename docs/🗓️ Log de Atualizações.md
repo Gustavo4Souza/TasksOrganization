@@ -1,20 +1,63 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
-## 23/10/2026 — PomodoroHUD, RoomMap e suíte de componentes
+## 30/10/2026 — Quadro e Modo foco do MVP 1
 
-Feitas a `T0.2.9` e a `T0.2.10` (PR aberto). O `PomodoroHUD` recebe o
-`PomodoroSnapshot` do core e mostra fase com ícone e cor, relógio, orbes de ciclos,
-barra do tempo restante, missão em batalha e controles opcionais (inclusive "Pular
-fase", para o Modo foco). O `RoomMap` desenha as salas da semana e do ano a partir de
-`weekProgress`/`yearProgress` (`roomsFromWeek`/`roomsFromYear`); o nível de cada sala
-está em texto para leitores de tela, e o texto sobre cada nível foi conferido ≥ 4.5:1
-nos dois temas. O `/design` ganhou os painéis 06 (HUD funcionando) e 07 (mapas).
-A suíte de componentes cobre estados, props, clique e teclado de todos os componentes
-do Design System: `packages/ui` com 105 testes.
+Complementada a validação do Quadro com 14 missões de exemplo nos temas Castelo e
+Pergaminho em 1280×720. Isso revelou títulos de cartões ocultos pela grade CSS;
+o layout dos cartões foi corrigido e as capturas refeitas, sem rolagem da página.
+A restauração do tema salvo também foi corrigida e recebeu teste. Os avisos de
+troca de fase, com som 8-bit opcional e notificação mediante permissão, agora
+compartilham a mesma implementação entre Quadro e Modo foco. Passaram 13 testes
+do Web e 34 do UI, além de lint, typecheck e build do Web e build do Desktop. A revisão
+por PR e os critérios finais da Definition of Done ainda estão pendentes; as
+alterações desta sessão permanecem locais na branch `Higor`.
 
-As `T0.2.6`, `T0.2.7`, `T0.2.8` e `T0.2.11` do Higor (PR #14), a `T1.3.1` e a
-`T1.3.6` (PR #12) e a correção do standalone (PR #15) foram marcadas como concluídas.
-Para fechar o MVP 0 falta a `T0.2.4`.
+Foram acrescentados testes de edição, exclusão com confirmação e botões de
+movimentação como alternativa ao arrastar. Links e resumos da lista excedente
+receberam foco de teclado visível. No Modo foco, os atalhos agora respeitam as
+teclas modificadoras e não interceptam a digitação em controles. A primeira visita
+direta ao Modo foco agora respeita o tema claro do sistema; a exibição das próximas
+três missões recebeu teste. O Mapa recebeu descrições acessíveis de cada dia e mês,
+com teste para as sete posições semanais e os doze meses.
+
+O Modo foco foi conferido em Chrome com missões preenchidas nos temas Castelo e
+Pergaminho em 1280×720 e no celular em 390×844. Mesmo com títulos longos, relógio,
+controles e próximas três missões permaneceram visíveis. Um teste adicional
+verifica que Espaço inicia/pausa o relógio sem capturar a tecla em controles nem
+com `Ctrl` pressionado.
+
+A imagem Docker de produção do Web foi construída com o código local da branch
+`Higor`. O contêiner iniciou e respondeu HTTP 200 nas rotas `/`, `/foco` e
+`/design`; foi encerrado após a verificação. Resta a revisão por outro integrante
+em PR para concluir formalmente as tasks do MVP 1.
+
+Uma conferência task a task confirmou que as entregas do Higor no MVP 0 já foram
+integradas à `main`; a página `MVP0-Higor.md` foi corrigida para refletir isso.
+No MVP 1, a movimentação real por arrastar e soltar ganhou teste, elevando a
+suíte do Web a 14 testes. A `T1.3.2` foi separada das implementações prontas: a
+lateral atual funciona, mas a integração final depende do componente
+`PomodoroHUD` da `T0.2.9` (Gustavo), ainda ausente de `@tasksorg/ui`.
+
+Adicionado teste de integração do Quadro para criar, iniciar batalha, concluir e
+restaurar uma missão do armazenamento local. Corrigida a restauração do Pomodoro
+para creditar o foco concluído mesmo quando as missões ainda estão carregando.
+Ampliados os testes para lista excedente, troca de escopo, persistência e primeira
+visita no tema claro. O Quadro foi conferido em Chrome nas dimensões 1280×720,
+1440×900 e 1920×1080: as capturas completas têm exatamente essas alturas, sem
+rolagem da página. O monitor vertical (1080×1920) recebeu grade 2×2; no celular
+(390×844), a rolagem continua permitida. Essas verificações cobrem estados vazios;
+os testes E2E completos seguem com a task de qualidade do MVP 1.
+
+Na branch `Higor`, a POC do Web foi substituída pelo Quadro com HUD, três colunas,
+ações de missão, densidade adaptativa, lista de excedentes, arrastar e soltar,
+Pomodoro e Mapa. As missões usam `TaskStore` e `TaskRepository` no armazenamento
+local. A rota `/foco` mostra relógio grande, missão atual e próximas três, com
+som e notificação opcionais. Os atalhos incluem `F` para alternar o Modo foco.
+O Desktop passou a carregar os tokens compartilhados e alternar os temas com
+preferência persistida. Build do Web, build e lint do Desktop passaram; a
+validação visual foi feita nos dois temas em viewport estreita. Ainda faltam
+testes de interface, validação nas resoluções de monitor do roadmap e revisão
+por PR antes de fechar as tasks.
 
 ## 23/10/2026 — Componentes pixel e catálogo do MVP 0
 
@@ -22,8 +65,10 @@ Na branch `Higor`, foram implementados Panel, Button, Tag, PixelIcon, TaskCard,
 StatBar e ScopeTabs em `@tasksorg/ui`, com estados, contadores, foco e navegação
 por teclado. A nova rota `/design` mostra os componentes nos temas Castelo e
 Pergaminho e permite experimentar as ações. As fontes locais existentes foram
-preservadas e os estilos usam os tokens compartilhados. A comparação com o bundle
-original e a revisão por PR permanecem pendentes. Detalhes em [MVP0-Higor](MVP0-Higor.md).
+preservadas e os estilos usam os tokens compartilhados. O
+`components/bundle.css` foi conferido e portado para alinhar molduras, sombras,
+botões, tags, cartões, barras e abas à referência. A revisão por PR permanece
+pendente. Detalhes em [MVP0-Higor](MVP0-Higor.md).
 
 ## 23/10/2026 — Tokens do Design System e regras do Pomodoro no core
 

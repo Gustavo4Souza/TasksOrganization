@@ -1,0 +1,12 @@
+.focus-screen { max-width: none; width: 100%; height: 100dvh; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; text-align: center; overflow: hidden; }
+.focus-screen header { display: flex; justify-content: space-between; color: var(--ink-muted); }
+.focus-screen a { color: var(--mana); }
+.focus-center p { color: var(--mana); text-transform: uppercase; font-family: var(--font-silkscreen); }
+.focus-center h1 { font-family: var(--font-jersey); font-size: clamp(120px, 22vw, 320px); line-height: .8; font-weight: 400; margin: 24px 0; font-variant-numeric: tabular-nums; }
+.focus-center h2 { font-size: clamp(20px, 3vw, 40px); }
+.focus-controls { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.focus-screen .phase-alert-options { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+.focus-screen aside { color: var(--ink-muted); }
+.focus-screen aside h2 { font-size: 15px; }
+.focus-screen ol { display: flex; justify-content: center; gap: 24px; padding: 0; list-style-position: inside; }
+@media (max-width: 600px) { .focus-screen { height: auto; min-height: 100dvh; gap: 48px; } .focus-screen ol { flex-direction: column; gap: 4px; } }

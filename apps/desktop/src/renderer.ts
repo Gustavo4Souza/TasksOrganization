@@ -90,6 +90,20 @@ function setupPomodoro(): void {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  const themeKey = "tasksorg:theme";
+  let theme: "castelo" | "pergaminho" = window.matchMedia("(prefers-color-scheme: light)").matches ? "pergaminho" : "castelo";
+  try {
+    const saved = window.localStorage.getItem(themeKey);
+    if (saved === "castelo" || saved === "pergaminho") theme = saved;
+  } catch { /* preferência local indisponível */ }
+  const themeButton = document.getElementById("theme-toggle");
+  function applyTheme(): void {
+    document.documentElement.dataset.theme = theme;
+    if (themeButton) themeButton.textContent = `Tema ${theme === "castelo" ? "Pergaminho" : "Castelo"}`;
+    try { window.localStorage.setItem(themeKey, theme); } catch { /* tema continua ativo nesta sessão */ }
+  }
+  themeButton?.addEventListener("click", () => { theme = theme === "castelo" ? "pergaminho" : "castelo"; applyTheme(); });
+  applyTheme();
   setupTaskForm();
   setupPomodoro();
   renderTasks();

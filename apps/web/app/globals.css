@@ -14,7 +14,7 @@
   border: 0;
 }
 
-:where(button, input, select):focus-visible {
+:where(a, button, input, select, summary):focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
 }
