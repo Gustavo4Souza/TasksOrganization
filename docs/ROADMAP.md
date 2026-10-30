@@ -79,7 +79,7 @@ MVP ──► entrega que dá para demonstrar e usar
 | Status | Tasks | Situação |
 |---|---|---|
 | Concluídas e integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11` | Web oficial, fontes, componentes pixel e catálogo `/design` integrados pelos PRs #14 e #16. |
-| Implementadas na branch `Higor`, aguardando validação e revisão | `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro e Modo foco com tarefas salvas localmente, Pomodoro, mapa, ações, densidade, arrastar e soltar, atalhos, temas e layouts responsivos. Build do Web e Desktop e teste do fluxo criar → batalhar → concluir → recarregar passaram; faltam validação nas resoluções alvo, cobertura complementar e PR. |
+| Implementadas na branch `Higor`, aguardando revisão | `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro e Modo foco com tarefas salvas localmente, Pomodoro, mapa, ações, densidade, arrastar e soltar, atalhos e temas. Quatro testes de interface passaram. Capturas completas confirmaram ausência de rolagem em 1280×720, 1440×900 e 1920×1080; monitor vertical em 2×2 e celular com rolagem foram conferidos. Faltam revisão por PR e cobertura complementar. |
 
 Validação atual da UI: lint e typecheck aprovados e 34 testes passaram. Veja
 [escopo e validação do MVP 0](MVP0-Higor.md).
@@ -196,7 +196,7 @@ Validação atual da UI: lint e typecheck aprovados e 34 testes passaram. Veja
 > Como usuário, quero que o app funcione no meu monitor, seja ele pequeno, grande ou vertical, no tema que eu preferir.
 
 - [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P · Web e Desktop integrados aos tokens de `@tasksorg/ui`; aguarda validação final e revisão
-- [ ] `T1.4.2` Layouts para telas de até 1280px, monitor vertical e celular (no celular a rolagem é aceita) — **Higor** · M · ⛓ T1.2.1
+- [ ] `T1.4.2` Layouts para telas de até 1280px, monitor vertical e celular (no celular a rolagem é aceita) — **Higor** · M · ⛓ T1.2.1 · implementados e conferidos nas resoluções alvo, aguardando revisão
 - [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P · base de movimento/foco no Web e Desktop pronta; rótulos dos futuros botões de ícone pendentes
 - [ ] `T1.4.4` Auditoria automática com axe nas telas (zero violações sérias) — **Gustavo** · M
 

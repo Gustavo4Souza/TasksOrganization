@@ -5,6 +5,12 @@ Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisõe
 Adicionado teste de integração do Quadro para criar, iniciar batalha, concluir e
 restaurar uma missão do armazenamento local. Corrigida a restauração do Pomodoro
 para creditar o foco concluído mesmo quando as missões ainda estão carregando.
+Ampliados os testes para lista excedente, troca de escopo, persistência e primeira
+visita no tema claro. O Quadro foi conferido em Chrome nas dimensões 1280×720,
+1440×900 e 1920×1080: as capturas completas têm exatamente essas alturas, sem
+rolagem da página. O monitor vertical (1080×1920) recebeu grade 2×2; no celular
+(390×844), a rolagem continua permitida. Essas verificações cobrem estados vazios;
+os testes E2E completos seguem com a task de qualidade do MVP 1.
 
 Na branch `Higor`, a POC do Web foi substituída pelo Quadro com HUD, três colunas,
 ações de missão, densidade adaptativa, lista de excedentes, arrastar e soltar,
