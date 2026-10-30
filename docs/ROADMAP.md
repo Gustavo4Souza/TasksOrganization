@@ -74,13 +74,12 @@ MVP ──► entrega que dá para demonstrar e usar
 
 ## 🗺️ Roadmap
 
-### Estado das entregas do Higor — 23/10/2026
+### Estado das entregas do Higor — 30/10/2026
 
 | Status | Tasks | Situação |
 |---|---|---|
-| Concluída e integrada à `main` | `T0.1.4`, `T0.2.5` | Web definido como frontend oficial; fontes locais carregadas no Web e Desktop. |
-| Implementadas na branch `Higor`, aguardando PR e revisão | `T0.2.4`, `T0.2.6`, `T0.2.7`, `T0.2.8`, `T0.2.11` | Classes `px-*` portadas e comparadas com o `bundle.css`; componentes, cartões, barras, abas acessíveis e catálogo `/design` nos dois temas. |
-| Implementadas anteriormente, aguardando trabalho dependente | `T1.3.5`, `T1.4.1`, `T1.4.3` | Atalhos existentes, tema persistido no Web e base de acessibilidade já estão no código. |
+| Concluídas e integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11` | Web oficial, fontes, componentes pixel e catálogo `/design` integrados pelos PRs #14 e #16. |
+| Implementadas na branch `Higor`, aguardando validação e revisão | `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro e Modo foco com tarefas salvas localmente, Pomodoro, mapa, ações, densidade, arrastar e soltar, atalhos, temas e layouts responsivos. Build do Web e Desktop passou; faltam testes de interface, validação nas resoluções alvo e PR. |
 
 Validação atual da UI: lint e typecheck aprovados e 34 testes passaram. Veja
 [escopo e validação do MVP 0](MVP0-Higor.md).
@@ -94,9 +93,9 @@ Validação atual da UI: lint e typecheck aprovados e 34 testes passaram. Veja
 | Concluídas | `T0.2.2`, `T0.2.3` | `tokens.css` gerado do `tokens.json` do Design System (temas Castelo e Pergaminho) e teste de contraste WCAG nos dois temas, rodando no CI. Mergeado no PR #9. |
 | Concluídas | `T1.1.4`, `T1.1.5` | `PomodoroTimer.onPhaseChange` e `creditFocusToBattle` (fim do Foco credita +1 na missão em batalha); `weekProgress` e `yearProgress` com níveis 0–3 para o mapa. Core com 68 testes. Mergeado no PR #10. |
 | Concluídas | `T1.3.1`, `T1.3.6` | Hooks `usePomodoro` e `usePomodoroSettings` em `@tasksorg/ui/hooks`: relógio pelo tempo real (aba em segundo plano continua certa), retoma ao recarregar descontando só até o fim da fase, `skip` sem crédito e tempos validados e salvos localmente. Mergeados no PR #12; liberam `T1.3.2`–`T1.3.4` (Higor) e `T1.5.3` (Guilhermo). |
-| Correção, aguardando merge | — | `output: "standalone"` do Next só no build do Docker (`NEXT_OUTPUT=standalone`). No Windows, os links do standalone faziam o build seguinte esvaziar o `next` no `node_modules`. PR aberto. |
+| Correção integrada | — | `output: "standalone"` do Next só no build do Docker (`NEXT_OUTPUT=standalone`). Correção integrada no PR #15. |
 | Prontas para começar | `T1.1.7`, `T2.1.1` | Cobertura ≥ 90% no core; proposta da decisão de persistência para o grupo. |
-| Bloqueadas por pré-requisito | `T0.2.9`, `T0.2.10`, `T1.6.1` | Aguardam os componentes `T0.2.6`/`T0.2.7` e a tela `T1.2.5`. |
+| Liberadas para implementação/validação | `T0.2.9`, `T0.2.10`, `T1.6.1` | Os componentes do MVP 0 estão na `main`; a tela `T1.2.5` está implementada na branch `Higor` e precisa de revisão para liberar os E2E. |
 
 > As tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done.
 
@@ -135,14 +134,14 @@ Validação atual da UI: lint e typecheck aprovados e 34 testes passaram. Veja
 - [x] `T0.2.1` Criar `packages/ui` no workspace (build, export de CSS e de componentes, tarefas no `turbo.json`) — **Guilhermo** · M
 - [x] `T0.2.2` Gerar `tokens.css` dos temas Castelo e Pergaminho a partir do `tokens.json` do Design System (script versionado) — **Gustavo** · M · ⛓ T0.2.1
 - [x] `T0.2.3` Teste automatizado de contraste: falha se algum par texto/fundo dos tokens ficar abaixo de 4.5:1 — **Gustavo** · P · ⛓ T0.2.2
-- [ ] `T0.2.4` Portar as classes `px-*` do `bundle.css` do Design System para `packages/ui/styles` — **Higor** · P · ⛓ T0.2.2 · implementada na branch `Higor`, aguardando revisão
+- [x] `T0.2.4` Portar as classes `px-*` do `bundle.css` do Design System para `packages/ui/styles` — **Higor** · P · ⛓ T0.2.2
 - [x] `T0.2.5` Fontes Silkscreen, Pixelify Sans e Jersey 10 (via `next/font` no web e arquivos locais no Electron) — **Higor** · P · integrada à `main`
-- [ ] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4 · implementada na branch `Higor`, aguardando revisão
-- [ ] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6 · implementada na branch `Higor`, aguardando revisão
-- [ ] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6 · implementada na branch `Higor`, aguardando revisão
+- [x] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4
+- [x] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6
+- [x] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6
 - [ ] `T0.2.9` Componentes React `PomodoroHUD` e `RoomMap`, recebendo o `PomodoroSnapshot` do core como prop — **Gustavo** · M · ⛓ T0.2.6
 - [ ] `T0.2.10` Testes de componentes (Vitest + Testing Library): estados, props e acessibilidade básica — **Gustavo** · M · ⛓ T0.2.7
-- [ ] `T0.2.11` Rota `/design` no `apps/web` com o catálogo de componentes e alternância de tema — **Higor** · P · ⛓ T0.2.7 · implementada na branch `Higor`, aguardando revisão
+- [x] `T0.2.11` Rota `/design` no `apps/web` com o catálogo de componentes e alternância de tema — **Higor** · P · ⛓ T0.2.7
 
 **✔️ Critérios de aceite do MVP 0**
 - Componentes iguais aos previews do Design System nos dois temas.
@@ -189,14 +188,14 @@ Validação atual da UI: lint e typecheck aprovados e 34 testes passaram. Veja
 - [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1
 - [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1
 - [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1
-- [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · atalhos das ações atuais no Web prontos; `F` aguarda a tela `/foco`
+- [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · implementados na branch `Higor`, aguardando testes e revisão
 - [x] `T1.3.6` Configuração dos tempos (padrão 25/5/15, 4 ciclos), salva localmente — **Gustavo** · P
 
 #### Épico 1.4 — Temas, formatos de tela e acessibilidade
 
 > Como usuário, quero que o app funcione no meu monitor, seja ele pequeno, grande ou vertical, no tema que eu preferir.
 
-- [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P · Web integrado aos tokens de `@tasksorg/ui`; aguarda validação visual, revisão e integração ao Desktop
+- [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P · Web e Desktop integrados aos tokens de `@tasksorg/ui`; aguarda validação final e revisão
 - [ ] `T1.4.2` Layouts para telas de até 1280px, monitor vertical e celular (no celular a rolagem é aceita) — **Higor** · M · ⛓ T1.2.1
 - [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P · base de movimento/foco no Web e Desktop pronta; rótulos dos futuros botões de ícone pendentes
 - [ ] `T1.4.4` Auditoria automática com axe nas telas (zero violações sérias) — **Gustavo** · M
