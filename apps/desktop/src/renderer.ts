@@ -13,6 +13,7 @@ function formatTime(totalSeconds: number): string {
 }
 
 const tasks: Task[] = [];
+const TASK_TITLE_MAX_LENGTH = 160;
 
 function renderTasks(): void {
   const list = document.getElementById("task-list");
@@ -47,11 +48,13 @@ function setupTaskForm(): void {
   const form = document.getElementById("task-form") as HTMLFormElement | null;
   const input = document.getElementById("task-input") as HTMLInputElement | null;
   if (!form || !input) return;
+  input.maxLength = TASK_TITLE_MAX_LENGTH;
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    if (!input.value.trim()) return;
-    tasks.push(createTask({ title: input.value, scope: "daily" }));
+    const title = input.value.trim();
+    if (!title) return;
+    tasks.push(createTask({ title, scope: "daily" }));
     input.value = "";
     renderTasks();
   });

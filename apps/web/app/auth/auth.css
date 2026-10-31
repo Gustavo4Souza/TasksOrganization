@@ -1,0 +1,27 @@
+.auth-screen { width: 100%; max-width: none; min-height: 100dvh; padding: 24px; display: flex; flex-direction: column; gap: 32px; background: var(--bg); }
+.auth-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.auth-header a, .auth-switch a { color: var(--mana); }
+.auth-layout { width: min(980px, 100%); margin: auto; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 440px); gap: 48px; align-items: center; background: transparent; border: 0; border-radius: 0; }
+.auth-intro { padding: 20px; }
+.auth-intro > .px-icon { width: 48px; height: 48px; color: var(--gold); }
+.auth-eyebrow { color: var(--mana); font-family: var(--font-display); font-size: 12px; text-transform: uppercase; }
+.auth-intro h1 { max-width: 620px; margin: 20px 0 16px; font-size: clamp(28px, 5vw, 52px); line-height: 1.15; }
+.auth-intro > p:not(.auth-eyebrow) { color: var(--ink-muted); font-size: 20px; line-height: 1.4; }
+.auth-perks { display: grid; gap: 12px; margin: 28px 0 0; padding: 0; list-style: none; }
+.auth-perks li { display: flex; align-items: center; gap: 10px; }
+.auth-perks .px-icon { color: var(--moss); }
+.auth-panel { margin: 0; }
+.auth-form { display: grid; gap: 16px; }
+.auth-form label { display: grid; gap: 6px; color: var(--ink-muted); font-weight: 600; }
+.auth-form input { width: 100%; min-height: 44px; padding: 9px 12px; color: var(--ink); background: var(--surface-sunken); border: 2px solid var(--edge); font: inherit; }
+.auth-form .px-button { width: 100%; margin-top: 4px; }
+.auth-error { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 10px; color: var(--crimson); background: var(--surface-sunken); border: 2px solid var(--crimson); }
+.auth-error .px-icon { flex: 0 0 auto; }
+.auth-loading { display: flex; align-items: center; gap: 7px; color: var(--mana); }
+.auth-loading span { width: 10px; height: 10px; background: var(--mana); animation: auth-blink 900ms steps(2, end) infinite; }
+.auth-loading span:nth-child(2) { animation-delay: 150ms; }
+.auth-loading span:nth-child(3) { animation-delay: 300ms; }
+.auth-switch { margin: 20px 0 0; color: var(--ink-muted); text-align: center; }
+@keyframes auth-blink { 50% { opacity: .2; } }
+@media (max-width: 760px) { .auth-screen { padding: 16px; } .auth-layout { grid-template-columns: 1fr; gap: 16px; } .auth-intro { padding: 4px; } .auth-perks { margin-top: 18px; } }
+@media (prefers-reduced-motion: reduce) { .auth-loading span { animation: none; } }

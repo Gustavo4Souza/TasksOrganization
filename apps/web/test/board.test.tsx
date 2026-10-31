@@ -11,6 +11,20 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 describe("Quadro", () => {
+  it("limita e normaliza títulos nas entradas do usuário", async () => {
+    const task = createTask({ title: "Editar depois" });
+    window.localStorage.setItem("tasksorg:tasks", serializeTasks([task]));
+    render(<HomePage />);
+    await waitFor(() => expect((screen.getByRole("button", { name: "Criar" }) as HTMLButtonElement).disabled).toBe(false));
+    const createInput = screen.getByRole("textbox", { name: "Nova missão" }) as HTMLInputElement;
+    expect(createInput.maxLength).toBe(160);
+    fireEvent.change(createInput, { target: { value: "  Título normalizado  " } });
+    fireEvent.click(screen.getByRole("button", { name: "Criar" }));
+    expect(await screen.findByRole("heading", { name: "Título normalizado" })).toBeTruthy();
+    fireEvent.click(screen.getAllByRole("button", { name: "Editar" })[0]);
+    expect((screen.getByRole("textbox", { name: "Editar missão" }) as HTMLInputElement).maxLength).toBe(160);
+  });
+
   it("cria, inicia batalha, conclui e restaura a missão salva", async () => {
     const view = render(<HomePage />);
     await waitFor(() => expect((screen.getByRole("button", { name: "Criar" }) as HTMLButtonElement).disabled).toBe(false));
@@ -116,6 +130,17 @@ describe("Quadro", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: "Reabrir" })).toBeTruthy());
     fireEvent.click(screen.getByRole("button", { name: "Reabrir" }));
     await waitFor(() => expect(screen.getByRole("button", { name: "Batalhar" })).toBeTruthy());
+  });
+
+  it("liga o PomodoroHUD à missão em batalha", async () => {
+    const task = createTask({ title: "Foco no HUD" });
+    window.localStorage.setItem("tasksorg:tasks", serializeTasks([task]));
+    render(<HomePage />);
+    fireEvent.click(await screen.findByRole("button", { name: "Batalhar" }));
+    await waitFor(() => expect(screen.getByText("Em batalha:")).toBeTruthy());
+    expect(screen.getByText("Foco no HUD", { selector: ".px-pomo-battle strong" })).toBeTruthy();
+    expect(screen.getByRole("timer", { name: /restantes de Foco/ })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Pular fase" })).toBeTruthy();
   });
 
   it("move uma missão ao soltar o cartão em outra coluna", async () => {

@@ -1,0 +1,28 @@
+.metrics-screen { width: 100%; max-width: 1280px; min-height: 100dvh; padding: 24px; display: grid; align-content: start; gap: 20px; }
+.metrics-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.metrics-header a { color: var(--mana); }
+.metrics-header p { margin: 16px 0 4px; color: var(--ink-muted); text-transform: uppercase; }
+.metrics-header h1 { margin: 0; font-size: clamp(28px, 4vw, 48px); }
+.metrics-periods { display: flex; gap: 10px; flex-wrap: wrap; padding: 10px; background: var(--surface); border: 2px solid var(--edge); }
+.metrics-loading { display: flex; align-items: center; gap: 8px; color: var(--mana); }
+.metrics-loading span { width: 12px; height: 12px; background: var(--mana); animation: metrics-blink 900ms steps(2, end) infinite; }
+.metrics-loading span:nth-child(2) { animation-delay: 150ms; }
+.metrics-loading span:nth-child(3) { animation-delay: 300ms; }
+.metrics-error { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px; color: var(--crimson); background: var(--surface); border: 2px solid var(--crimson); }
+.metrics-error p { margin: 0; }
+.metrics-grid { margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; background: transparent; border: 0; }
+.metrics-card { min-width: 0; margin: 0; }
+.metrics-card .px-panel__body { display: grid; align-content: start; gap: 12px; }
+.metrics-card p { margin: 0; color: var(--ink-muted); }
+.metrics-card .metrics-value { color: var(--ink); font-family: var(--font-digits); font-size: clamp(48px, 5vw, 72px); line-height: .9; white-space: nowrap; }
+.metrics-card .px-tag { justify-self: start; }
+.metrics-history { margin: 0; }
+.metrics-history p { color: var(--ink-muted); }
+.metrics-table-wrap { overflow-x: auto; }
+.metrics-history table { width: 100%; border-collapse: collapse; }
+.metrics-history th, .metrics-history td { padding: 10px; text-align: left; border-bottom: 2px solid var(--edge-soft); }
+.metrics-history th { color: var(--mana); font-family: var(--font-display); font-size: 12px; }
+@keyframes metrics-blink { 50% { opacity: .2; } }
+@media (max-width: 960px) { .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .metrics-screen { padding: 14px; } .metrics-header { align-items: flex-start; flex-direction: column; } .metrics-grid { grid-template-columns: 1fr; } .metrics-error { align-items: stretch; flex-direction: column; } }
+@media (prefers-reduced-motion: reduce) { .metrics-loading span { animation: none; } }
