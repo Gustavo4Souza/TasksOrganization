@@ -31,6 +31,14 @@ A imagem Docker de produção do Web foi construída com o código local da bran
 `/design`; foi encerrado após a verificação. Resta a revisão por outro integrante
 em PR para concluir formalmente as tasks do MVP 1.
 
+Após o merge do PR #17, o Quadro passou a usar `PomodoroHUD` e `RoomMap` de
+`@tasksorg/ui`, concluindo a integração da `T1.3.2` e centralizando o mapa da
+`T1.2.7`. A exportação pública desses componentes foi corrigida em
+`components.ts`; sem ela, o Web não conseguia importá-los pelo pacote. A suíte
+de componentes também teve oito expectativas ajustadas às classes atuais do
+Design System. Passaram 15 testes do Web e 105 do UI, além de lint, typecheck e
+build do Web.
+
 Uma conferência task a task confirmou que as entregas do Higor no MVP 0 já foram
 integradas à `main`; a página `MVP0-Higor.md` foi corrigida para refletir isso.
 No MVP 1, a movimentação real por arrastar e soltar ganhou teste, elevando a

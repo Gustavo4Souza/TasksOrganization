@@ -118,6 +118,17 @@ describe("Quadro", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: "Batalhar" })).toBeTruthy());
   });
 
+  it("liga o PomodoroHUD à missão em batalha", async () => {
+    const task = createTask({ title: "Foco no HUD" });
+    window.localStorage.setItem("tasksorg:tasks", serializeTasks([task]));
+    render(<HomePage />);
+    fireEvent.click(await screen.findByRole("button", { name: "Batalhar" }));
+    await waitFor(() => expect(screen.getByText("Em batalha:")).toBeTruthy());
+    expect(screen.getByText("Foco no HUD", { selector: ".px-pomo-battle strong" })).toBeTruthy();
+    expect(screen.getByRole("timer", { name: /restantes de Foco/ })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Pular fase" })).toBeTruthy();
+  });
+
   it("move uma missão ao soltar o cartão em outra coluna", async () => {
     const task = createTask({ title: "Arrastar missão" });
     window.localStorage.setItem("tasksorg:tasks", serializeTasks([task]));

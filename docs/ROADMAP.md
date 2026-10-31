@@ -79,10 +79,9 @@ MVP ──► entrega que dá para demonstrar e usar
 | Status | Tasks | Situação |
 |---|---|---|
 | Concluídas e integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11` | Web oficial, fontes, componentes pixel e catálogo `/design` integrados pelos PRs #14 e #16. |
-| Implementação local pronta, aguardando revisão | `T1.2.1`–`T1.2.7`, `T1.3.3`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro, Modo foco, mapa, ações, arrastar e soltar, atalhos, temas e acessibilidade implementados na branch `Higor`. Faltam revisão por PR e aceite final da Definition of Done. |
-| Integração pendente | `T1.3.2` | A lateral do Quadro já mostra o Pomodoro e a missão em batalha. Falta substituir a implementação local pelo componente `PomodoroHUD` de `@tasksorg/ui`, previsto na `T0.2.9` do Gustavo e ainda ausente do pacote. |
+| Implementação local pronta, aguardando revisão | `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro, Modo foco, `PomodoroHUD`, `RoomMap`, ações, arrastar e soltar, atalhos, temas e acessibilidade implementados na branch `Higor`. Faltam revisão por PR e aceite final da Definition of Done. |
 
-Validação local: 14 testes do Web e 34 do UI passaram; lint, typecheck e build do
+Validação local: 15 testes do Web e 105 do UI passaram; lint, typecheck e build do
 Web, além do build do Desktop, passaram. A imagem Docker de produção foi
 construída e respondeu HTTP 200 em `/`, `/foco` e `/design`. O Quadro vazio foi
 conferido em 1280×720, 1440×900, 1920×1080, monitor vertical e celular. O
@@ -146,8 +145,8 @@ Veja
 - [x] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4
 - [x] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6
 - [x] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6
-- [ ] `T0.2.9` Componentes React `PomodoroHUD` e `RoomMap`, recebendo o `PomodoroSnapshot` do core como prop — **Gustavo** · M · ⛓ T0.2.6
-- [ ] `T0.2.10` Testes de componentes (Vitest + Testing Library): estados, props e acessibilidade básica — **Gustavo** · M · ⛓ T0.2.7
+- [x] `T0.2.9` Componentes React `PomodoroHUD` e `RoomMap`, recebendo o `PomodoroSnapshot` do core como prop — **Gustavo** · M · ⛓ T0.2.6 · integrado no PR #17
+- [x] `T0.2.10` Testes de componentes (Vitest + Testing Library): estados, props e acessibilidade básica — **Gustavo** · M · ⛓ T0.2.7 · integrado no PR #17
 - [x] `T0.2.11` Rota `/design` no `apps/web` com o catálogo de componentes e alternância de tema — **Higor** · P · ⛓ T0.2.7
 
 **✔️ Critérios de aceite do MVP 0**
@@ -185,14 +184,14 @@ Veja
 - [ ] `T1.2.4` Densidade adaptativa: mais de 6 cartões → compactos; mais de 11 → "+N missões" com lista em popover — **Higor** · M · ⛓ T1.2.3
 - [ ] `T1.2.5` Ações no cartão: concluir, BATALHAR/RECUAR, editar inline e excluir com confirmação — **Higor** · M · ⛓ T1.1.3 · fluxos cobertos por testes do Web; aguarda revisão
 - [ ] `T1.2.6` Arrastar e soltar entre colunas, com alternativa por teclado — **Higor** · G · ⛓ T1.2.5 · arrastar e soltar e botões Batalhar, Recuar, Concluir e Reabrir testados; aguarda revisão
-- [ ] `T1.2.7` Painel Mapa ligado ao histórico do core — **Higor** · P · ⛓ T1.1.5 · progresso semanal e anual testado com rótulos acessíveis; aguarda revisão
+- [ ] `T1.2.7` Painel Mapa ligado ao histórico do core — **Higor** · P · ⛓ T1.1.5 · integrado ao `RoomMap` compartilhado, com progresso semanal e anual testado; aguarda revisão
 
 #### Épico 1.3 — Pomodoro e Modo foco
 
 > Como usuário, quero um timer que eu leia de longe e que me avise quando a fase virar.
 
 - [x] `T1.3.1` Hook `usePomodoro` (tick com `PomodoroTimer`, continua certo após recarregar a página) — **Gustavo** · M · ⛓ T1.1.4
-- [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1, T0.2.9 · lateral funcional; integração com o componente do Gustavo pendente
+- [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1, T0.2.9 · integrado ao componente compartilhado, coberto por teste; aguarda revisão
 - [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1 · próximas três cobertas por teste; tela preenchida conferida nos dois temas em 1280×720 e no celular; aguarda revisão
 - [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1 · implementado no Quadro e Modo foco; testes de permissão e som passaram; aguarda revisão
 - [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · implementados; Espaço, N e escopos cobertos por teste; F validado na navegação manual; aguardam revisão

@@ -3,14 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createLocalStorageTaskRepository, TaskStore, weekProgress, yearProgress, type Task, type TaskPriority, type TaskScope } from "@tasksorg/core";
-import { Button, Panel, ScopeTabs, StatBar, TaskCard, usePomodoro, usePomodoroSettings } from "@tasksorg/ui";
+import { Button, Panel, PomodoroHUD, RoomMap, ScopeTabs, StatBar, TaskCard, roomsFromWeek, roomsFromYear, usePomodoro, usePomodoroSettings } from "@tasksorg/ui";
 import "@tasksorg/ui/styles.css";
 import "./quadro.css";
 import { PhaseAlertOptions, usePhaseAlerts } from "./phase-alerts";
 
 const scopes: TaskScope[] = ["daily", "weekly", "yearly"];
-const phases = { focus: "Foco", shortBreak: "Pausa curta", longBreak: "Pausa longa" };
-const time = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
 export default function HomePage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -163,7 +161,7 @@ export default function HomePage() {
           </div>)}</div>}
         </Panel>;
       })}
-      <aside className="board-side"><Panel title="Pomodoro"><p className="board-phase">{phases[pomo.snapshot.phase]} · {battle?.title ?? "Sem missão em batalha"}</p><p className="board-timer">{time(pomo.snapshot.remainingSeconds)}</p><div className="board-actions"><Button onClick={pomo.toggle}>{pomo.snapshot.state === "running" ? "Pausar" : "Iniciar"}</Button><Button variant="secondary" onClick={pomo.reset}>Reiniciar</Button><Button variant="secondary" onClick={pomo.skip}>Pular</Button></div><PhaseAlertOptions alerts={alerts} /></Panel><Panel title="Mapa"><div className="board-map" role="list" aria-label={scope === "yearly" ? "Progresso do ano" : "Progresso da semana"}>{scope === "yearly" ? months.map((month) => <span key={month.month} role="listitem" aria-label={`${month.month}: ${month.completed} conquistas`} className={`board-map-cell level-${month.level}`} title={`${month.month}: ${month.completed} conquistas`}>{month.month.slice(5)}</span>) : week.map((day) => <span key={day.date} role="listitem" aria-label={`${day.date}: ${day.completed} conquistas`} className={`board-map-cell level-${day.level}`} title={`${day.date}: ${day.completed} conquistas`}>{day.date.slice(8)}</span>)}</div></Panel></aside>
+      <aside className="board-side"><PomodoroHUD snapshot={pomo.snapshot} config={config} battleTitle={battle?.title} onToggle={pomo.toggle} onReset={pomo.reset} onSkip={pomo.skip} /><PhaseAlertOptions alerts={alerts} /><Panel title="Mapa"><RoomMap label={scope === "yearly" ? "Progresso do ano" : "Progresso da semana"} rooms={scope === "yearly" ? roomsFromYear(months) : roomsFromWeek(week)} columns={scope === "yearly" ? 6 : 7} /></Panel></aside>
     </div>
   </main>;
 }
