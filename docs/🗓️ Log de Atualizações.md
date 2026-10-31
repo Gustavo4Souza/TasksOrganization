@@ -1,5 +1,19 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 31/10/2026 — SAST e auditoria de dependências do MVP 3
+
+Concluídas as `T3.1.1`, `T3.1.2`, `T3.1.3` e `T3.1.4`. O CodeQL foi escolhido
+como SAST principal e configurado em `.github/workflows/codeql.yml` para analisar
+JavaScript/TypeScript com `security-extended` em pushes, pull requests e execução
+semanal. Os resultados são publicados no GitHub Code Scanning e o workflow bloqueia
+o pipeline quando encontra vulnerabilidades com `security-severity` alta ou crítica.
+
+Criado `.github/workflows/dependency-audit.yml`, que executa
+`pnpm audit --audit-level=high` no CI. Também foi configurado o Dependabot em
+`.github/dependabot.yml` para propor atualizações semanais das dependências npm e
+das GitHub Actions. Os arquivos de configuração foram validados como YAML; a
+auditoria local ficou pendente porque `pnpm` não estava disponível no ambiente.
+
 ## 30/10/2026 — Quadro e Modo foco do MVP 1
 
 Complementada a validação do Quadro com 14 missões de exemplo nos temas Castelo e

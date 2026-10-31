@@ -294,12 +294,23 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 
 > Como time, queremos que vulnerabilidades sejam encontradas antes do deploy.
 
-- [ ] `T3.1.1` Escolher a ferramenta SAST e registrar a decisão — **Guilhermo** · P
-- [ ] `T3.1.2` SAST no GitHub Actions com relatório no PR — **Guilhermo** · M · ⛓ T3.1.1
-- [ ] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2
-- [ ] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P
+- [x] `T3.1.1` Escolher a ferramenta SAST e registrar a decisão — **Guilhermo** · P
+- [x] `T3.1.2` SAST no GitHub Actions com relatório no PR — **Guilhermo** · M · ⛓ T3.1.1
+- [x] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2
+- [x] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P
 - [ ] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2
 - [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2
+
+> **Decisão da T3.1.1:** o projeto usará o **CodeQL** como SAST principal,
+> analisando JavaScript/TypeScript com a query suite `security-extended`.
+> O workflow `.github/workflows/codeql.yml` executa em pushes, pull requests e
+> semanalmente, publicando os resultados no GitHub para aparecerem no PR.
+> O próprio workflow falha quando o SARIF contém uma vulnerabilidade com
+> `security-severity` igual ou superior a 7 (alta ou crítica).
+>
+> A auditoria de dependências usa `pnpm audit --audit-level=high` no workflow
+> `.github/workflows/dependency-audit.yml`, complementada por atualizações
+> semanais do Dependabot para dependências npm e GitHub Actions.
 
 #### Épico 3.2 — Coleta dos KPIs
 

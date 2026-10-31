@@ -1,0 +1,68 @@
+name: CodeQL
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "30 2 * * 1"
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript-typescript"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+          build-mode: none
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+          output: ${{ runner.temp }}/codeql-results
+
+      - name: Upload CodeQL results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ runner.temp }}/codeql-results
+          category: "/language:${{ matrix.language }}"
+
+      - name: Enforce security gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          sarif_file="$(find "${{ runner.temp }}/codeql-results" -name '*.sarif' -print -quit)"
+          if [[ -z "$sarif_file" ]]; then
+            echo "CodeQL did not produce a SARIF result file."
+            exit 1
+          fi
+
+          jq -e '
+            [
+              .runs[] as $run
+              | $run.tool.driver.rules[] as $rule
+              | ($run.results[]? | select(.ruleId == $rule.id)
+                | ($rule.properties["security-severity"] // "0" | tonumber) as $severity
+                | select($severity >= 7)
+                | {ruleId, severity: $severity})
+            ] | length == 0
+          ' "$sarif_file" > /dev/null || {
+            echo "CodeQL found high or critical severity vulnerabilities."
+            exit 1
+          }
