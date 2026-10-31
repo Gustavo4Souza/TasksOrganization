@@ -74,15 +74,14 @@ MVP ──► entrega que dá para demonstrar e usar
 
 ## 🗺️ Roadmap
 
-### Estado das entregas do Higor — 30/10/2026
+### Estado das entregas do Higor — 31/10/2026
 
 | Status | Tasks | Situação |
 |---|---|---|
 | Concluídas e integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11` | Web oficial, fontes, componentes pixel e catálogo `/design` integrados pelos PRs #14 e #16. |
-| Implementação local pronta, aguardando revisão | `T1.2.1`–`T1.2.7`, `T1.3.3`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro, Modo foco, mapa, ações, arrastar e soltar, atalhos, temas e acessibilidade implementados na branch `Higor`. Faltam revisão por PR e aceite final da Definition of Done. |
-| Integração pendente | `T1.3.2` | A lateral do Quadro já mostra o Pomodoro e a missão em batalha. Falta substituir a implementação local pelo componente `PomodoroHUD` de `@tasksorg/ui`, previsto na `T0.2.9` do Gustavo e ainda ausente do pacote. |
+| Implementação local pronta, aguardando revisão | `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro, Modo foco, `PomodoroHUD`, `RoomMap`, ações, arrastar e soltar, atalhos, temas e acessibilidade implementados na branch `Higor`. Faltam revisão por PR e aceite final da Definition of Done. |
 
-Validação local: 14 testes do Web e 34 do UI passaram; lint, typecheck e build do
+Validação local: 15 testes do Web e 105 do UI passaram; lint, typecheck e build do
 Web, além do build do Desktop, passaram. A imagem Docker de produção foi
 construída e respondeu HTTP 200 em `/`, `/foco` e `/design`. O Quadro vazio foi
 conferido em 1280×720, 1440×900, 1920×1080, monitor vertical e celular. O
@@ -90,6 +89,26 @@ Quadro preenchido foi conferido nos dois temas em 1280×720, e o Modo foco
 preenchido nos dois temas em 1280×720 e no celular, inclusive com títulos longos.
 Veja
 [escopo e validação do MVP 0](MVP0-Higor.md).
+
+#### Avanço do Higor após o MVP 1 — 31/10/2026
+
+| Status | Tasks | Situação |
+|---|---|---|
+| Implementação local pronta, aguardando revisão | `T2.2.1`, `T2.2.3`, `T3.3.1` | Rotas `/login` e `/cadastro` com protótipo pixel responsivo, validação e estados de carregamento/erro; protótipo interativo de KPIs em `/design/kpis`, com quatro indicadores, filtro e `RoomMap`. |
+| Interface pronta, integração bloqueada | `T2.2.2`, `T3.3.2`, `T3.3.3` | Login/cadastro já chamam o contrato de autenticação. A rota `/kpis` consome registros do catálogo, filtra 7/30/90 dias e mostra valores, qualidade, origem e histórico. Dados reais dependem das APIs `T2.1.6` e `T3.2.5`. |
+| Parte independente pronta | `T3.1.6`, `T4.2.2` | Entradas de títulos no Web/Desktop agora são normalizadas e limitadas a 160 caracteres. `@tasksorg/ui/native` expõe tokens numéricos, temas e fábrica dos componentes principais sem acoplar o Web ao React Native. Correções do relatório SAST e validação dentro do Expo aguardam suas dependências. |
+| Bloqueadas por dependências | `T2.2.4`, `T2.2.5`, `T4.1.5`, `T4.2.3` | Dependem, respectivamente, do repositório HTTP, autenticação, cluster Kubernetes e criação/definição do app mobile. |
+
+Não restam tarefas de implementação independente atribuídas ao Higor no roadmap.
+O próximo avanço é revisar e integrar este conjunto; depois, as continuações exigem
+API de autenticação/repositório HTTP, endpoints de KPIs, relatório SAST, cluster ou
+o projeto Expo entregues pelos respectivos responsáveis.
+
+Validação desta etapa: 23 testes do Web e 108 do UI passaram; as telas de autenticação foram
+conferidas em 1280×720 nos temas do sistema e em 390×844. O protótipo de KPIs foi
+conferido em 1280×720. A rota real `/kpis` também foi conferida sem API, mostrando
+os quatro indicadores como indisponíveis. Lint, typecheck e builds do UI, Web e
+Desktop passaram.
 
 ### Estado das entregas do Gustavo — 23/10/2026
 
@@ -146,8 +165,8 @@ Veja
 - [x] `T0.2.6` Componentes React `Panel`, `Button`, `Tag` e `PixelIcon` (caveira, coração, espada, estrela, check, bandeira) — **Higor** · M · ⛓ T0.2.4
 - [x] `T0.2.7` Componentes React `TaskCard` (normal, em batalha, conquistada, compacto) e `StatBar` — **Higor** · M · ⛓ T0.2.6
 - [x] `T0.2.8` Componente React `ScopeTabs` (com `role="tablist"` e contadores) — **Higor** · P · ⛓ T0.2.6
-- [ ] `T0.2.9` Componentes React `PomodoroHUD` e `RoomMap`, recebendo o `PomodoroSnapshot` do core como prop — **Gustavo** · M · ⛓ T0.2.6
-- [ ] `T0.2.10` Testes de componentes (Vitest + Testing Library): estados, props e acessibilidade básica — **Gustavo** · M · ⛓ T0.2.7
+- [x] `T0.2.9` Componentes React `PomodoroHUD` e `RoomMap`, recebendo o `PomodoroSnapshot` do core como prop — **Gustavo** · M · ⛓ T0.2.6 · integrado no PR #17
+- [x] `T0.2.10` Testes de componentes (Vitest + Testing Library): estados, props e acessibilidade básica — **Gustavo** · M · ⛓ T0.2.7 · integrado no PR #17
 - [x] `T0.2.11` Rota `/design` no `apps/web` com o catálogo de componentes e alternância de tema — **Higor** · P · ⛓ T0.2.7
 
 **✔️ Critérios de aceite do MVP 0**
@@ -185,14 +204,14 @@ Veja
 - [ ] `T1.2.4` Densidade adaptativa: mais de 6 cartões → compactos; mais de 11 → "+N missões" com lista em popover — **Higor** · M · ⛓ T1.2.3
 - [ ] `T1.2.5` Ações no cartão: concluir, BATALHAR/RECUAR, editar inline e excluir com confirmação — **Higor** · M · ⛓ T1.1.3 · fluxos cobertos por testes do Web; aguarda revisão
 - [ ] `T1.2.6` Arrastar e soltar entre colunas, com alternativa por teclado — **Higor** · G · ⛓ T1.2.5 · arrastar e soltar e botões Batalhar, Recuar, Concluir e Reabrir testados; aguarda revisão
-- [ ] `T1.2.7` Painel Mapa ligado ao histórico do core — **Higor** · P · ⛓ T1.1.5 · progresso semanal e anual testado com rótulos acessíveis; aguarda revisão
+- [ ] `T1.2.7` Painel Mapa ligado ao histórico do core — **Higor** · P · ⛓ T1.1.5 · integrado ao `RoomMap` compartilhado, com progresso semanal e anual testado; aguarda revisão
 
 #### Épico 1.3 — Pomodoro e Modo foco
 
 > Como usuário, quero um timer que eu leia de longe e que me avise quando a fase virar.
 
 - [x] `T1.3.1` Hook `usePomodoro` (tick com `PomodoroTimer`, continua certo após recarregar a página) — **Gustavo** · M · ⛓ T1.1.4
-- [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1, T0.2.9 · lateral funcional; integração com o componente do Gustavo pendente
+- [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1, T0.2.9 · integrado ao componente compartilhado, coberto por teste; aguarda revisão
 - [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1 · próximas três cobertas por teste; tela preenchida conferida nos dois temas em 1280×720 e no celular; aguarda revisão
 - [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1 · implementado no Quadro e Modo foco; testes de permissão e som passaram; aguarda revisão
 - [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · implementados; Espaço, N e escopos cobertos por teste; F validado na navegação manual; aguardam revisão
@@ -261,11 +280,11 @@ Web / Desktop ──► TaskRepository (HTTP) ──► API ──► PostgreSQL
 
 > Como usuário, quero entrar na minha conta e continuar de onde parei, mesmo se a internet cair.
 
-- [ ] `T2.2.1` Prototipar no canvas as telas de login e cadastro com o Design System — **Higor** · P
-- [ ] `T2.2.2` Implementar login e cadastro no estilo pixel — **Higor** · M · ⛓ T2.2.1, T2.1.6
-- [ ] `T2.2.3` Estados de carregamento e erro pixelados (blocos piscando em `steps()`, aviso de erro) — **Higor** · M
-- [ ] `T2.2.4` Modo offline: fila local de alterações, sincronizada ao reconectar — **Higor** · G · ⛓ T2.1.7
-- [ ] `T2.2.5` Migrar os dados locais do MVP 1 para a conta no primeiro login — **Higor** · M · ⛓ T2.2.2
+- [ ] `T2.2.1` Prototipar no canvas as telas de login e cadastro com o Design System — **Higor** · P · protótipo funcional nas rotas `/login` e `/cadastro`, aguardando revisão
+- [ ] `T2.2.2` Implementar login e cadastro no estilo pixel — **Higor** · M · ⛓ T2.2.1, T2.1.6 · interface e contrato HTTP prontos; integração real bloqueada por `T2.1.6`
+- [ ] `T2.2.3` Estados de carregamento e erro pixelados (blocos piscando em `steps()`, aviso de erro) — **Higor** · M · implementados e cobertos por testes; aguarda revisão
+- [ ] `T2.2.4` Modo offline: fila local de alterações, sincronizada ao reconectar — **Higor** · G · ⛓ T2.1.7 · bloqueada pelo adaptador HTTP
+- [ ] `T2.2.5` Migrar os dados locais do MVP 1 para a conta no primeiro login — **Higor** · M · ⛓ T2.2.2 · bloqueada pela autenticação real
 
 #### Épico 2.3 — Infraestrutura dos dados
 
@@ -299,7 +318,7 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 - [ ] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2
 - [ ] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P
 - [ ] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2
-- [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2
+- [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2 · validação independente pronta: títulos normalizados, obrigatórios e limitados a 160 caracteres no Web/Desktop, com teste no Web; correções de achados aguardam o relatório SAST
 
 #### Épico 3.2 — Coleta dos KPIs
 
@@ -321,9 +340,9 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 
 > Como time, queremos ver os KPIs dentro do próprio TasksOrg, no mesmo visual.
 
-- [ ] `T3.3.1` Prototipar no canvas a tela de KPIs com o Design System (`StatBar` para taxas, `RoomMap` como calendário de deploys) — **Higor** · M
-- [ ] `T3.3.2` Implementar os cards de Deployments, Taxa de falha, MTTR e Testes — **Higor** · M · ⛓ T3.3.1, T3.2.5
-- [ ] `T3.3.3` Histórico e filtro por período — **Higor** · M · ⛓ T3.3.2
+- [ ] `T3.3.1` Prototipar no canvas a tela de KPIs com o Design System (`StatBar` para taxas, `RoomMap` como calendário de deploys) — **Higor** · M · protótipo interativo em `/design/kpis`, aguardando revisão
+- [ ] `T3.3.2` Implementar os cards de Deployments, Taxa de falha, MTTR e Testes — **Higor** · M · ⛓ T3.3.1, T3.2.5 · interface real em `/kpis`, com qualidade dos dados e estados indisponíveis; integração bloqueada pelos endpoints
+- [ ] `T3.3.3` Histórico e filtro por período — **Higor** · M · ⛓ T3.3.2 · filtros 7/30/90 dias e tabela de origem implementados; dados reais bloqueados pelos endpoints
 
 ---
 
@@ -345,13 +364,13 @@ k8s/
 - [ ] `T4.1.2` Health checks via `/health` e `/ready` — **Guilhermo** · P · ⛓ T2.3.3
 - [ ] `T4.1.3` Stage `kubectl apply` no CD — **Guilhermo** · M · ⛓ T4.1.1
 - [ ] `T4.1.4` Validar API e banco no cluster — **Gustavo** · P · ⛓ T4.1.3
-- [ ] `T4.1.5` Validar frontend e acesso no cluster — **Higor** · P · ⛓ T4.1.3
+- [ ] `T4.1.5` Validar frontend e acesso no cluster — **Higor** · P · ⛓ T4.1.3 · bloqueada até existir cluster e deploy
 
 #### Épico 4.2 — Mobile (Expo)
 
 - [ ] `T4.2.1` Criar `apps/mobile` com Expo, consumindo `@tasksorg/core` — **Gustavo** · M
-- [ ] `T4.2.2` Adaptar `packages/ui` para React Native (tokens + componentes principais) — **Higor** · G
-- [ ] `T4.2.3` Tela Quadro mobile (uma coluna por aba) e Pomodoro — **Higor** · G · ⛓ T4.2.2
+- [ ] `T4.2.2` Adaptar `packages/ui` para React Native (tokens + componentes principais) — **Higor** · G · base independente pronta em `@tasksorg/ui/native`: tokens numéricos, temas Castelo/Pergaminho e fábrica de `Panel`, `Button`, `Tag`, `StatBar` e `TaskCard`; ligação e validação visual no Expo aguardam `T4.2.1`
+- [ ] `T4.2.3` Tela Quadro mobile (uma coluna por aba) e Pomodoro — **Higor** · G · ⛓ T4.2.2 · bloqueada pela adaptação da UI
 - [ ] `T4.2.4` Login e sincronização no mobile — **Gustavo** · M · ⛓ T4.2.1
 - [ ] `T4.2.5` Build e release mobile no CI (EAS) — **Guilhermo** · M · ⛓ T4.2.1
 
