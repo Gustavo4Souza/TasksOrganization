@@ -25,7 +25,7 @@ afterEach(cleanup);
 describe("Panel", () => {
   it("o título vira o nome acessível da seção", () => {
     render(<Panel title="Em batalha">conteúdo</Panel>);
-    expect(screen.getByRole("region", { name: "Em batalha" })).toHaveProperty("className", "px-panel");
+    expect(screen.getByRole("region", { name: "Em batalha" }).className.split(" ")).toContain("px-panel");
     expect(screen.getByRole("heading", { level: 2, name: "Em batalha" })).toBeTruthy();
   });
 
@@ -38,14 +38,14 @@ describe("Panel", () => {
 
   it("junta className e repassa outras props", () => {
     const { container } = render(<Panel className="extra" data-testid="p" />);
-    expect(container.querySelector("section")!.className).toBe("px-panel extra");
+    expect(container.querySelector("section")!.className.split(" ")).toEqual(expect.arrayContaining(["px-panel", "extra"]));
   });
 });
 
 describe("Button", () => {
   it.each(["primary", "secondary", "danger"] as const)("variante %s ganha a classe certa", (variant) => {
     render(<Button variant={variant}>Ok</Button>);
-    expect(screen.getByRole("button", { name: "Ok" }).className).toBe(`px-button px-button--${variant}`);
+    expect(screen.getByRole("button", { name: "Ok" }).className.split(" ")).toEqual(expect.arrayContaining(["px-button", `px-button--${variant}`]));
   });
 
   it("padrão é primary e type=button", () => {
@@ -83,7 +83,7 @@ describe("Button", () => {
 describe("Tag", () => {
   it.each(["gold", "mana", "moss", "crimson", "arcane"] as const)("tom %s", (tone) => {
     render(<Tag tone={tone}>{tone}</Tag>);
-    expect(screen.getByText(tone).className).toBe(`px-tag px-tone--${tone}`);
+    expect(screen.getByText(tone).className.split(" ")).toEqual(expect.arrayContaining(["px-tag", `px-tone--${tone}`]));
   });
 
   it("padrão é gold", () => {

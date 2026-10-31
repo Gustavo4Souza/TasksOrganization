@@ -66,6 +66,8 @@ export default function DesignPage() {
         <header className="design-header">
           <div>
             <Link href="/">← Voltar ao quadro</Link>
+            <span aria-hidden="true"> · </span>
+            <Link href="/design/kpis">Protótipo de KPIs →</Link>
             <p className="design-eyebrow">TASKSORG / DESIGN SYSTEM</p>
             <h1>Inventário visual</h1>
             <p>Peças para construir suas próximas conquistas.</p>
