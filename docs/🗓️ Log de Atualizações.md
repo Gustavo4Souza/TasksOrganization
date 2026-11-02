@@ -1,5 +1,18 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 02/11/2026 — Correção local dos checks de segurança do PR #37
+
+Removido o upload SARIF duplicado do workflow CodeQL, preservando a análise e
+o Security Gate. Vitest foi atualizado de 2.1.9 para 4.1.12 em Web, core e UI;
+as dependências transitivas de alta severidade foram resolvidas por overrides
+compatíveis no workspace. A auditoria local agora passa em `--audit-level=high`
+(restam dois achados moderados). Também foi atualizado o mock de `AudioContext`
+e a configuração do Vitest para compatibilidade com a nova versão.
+
+Validação local: 23 testes Web, 92 do core e 108 do UI; lint, typecheck e builds
+Web/Desktop concluídos. O aceite das tasks de segurança continua pendente da
+nova execução remota do CodeQL após o envio da branch.
+
 ## 02/11/2026 — Validações de segurança e dependências Web/Desktop
 
 As `T1.2.1`–`T1.2.4` foram alinhadas no roadmap ao PR #21: a implementação já
