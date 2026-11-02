@@ -28,7 +28,7 @@ describe("avisos de fase", () => {
   it("toca som 8-bit somente quando ativado", async () => {
     const oscillator = { type: "", frequency: { value: 0 }, connect: vi.fn(), start: vi.fn(), stop: vi.fn() };
     const context = { resume: vi.fn().mockResolvedValue(undefined), close: vi.fn().mockResolvedValue(undefined), createOscillator: vi.fn(() => oscillator), destination: {}, currentTime: 10 };
-    const AudioContextMock = vi.fn(() => context);
+    const AudioContextMock = vi.fn(function AudioContextMock() { return context; });
     vi.stubGlobal("AudioContext", AudioContextMock);
     const { result } = renderHook(() => usePhaseAlerts());
     const change = { from: "focus", to: "shortBreak", reason: "completed", completedFocusCycles: 1 } as const;

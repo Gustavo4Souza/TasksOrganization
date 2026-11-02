@@ -5,6 +5,5 @@ export default defineConfig({
   test: {
     pool: "forks",
     maxWorkers: 1,
-    minWorkers: 1,
   },
 });

@@ -74,12 +74,11 @@ MVP ──► entrega que dá para demonstrar e usar
 
 ## 🗺️ Roadmap
 
-### Estado das entregas do Higor — 31/10/2026
+### Estado das entregas do Higor — 02/11/2026
 
 | Status | Tasks | Situação |
 |---|---|---|
-| Concluídas e integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11` | Web oficial, fontes, componentes pixel e catálogo `/design` integrados pelos PRs #14 e #16. |
-| Implementação local pronta, aguardando revisão | `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Quadro, Modo foco, `PomodoroHUD`, `RoomMap`, ações, arrastar e soltar, atalhos, temas e acessibilidade implementados na branch `Higor`. Faltam revisão por PR e aceite final da Definition of Done. |
+| Integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11`, `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Código do Quadro, Modo foco, temas e acessibilidade integrado pelos PRs #14, #16, #19 e #21. O aceite final de acessibilidade aguarda a auditoria axe `T1.4.4`. |
 
 Validação local: 15 testes do Web e 105 do UI passaram; lint, typecheck e build do
 Web, além do build do Desktop, passaram. A imagem Docker de produção foi
@@ -94,15 +93,18 @@ Veja
 
 | Status | Tasks | Situação |
 |---|---|---|
-| Implementação local pronta, aguardando revisão | `T2.2.1`, `T2.2.3`, `T3.3.1` | Rotas `/login` e `/cadastro` com protótipo pixel responsivo, validação e estados de carregamento/erro; protótipo interativo de KPIs em `/design/kpis`, com quatro indicadores, filtro e `RoomMap`. |
+| Implementação integrada no PR #21 | `T2.2.1`, `T2.2.3`, `T3.3.1` | Login/cadastro com estados de carregamento/erro e protótipo de KPIs em `/design/kpis`; faltam apenas os critérios de aceite externos indicados nas respectivas tasks. |
 | Interface pronta, integração bloqueada | `T2.2.2`, `T3.3.2`, `T3.3.3` | Login/cadastro já chamam o contrato de autenticação. A rota `/kpis` consome registros do catálogo, filtra 7/30/90 dias e mostra valores, qualidade, origem e histórico. Dados reais dependem das APIs `T2.1.6` e `T3.2.5`. |
-| Parte independente pronta | `T3.1.6`, `T4.2.2` | Entradas de títulos no Web/Desktop agora são normalizadas e limitadas a 160 caracteres. `@tasksorg/ui/native` expõe tokens numéricos, temas e fábrica dos componentes principais sem acoplar o Web ao React Native. Correções do relatório SAST e validação dentro do Expo aguardam suas dependências. |
+| Parte independente pronta | `T3.1.6`, `T4.2.2` | Entradas Web/Desktop validadas; Next 15.5.28, Electron 42.11.16 e Vitest 4.1.12 validados localmente. A auditoria não tem mais achados altos/críticos. `@tasksorg/ui/native` expõe tokens e componentes base. A nova execução remota do CodeQL e o app Expo ainda são necessários para o aceite final. |
 | Bloqueadas por dependências | `T2.2.4`, `T2.2.5`, `T4.1.5`, `T4.2.3` | Dependem, respectivamente, do repositório HTTP, autenticação, cluster Kubernetes e criação/definição do app mobile. |
 
-Não restam tarefas de implementação independente atribuídas ao Higor no roadmap.
-O próximo avanço é revisar e integrar este conjunto; depois, as continuações exigem
-API de autenticação/repositório HTTP, endpoints de KPIs, relatório SAST, cluster ou
-o projeto Expo entregues pelos respectivos responsáveis.
+O PR #22 adicionou as verificações de segurança. A atualização local de Next
+14.2.15 → 15.5.28, Electron 32.3.3 → 42.11.16 e Vitest 2.1.9 → 4.1.12 passou
+nos 23 testes do Web, 92 do core, 108 do UI, lint, typecheck e builds
+Web/Desktop. A auditoria caiu de 7 críticas/37 altas para 0 críticas/0 altas
+(restam dois achados moderados). As transitivas foram atualizadas por overrides
+controlados no workspace. O upload SARIF duplicado foi removido do CodeQL; falta
+a execução remota publicar o relatório para encerrar `T3.1.6`.
 
 Validação desta etapa: 23 testes do Web e 108 do UI passaram; as telas de autenticação foram
 conferidas em 1280×720 nos temas do sistema e em 390×844. O protótipo de KPIs foi
@@ -121,9 +123,19 @@ Desktop passaram.
 | Concluídas | `T1.3.1`, `T1.3.6` | Hooks `usePomodoro` e `usePomodoroSettings` em `@tasksorg/ui/hooks`: relógio pelo tempo real (aba em segundo plano continua certa), retoma ao recarregar descontando só até o fim da fase, `skip` sem crédito e tempos validados e salvos localmente. Mergeados no PR #12; liberam `T1.3.2`–`T1.3.4` (Higor) e `T1.5.3` (Guilhermo). |
 | Correção integrada | — | `output: "standalone"` do Next só no build do Docker (`NEXT_OUTPUT=standalone`). Correção integrada no PR #15. |
 | Prontas para começar | `T1.1.7`, `T2.1.1` | Cobertura ≥ 90% no core; proposta da decisão de persistência para o grupo. |
-| Liberadas para implementação/validação | `T0.2.9`, `T0.2.10`, `T1.6.1` | Os componentes do MVP 0 estão na `main`; a tela `T1.2.5` está implementada na branch `Higor` e precisa de revisão para liberar os E2E. |
+| Liberada para implementação/validação | `T1.6.1` | O fluxo do Quadro está integrado à `main` pelo PR #21; os testes E2E de Gustavo podem começar. `T0.2.9` e `T0.2.10` foram integradas pelo PR #17. |
+| Segurança compartilhada | `T3.1.5`, apoio a `T3.1.6` | Vitest 4.1.12 e suas transitivas seguras foram validados no core, UI e Web; a auditoria local passa no limite alto/crítico. Falta a execução remota publicar o relatório CodeQL. |
 
-> As caixas das tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done. A implementação do Higor está pronta para revisão local; as alterações desta sessão ainda não foram commitadas nem enviadas.
+### Estado das entregas do Guilhermo — 02/11/2026
+
+| Status | Tasks | Situação |
+|---|---|---|
+| Integradas | `T3.1.1`, implementação de `T3.1.4` | O PR #22 incluiu a decisão CodeQL, Dependabot e o workflow de auditoria. Este último executa e falha diante das vulnerabilidades altas/críticas do lockfile. |
+| Aguardando execução remota | `T3.1.2`, `T3.1.3` | O upload SARIF duplicado foi removido da branch `Higor`. A próxima execução precisa publicar o relatório e demonstrar o bloqueio por severidade antes do aceite. |
+| Próximas do MVP 1 | `T1.5.1`–`T1.5.4`, `T1.6.2`–`T1.6.5` | Renderer Electron compartilhado, janela/tray/instalador, E2E no CI, publicação e homologação não constam no código. `T1.6.2` depende de `T1.6.1` (Gustavo). |
+| Fases seguintes | `T2.3.1`–`T2.3.5`, `T3.2.1`–`T3.2.4`, `T3.2.6`, `T3.2.8`, `T4.1.1`–`T4.1.3`, `T4.2.5` | Infraestrutura da API, coleta de KPIs, cluster e release mobile ainda dependem dos pré-requisitos do roadmap. |
+
+> As caixas das tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done. Os PRs #21 e #22 estão na `main`; os fluxos integrados ainda precisam do aceite final de E2E/axe. A atualização de dependências do Higor precisa de revisão e aceite próprios.
 
 | MVP | Nome | O que dá para demonstrar no fim | Sprints |
 |---|---|---|---|
@@ -198,32 +210,32 @@ Desktop passaram.
 
 > Como usuário, quero ver todas as missões do escopo de relance, sem rolar a tela, e mudá-las de coluna com um clique.
 
-- [ ] `T1.2.1` Layout em `100vh`: HUD + 3 colunas + lateral (grid do protótipo) — **Higor** · M · ⛓ T0.2.11
-- [ ] `T1.2.2` HUD: `ScopeTabs` com contadores, barra de XP do dia e campo "Nova missão" com prioridade — **Higor** · M · ⛓ T1.2.1
-- [ ] `T1.2.3` Colunas Missões / Em batalha / Conquistas, com estados vazios — **Higor** · M · ⛓ T1.2.1
-- [ ] `T1.2.4` Densidade adaptativa: mais de 6 cartões → compactos; mais de 11 → "+N missões" com lista em popover — **Higor** · M · ⛓ T1.2.3
-- [ ] `T1.2.5` Ações no cartão: concluir, BATALHAR/RECUAR, editar inline e excluir com confirmação — **Higor** · M · ⛓ T1.1.3 · fluxos cobertos por testes do Web; aguarda revisão
-- [ ] `T1.2.6` Arrastar e soltar entre colunas, com alternativa por teclado — **Higor** · G · ⛓ T1.2.5 · arrastar e soltar e botões Batalhar, Recuar, Concluir e Reabrir testados; aguarda revisão
-- [ ] `T1.2.7` Painel Mapa ligado ao histórico do core — **Higor** · P · ⛓ T1.1.5 · integrado ao `RoomMap` compartilhado, com progresso semanal e anual testado; aguarda revisão
+- [ ] `T1.2.1` Layout em `100vh`: HUD + 3 colunas + lateral (grid do protótipo) — **Higor** · M · ⛓ T0.2.11 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.2.2` HUD: `ScopeTabs` com contadores, barra de XP do dia e campo "Nova missão" com prioridade — **Higor** · M · ⛓ T1.2.1 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.2.3` Colunas Missões / Em batalha / Conquistas, com estados vazios — **Higor** · M · ⛓ T1.2.1 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.2.4` Densidade adaptativa: mais de 6 cartões → compactos; mais de 11 → "+N missões" com lista em popover — **Higor** · M · ⛓ T1.2.3 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.2.5` Ações no cartão: concluir, BATALHAR/RECUAR, editar inline e excluir com confirmação — **Higor** · M · ⛓ T1.1.3 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.2.6` Arrastar e soltar entre colunas, com alternativa por teclado — **Higor** · G · ⛓ T1.2.5 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.2.7` Painel Mapa ligado ao histórico do core — **Higor** · P · ⛓ T1.1.5 · integrado no PR #21; aguarda aceite E2E
 
 #### Épico 1.3 — Pomodoro e Modo foco
 
 > Como usuário, quero um timer que eu leia de longe e que me avise quando a fase virar.
 
 - [x] `T1.3.1` Hook `usePomodoro` (tick com `PomodoroTimer`, continua certo após recarregar a página) — **Gustavo** · M · ⛓ T1.1.4
-- [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1, T0.2.9 · integrado ao componente compartilhado, coberto por teste; aguarda revisão
-- [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1 · próximas três cobertas por teste; tela preenchida conferida nos dois temas em 1280×720 e no celular; aguarda revisão
-- [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1 · implementado no Quadro e Modo foco; testes de permissão e som passaram; aguarda revisão
-- [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · implementados; Espaço, N e escopos cobertos por teste; F validado na navegação manual; aguardam revisão
+- [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1, T0.2.9 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · integrado no PR #21; aguarda aceite E2E
 - [x] `T1.3.6` Configuração dos tempos (padrão 25/5/15, 4 ciclos), salva localmente — **Gustavo** · P
 
 #### Épico 1.4 — Temas, formatos de tela e acessibilidade
 
 > Como usuário, quero que o app funcione no meu monitor, seja ele pequeno, grande ou vertical, no tema que eu preferir.
 
-- [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P · Web e Desktop integrados aos tokens de `@tasksorg/ui`; restauração do tema salvo e primeira visita direta ao Modo foco testadas no Web; aguarda revisão
-- [ ] `T1.4.2` Layouts para telas de até 1280px, monitor vertical e celular (no celular a rolagem é aceita) — **Higor** · M · ⛓ T1.2.1 · conferidos nas resoluções alvo; Quadro preenchido validado nos dois temas em 1280×720; aguardando revisão
-- [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P · foco visível também em links e resumos de listas; movimento reduzido e rótulos dos botões de ícone atuais prontos; aguarda revisão e auditoria axe (`T1.4.4`, Gustavo)
+- [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P · código Web/Desktop integrado no PR #21; aguarda aceite final
+- [ ] `T1.4.2` Layouts para telas de até 1280px, monitor vertical e celular (no celular a rolagem é aceita) — **Higor** · M · ⛓ T1.2.1 · código e validação visual integrados no PR #21; aguarda aceite final
+- [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P · código integrado no PR #21; aguarda auditoria axe (`T1.4.4`, Gustavo)
 - [ ] `T1.4.4` Auditoria automática com axe nas telas (zero violações sérias) — **Gustavo** · M
 
 #### Épico 1.5 — Desktop com a mesma interface
@@ -280,9 +292,9 @@ Web / Desktop ──► TaskRepository (HTTP) ──► API ──► PostgreSQL
 
 > Como usuário, quero entrar na minha conta e continuar de onde parei, mesmo se a internet cair.
 
-- [ ] `T2.2.1` Prototipar no canvas as telas de login e cadastro com o Design System — **Higor** · P · protótipo funcional nas rotas `/login` e `/cadastro`, aguardando revisão
+- [ ] `T2.2.1` Prototipar no canvas as telas de login e cadastro com o Design System — **Higor** · P · protótipo funcional integrado no PR #21; aceite do protótipo pendente
 - [ ] `T2.2.2` Implementar login e cadastro no estilo pixel — **Higor** · M · ⛓ T2.2.1, T2.1.6 · interface e contrato HTTP prontos; integração real bloqueada por `T2.1.6`
-- [ ] `T2.2.3` Estados de carregamento e erro pixelados (blocos piscando em `steps()`, aviso de erro) — **Higor** · M · implementados e cobertos por testes; aguarda revisão
+- [ ] `T2.2.3` Estados de carregamento e erro pixelados (blocos piscando em `steps()`, aviso de erro) — **Higor** · M · integrados no PR #21; aceite da tela pendente
 - [ ] `T2.2.4` Modo offline: fila local de alterações, sincronizada ao reconectar — **Higor** · G · ⛓ T2.1.7 · bloqueada pelo adaptador HTTP
 - [ ] `T2.2.5` Migrar os dados locais do MVP 1 para a conta no primeiro login — **Higor** · M · ⛓ T2.2.2 · bloqueada pela autenticação real
 
@@ -314,11 +326,11 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 > Como time, queremos que vulnerabilidades sejam encontradas antes do deploy.
 
 - [x] `T3.1.1` Escolher a ferramenta SAST e registrar a decisão — **Guilhermo** · P
-- [x] `T3.1.2` SAST no GitHub Actions com relatório no PR — **Guilhermo** · M · ⛓ T3.1.1
-- [x] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2
-- [x] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P
+- [ ] `T3.1.2` SAST no GitHub Actions com relatório no PR — **Guilhermo** · M · ⛓ T3.1.1 · workflow integrado no PR #22, mas a execução falha por upload SARIF duplicado; aguarda relatório publicado
+- [ ] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2 · lógica versionada, ainda sem execução válida do CodeQL
+- [x] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P · workflow integrado e falhando por vulnerabilidades detectadas; correção das dependências por responsável técnico
 - [ ] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2
-- [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2 · validação independente pronta: títulos normalizados, obrigatórios e limitados a 160 caracteres no Web/Desktop, com teste no Web; correções de achados aguardam o relatório SAST
+- [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2 · entradas validadas; Next/Electron/Vitest e transitivas atualizados; auditoria local passa em alta/crítica; aguarda relatório remoto do CodeQL
 
 > **Decisão da T3.1.1:** o projeto usará o **CodeQL** como SAST principal,
 > analisando JavaScript/TypeScript com a query suite `security-extended`.
@@ -351,7 +363,7 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 
 > Como time, queremos ver os KPIs dentro do próprio TasksOrg, no mesmo visual.
 
-- [ ] `T3.3.1` Prototipar no canvas a tela de KPIs com o Design System (`StatBar` para taxas, `RoomMap` como calendário de deploys) — **Higor** · M · protótipo interativo em `/design/kpis`, aguardando revisão
+- [ ] `T3.3.1` Prototipar no canvas a tela de KPIs com o Design System (`StatBar` para taxas, `RoomMap` como calendário de deploys) — **Higor** · M · protótipo interativo integrado no PR #21; aceite pendente
 - [ ] `T3.3.2` Implementar os cards de Deployments, Taxa de falha, MTTR e Testes — **Higor** · M · ⛓ T3.3.1, T3.2.5 · interface real em `/kpis`, com qualidade dos dados e estados indisponíveis; integração bloqueada pelos endpoints
 - [ ] `T3.3.3` Histórico e filtro por período — **Higor** · M · ⛓ T3.3.2 · filtros 7/30/90 dias e tabela de origem implementados; dados reais bloqueados pelos endpoints
 

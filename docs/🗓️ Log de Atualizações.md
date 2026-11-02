@@ -1,5 +1,35 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 02/11/2026 — Correção local dos checks de segurança do PR #37
+
+Removido o upload SARIF duplicado do workflow CodeQL, preservando a análise e
+o Security Gate. Vitest foi atualizado de 2.1.9 para 4.1.12 em Web, core e UI;
+as dependências transitivas de alta severidade foram resolvidas por overrides
+compatíveis no workspace. A auditoria local agora passa em `--audit-level=high`
+(restam dois achados moderados). Também foi atualizado o mock de `AudioContext`
+e a configuração do Vitest para compatibilidade com a nova versão.
+
+Validação local: 23 testes Web, 92 do core e 108 do UI; lint, typecheck e builds
+Web/Desktop concluídos. O aceite das tasks de segurança continua pendente da
+nova execução remota do CodeQL após o envio da branch.
+
+## 02/11/2026 — Validações de segurança e dependências Web/Desktop
+
+As `T1.2.1`–`T1.2.4` foram alinhadas no roadmap ao PR #21: a implementação já
+está na `main`, enquanto o aceite E2E do MVP 1 continua pendente (`T1.6.1`).
+
+O PR #21 integrou o trabalho anterior do Higor e o PR #22 trouxe CodeQL e a
+auditoria de dependências. O roadmap foi atualizado para os três integrantes com
+base no código e nas execuções: o CodeQL ainda falha pelo envio duplicado de SARIF,
+e a auditoria executa mas encontra dependências vulneráveis.
+
+Na branch `Higor`, Next e eslint-config-next foram atualizados para 15.5.28 e
+Electron para 42.11.16. Passaram 23 testes do Web, lint, typecheck e builds do
+Web/Desktop. A auditoria passou de 7 críticas/37 altas para 3 críticas/9 altas.
+Os alertas restantes incluem ferramentas de testes compartilhadas e dependências
+transitivas; não foram marcados como resolvidos. A atualização de dependências
+precisa de revisão pelo time antes de entrar na `main`.
+
 ## 31/10/2026 — SAST e auditoria de dependências do MVP 3
 
 Concluídas as `T3.1.1`, `T3.1.2`, `T3.1.3` e `T3.1.4`. O CodeQL foi escolhido
