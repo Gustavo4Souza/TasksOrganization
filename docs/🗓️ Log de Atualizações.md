@@ -1,45 +1,18 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
-## 31/10/2026 — Validação de entradas e base independente para mobile
+## 31/10/2026 — SAST e auditoria de dependências do MVP 3
 
-Avançada a parte independente da `T3.1.6`: os campos de criação e edição de
-missões no Web e a criação de tarefas no Desktop agora removem espaços externos,
-recusam conteúdo vazio e limitam títulos a 160 caracteres. O Web ganhou um teste
-para o limite e a normalização. A correção de achados específicos continua
-aguardando o relatório SAST da `T3.1.2`.
+Concluídas as `T3.1.1`, `T3.1.2`, `T3.1.3` e `T3.1.4`. O CodeQL foi escolhido
+como SAST principal e configurado em `.github/workflows/codeql.yml` para analisar
+JavaScript/TypeScript com `security-extended` em pushes, pull requests e execução
+semanal. Os resultados são publicados no GitHub Code Scanning e o workflow bloqueia
+o pipeline quando encontra vulnerabilidades com `security-severity` alta ou crítica.
 
-Também foi iniciada a `T4.2.2` sem antecipar decisões do app Expo. O novo export
-`@tasksorg/ui/native` converte cores, espaçamentos, bordas e tipografia para valores
-compatíveis com React Native e fornece uma fábrica desacoplada para `Panel`,
-`Button`, `Tag`, `StatBar` e `TaskCard`. Assim, `packages/ui` não passa a carregar
-`react-native` no Web; o futuro `apps/mobile` injeta `View`, `Text` e `Pressable`.
-A ligação e a validação visual no Expo continuam dependentes da `T4.2.1`.
-
-Passaram 108 testes do UI e 23 do Web, além de lint, typecheck e builds do UI,
-Web e Desktop. Nenhum commit ou push foi realizado nesta sessão.
-
-## 31/10/2026 — Início das entregas do Higor após o MVP 1
-
-Criadas as rotas `/login` e `/cadastro` com o Design System pixel, alternância de
-tema persistida, campos acessíveis, validação de senha e layout responsivo. Os
-formulários já usam o contrato `/auth/login` e `/auth/register` quando
-`NEXT_PUBLIC_API_URL` estiver configurada. Sem a API, exibem uma mensagem de
-indisponibilidade; durante uma requisição, bloqueiam os campos e mostram blocos
-animados em `steps()`, respeitando movimento reduzido.
-
-Também foi criado o protótipo interativo `/design/kpis`, com cards de Deployments,
-Taxa de falha, MTTR e Testes, filtros de 7/30/90 dias, `StatBar` e `RoomMap`. Os
-dados estão identificados como demonstrativos porque os endpoints da `T3.2.5`
-ainda não existem. As novas telas elevaram a suíte do Web para 20 testes e foram
-conferidas visualmente em desktop e celular.
-
-A rota real `/kpis` foi preparada para receber os registros do contrato do
-catálogo de KPIs. Ela não inventa valores ausentes: exibe qualidade `complete`,
-`partial` ou `unavailable`, fonte, janela de medição e observações. Os filtros de
-7/30/90 dias refazem a consulta e o histórico preserva origem e período. Sem
-`NEXT_PUBLIC_API_URL`, a tela informa que a fonte ainda não foi configurada. Com
-isso, a suíte do Web passou a 22 testes; a tela sem API foi conferida em 1280×720
-e os dados reais continuam dependentes da `T3.2.5`.
+Criado `.github/workflows/dependency-audit.yml`, que executa
+`pnpm audit --audit-level=high` no CI. Também foi configurado o Dependabot em
+`.github/dependabot.yml` para propor atualizações semanais das dependências npm e
+das GitHub Actions. Os arquivos de configuração foram validados como YAML; a
+auditoria local ficou pendente porque `pnpm` não estava disponível no ambiente.
 
 ## 30/10/2026 — Quadro e Modo foco do MVP 1
 
