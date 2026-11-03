@@ -15,6 +15,7 @@ Base de decisões (estilo ADR) do projeto **TasksOrg**. Cada decisão registra o
 | [[GitHub Actions como CI-CD oficial]] | DevOps | Aceita | 2026-10-11 |
 | [[Identidade visual pixel (Metroidvania) e tela sem rolagem]] | Produto / UI | Proposta | 2026-10-02 |
 | [[Stack oficial de hospedagem]] | Infraestrutura | Aceita | 2026-10-16 |
+| [[Persistência com API própria e PostgreSQL]] | Arquitetura | Proposta | 2026-11-02 |
 
 > Jenkins e GitLab permanecem registrados como histórico. A decisão vigente de
 > CI/CD é [[GitHub Actions como CI-CD oficial]].
