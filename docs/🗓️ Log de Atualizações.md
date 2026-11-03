@@ -1,5 +1,43 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 03/11/2026 — Integração do desktop com a UI compartilhada
+
+O renderer do Electron foi migrado do HTML manual para React, reutilizando
+`@tasksorg/core`, `@tasksorg/ui`, `TaskStore`, persistência local e o mesmo HUD
+de Pomodoro, cartões de missão, escopos e temas do web. A janela agora salva
+posição, tamanho, monitor e o estado de sempre no topo em `userData`, com uma
+ponte preload sem Node exposto ao renderer.
+
+Foi adicionada a bandeja do sistema com ações para abrir, fixar e sair, além da
+configuração do `electron-builder` e do workflow `Desktop release`, que gera o
+instalador Windows e o publica como artefato. Build, lint, typecheck,
+empacotamento local e validação YAML passaram; a execução Windows do workflow
+continua pendente para encerrar `T1.5.4`.
+
+## 03/11/2026 — Escopo de produção e preparação da release v0.1.0
+
+O grupo decidiu não criar um ambiente separado de homologação neste MVP.
+`T1.6.4` foi retirada do escopo, e a produção do web continua sendo atendida
+pela integração existente com a Vercel. A `T1.6.5` foi validada parcialmente:
+o `CHANGELOG.md` foi preparado, mas a tag `v0.1.0` deve ser criada somente após
+o merge desta documentação na `main`.
+
+## 03/11/2026 — CI do MVP 1 e publicação no GHCR
+
+A `T1.6.2` foi concluída no workflow de CI: além dos testes unitários, o pipeline
+executa a cobertura do `@tasksorg/core` com limiar de 90%, os testes E2E e publica
+um resumo tabular de sucesso/falha no Summary do GitHub Actions. A validação local
+passou com 105 testes do core, 98,92% de statements e 31 cenários E2E; lint,
+typecheck e builds Web/Desktop também passaram.
+
+A `T1.6.3` foi concluída: pushes na `main` fazem login no GHCR com o
+`GITHUB_TOKEN` e publicam `ghcr.io/<owner>/tasksorg-web` com tags de SHA e
+`latest`. Pull requests continuam apenas construindo a imagem, sem publicar.
+
+O catálogo e o contrato de dados de KPIs já existentes foram reconhecidos como
+`T3.2.8`. As tarefas de renderer/tray do Electron, ambiente de homologação e
+KPIs dependentes de deploy ou incidentes reais continuam abertas.
+
 ## 03/11/2026 — Quadro mobile e testes de aceite do Higor
 
 O pacote `@tasksorg/ui/native` foi ligado ao app Expo e compatibilizado com as

@@ -7,6 +7,9 @@ on:
 jobs:
   quality-and-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,11 +34,67 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Test
+      - name: Unit tests
+        id: unit_tests
         run: pnpm test
+
+      - name: Core coverage
+        id: core_coverage
+        if: always()
+        run: pnpm --filter @tasksorg/core test:coverage
+
+      - name: End-to-end tests
+        id: e2e_tests
+        if: always()
+        run: pnpm test:e2e
+
+      - name: Publish test summary
+        if: always()
+        env:
+          UNIT_TESTS_OUTCOME: ${{ steps.unit_tests.outcome }}
+          CORE_COVERAGE_OUTCOME: ${{ steps.core_coverage.outcome }}
+          E2E_TESTS_OUTCOME: ${{ steps.e2e_tests.outcome }}
+        run: |
+          {
+            echo "## Test report"
+            echo ""
+            echo "| Suite | Result |"
+            echo "| --- | --- |"
+            echo "| Unit tests | ${UNIT_TESTS_OUTCOME} |"
+            echo "| Core coverage (90% threshold) | ${CORE_COVERAGE_OUTCOME} |"
+            echo "| End-to-end tests | ${E2E_TESTS_OUTCOME} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Build web and desktop
         run: pnpm turbo run build --filter=@tasksorg/web --filter=@tasksorg/desktop
 
       - name: Build web production image
         run: docker build -f apps/web/Dockerfile -t tasksorg-web:${{ github.sha }} .
+
+      - name: Log in to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract image metadata
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/tasksorg-web
+          tags: |
+            type=sha
+            type=raw,value=latest
+
+      - name: Publish web production image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

@@ -44,12 +44,13 @@ pull request. Ele executa:
 1. checkout do repositório;
 2. configuração do pnpm 9.12.0 e Node.js 20;
 3. instalação com `pnpm install --frozen-lockfile`;
-4. lint, typecheck e testes;
+4. lint, typecheck, testes unitários, cobertura do core e E2E;
 5. build do web e desktop;
-6. build da imagem de produção do `apps/web`.
+6. build da imagem de produção do `apps/web`;
+7. publicação da imagem no GHCR em pushes na `main`, usando o `GITHUB_TOKEN`.
 
-O workflow não publica a imagem em um registry nem faz deploy. Esses passos
-ficam para etapas futuras.
+O deploy de produção do web continua sendo gerenciado pela integração existente
+com a Vercel. Não haverá ambiente separado de homologação neste MVP.
 
 O catálogo completo de métricas, IDs canônicos, fórmulas, fontes, responsáveis
 e contrato de dados está em [KPIs de DevOps e DevSecOps](./KPIs%20de%20DevOps%20e%20DevSecOps.md).
@@ -65,8 +66,9 @@ continuam registradas em `docs/Decisões/`.
 
 ## Próximas etapas de DevOps
 
-- Publicar `tasksorg-web` em um registry.
-- Definir deploy automatizado.
+- Criar a tag `v0.1.0` após o merge da release.
+- Executar o workflow `Desktop release` em uma tag `v*.*.*` para publicar o
+  instalador Windows como artefato (`T1.5.4`).
 - Criar manifests Kubernetes quando o deploy estiver pronto.
 - Incorporar backend, banco e health checks quando essas partes forem
   implementadas.

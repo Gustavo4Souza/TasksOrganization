@@ -5,6 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc -p tsconfig.json && node esbuild.renderer.mjs",
+    "dist:win": "pnpm build && electron-builder --win --publish never",
     "dev": "pnpm build && electron .",
     "start": "electron .",
     "lint": "eslint . --max-warnings 0",
@@ -12,15 +13,40 @@
     "test": "echo \"(sem testes automatizados no desktop na POC - a logica fica coberta pelos testes de @tasksorg/core)\" && exit 0"
   },
   "dependencies": {
-    "@tasksorg/core": "workspace:*"
+    "@tasksorg/core": "workspace:*",
+    "@tasksorg/ui": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@tasksorg/eslint-config": "workspace:^",
     "@tasksorg/tsconfig": "workspace:^",
     "@types/node": "^20.16.11",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "electron-builder": "^26.0.12",
     "electron": "^42.11.16",
     "esbuild": "^0.24.0",
     "eslint": "^9",
     "typescript": "^5.6.3"
+  },
+  "build": {
+    "appId": "com.tasksorg.desktop",
+    "productName": "TasksOrg",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }
