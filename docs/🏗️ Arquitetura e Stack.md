@@ -4,8 +4,8 @@
 |---|---|
 | Linguagem | TypeScript em 100% do código |
 | Monorepo | pnpm workspaces + Turborepo |
-| Web | Next.js 14 (App Router) + React 18 |
-| Desktop | Electron 32 |
+| Web | Next.js 15 (App Router) + React 18 |
+| Desktop | Electron 42 |
 | Mobile | ainda não implementado — próximo passo: Expo (React Native) |
 | Lógica compartilhada | pacote `@tasksorg/core`, sem nenhuma dependência de UI |
 | Testes | Vitest (packages/core) |

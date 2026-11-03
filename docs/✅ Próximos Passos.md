@@ -5,20 +5,20 @@ Lista viva — marca como feito conforme avança, e adiciona itens novos conform
 - [x] Adotar GitHub Actions como CI/CD oficial
 - [x] Remover Jenkins e GitLab da configuração ativa do projeto
 - [x] Criar workflow de CI com qualidade, build e imagem Docker do web
-- [ ] Publicar a imagem `tasksorg-web` num registry (Docker Hub, GHCR ou o próprio GitLab Container Registry)
+- [ ] Publicar a imagem `tasksorg-web` no GHCR (`T1.6.3`)
 - [ ] Escrever manifests do Kubernetes (`k8s/deployment.yaml`, `k8s/service.yaml`)
 - [ ] Adicionar etapa de deploy ao workflow do GitHub Actions
 
 ## Produto / Plataformas
 
 - [ ] Criar `apps/mobile` com Expo (React Native), reaproveitando `@tasksorg/core`
-- [ ] Persistência real — hoje o `TaskStore` é só em memória. Decidir entre backend próprio (API + Postgres) ou local-first com sync
+- [ ] Persistência real — hoje os dados ficam só no dispositivo (`localStorage` no web). Decidir entre backend próprio (API + Postgres) ou local-first com sync
 - [ ] Levantar com o grupo o restante dos requisitos de produto (hoje só tarefas diária/semanal/anual + pomodoro)
 
 ## Qualidade / Arquitetura
 
-- [ ] `packages/ui` compartilhado entre web e (futuramente) mobile via React Native Web
-- [ ] `packages/eslint-config` compartilhado (hoje `core` e `desktop` têm lint placeholder)
+- [x] `packages/ui` compartilhado; a base para mobile está em `@tasksorg/ui/native`
+- [x] `packages/eslint-config` compartilhado (`T0.1.7`)
 
 ## Documentação
 

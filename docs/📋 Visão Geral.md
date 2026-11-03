@@ -12,7 +12,7 @@ Rodar em **multiplataforma** mantendo o produto sempre atualizado nas várias pl
 
 - **Web** — página acessível de qualquer navegador
 - **Desktop** — executável instalável (Windows/Mac/Linux)
-- **Mobile** — app (ainda não implementado, ver [[Projetos/TasksOrg - DevOps/✅ Próximos Passos]])
+- **Mobile** — app (ainda não implementado, ver [[✅ Próximos Passos]])
 
 ## Fase atual
 

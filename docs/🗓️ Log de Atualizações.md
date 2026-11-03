@@ -1,5 +1,12 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 02/11/2026 — Documentação alinhada ao estado da `main`
+
+Roadmap, Arquitetura e Próximos Passos alinhados a `1502ae6`: CI, CodeQL e auditoria
+passando na `main`, Next.js 15 e Electron 42. Localmente, lint, typecheck, build e os
+223 testes (92 core, 108 UI, 23 Web) passaram. As caixas de `T3.1.2` e `T3.1.3`
+continuam abertas até o relatório e o bloqueio serem conferidos.
+
 ## 02/11/2026 — Compatibilidade do lockfile com o CI
 
 O PR falhou na instalação congelada porque o lockfile e os overrides foram
