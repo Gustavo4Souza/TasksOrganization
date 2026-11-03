@@ -74,11 +74,20 @@ MVP ──► entrega que dá para demonstrar e usar
 
 ## 🗺️ Roadmap
 
+### O que cada um pode puxar agora — 02/11/2026
+
+| Quem | Liberado | Observação |
+|---|---|---|
+| Guilhermo | `T1.6.2`, `T1.5.1`, `T1.5.3`, `T1.6.3`, `T2.3.2`, `T3.2.1`–`T3.2.3`, `T3.2.8` | `T1.6.2` foi destravada por `T1.6.1`: rodar `pnpm test:e2e` e a cobertura do core no CI. Falta também demonstrar o bloqueio de `T3.1.2` e `T3.1.3`. |
+| Higor | Aceite de `T1.2.x`, `T1.3.2`–`T1.3.5` e `T1.4.1`–`T1.4.3` | E2E e axe já existem (PRs #43 e #44). Arrastar e soltar, avisos de fase, atalhos e layouts em monitor vertical/celular não são cobertos por eles. As integrações do MVP 2 dependem da API. |
+| Gustavo | `T2.1.2`, após a aprovação da `T2.1.1` | Proposta no PR #46. A base do mobile está no PR #47. |
+| Grupo | Decidir `T2.1.1` e revisar o PR #47 | A decisão libera o MVP 2. |
+
 ### Estado das entregas do Higor — 02/11/2026
 
 | Status | Tasks | Situação |
 |---|---|---|
-| Integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11`, `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Código do Quadro, Modo foco, temas e acessibilidade integrado pelos PRs #14, #16, #19 e #21. O aceite final de acessibilidade aguarda a auditoria axe `T1.4.4`. |
+| Integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11`, `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Código do Quadro, Modo foco, temas e acessibilidade integrado pelos PRs #14, #16, #19 e #21. A auditoria axe `T1.4.4` passou no PR #44. |
 
 Validação local da época (hoje são 23 do Web e 108 do UI): 15 testes do Web e 105 do UI passaram; lint, typecheck e build do
 Web, além do build do Desktop, passaram. A imagem Docker de produção foi
@@ -122,9 +131,9 @@ Desktop passaram.
 | Concluídas | `T1.1.4`, `T1.1.5` | `PomodoroTimer.onPhaseChange` e `creditFocusToBattle` (fim do Foco credita +1 na missão em batalha); `weekProgress` e `yearProgress` com níveis 0–3 para o mapa. Core com 68 testes. Mergeado no PR #10. |
 | Concluídas | `T1.3.1`, `T1.3.6` | Hooks `usePomodoro` e `usePomodoroSettings` em `@tasksorg/ui/hooks`: relógio pelo tempo real (aba em segundo plano continua certa), retoma ao recarregar descontando só até o fim da fase, `skip` sem crédito e tempos validados e salvos localmente. Mergeados no PR #12; liberam `T1.3.2`–`T1.3.4` (Higor) e `T1.5.3` (Guilhermo). |
 | Correção integrada | — | `output: "standalone"` do Next só no build do Docker (`NEXT_OUTPUT=standalone`). Correção integrada no PR #15. |
-| Prontas para começar | `T1.1.7`, `T2.1.1` | Cobertura ≥ 90% no core; proposta da decisão de persistência para o grupo. |
-| Liberada para implementação/validação | `T1.6.1` | O fluxo do Quadro está integrado à `main` pelo PR #21; os testes E2E de Gustavo podem começar. `T0.2.9` e `T0.2.10` foram integradas pelo PR #17. |
-| Segurança compartilhada | `T3.1.5`, apoio a `T3.1.6` | Vitest 4.1.12 e suas transitivas seguras foram validados no core, UI e Web; a auditoria passa no limite alto/crítico. O CodeQL passou na `main`; falta conferir o relatório. |
+| Concluídas | `T1.1.7`, `T1.4.4`, `T1.6.1` | Cobertura do core em 98,9% com limite de 90% (PR #45); axe sem violações sérias em 7 rotas e no Quadro, nos dois temas (PR #44); 9 testes E2E (PR #43). |
+| Em revisão | `T2.1.1`, `T4.2.1` | Proposta de persistência no PR #46; base do app Expo no PR #47. |
+| Segurança compartilhada | `T3.1.5`, apoio a `T3.1.6` | Sem alertas do CodeQL para o core na aba Security (consulta de 02/11/2026). A parte da API só pode ser avaliada depois de `T2.1.2`. |
 
 ### Estado das entregas do Guilhermo — 02/11/2026
 
@@ -135,7 +144,7 @@ Desktop passaram.
 | Próximas do MVP 1 | `T1.5.1`–`T1.5.4`, `T1.6.2`–`T1.6.5` | Renderer Electron compartilhado, janela/tray/instalador, E2E no CI, publicação e homologação não constam no código. `T1.6.2` depende de `T1.6.1` (Gustavo). |
 | Fases seguintes | `T2.3.1`–`T2.3.5`, `T3.2.1`–`T3.2.4`, `T3.2.6`, `T3.2.8`, `T4.1.1`–`T4.1.3`, `T4.2.5` | Infraestrutura da API, coleta de KPIs, cluster e release mobile ainda dependem dos pré-requisitos do roadmap. |
 
-> As caixas das tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done. Os PRs #21 e #22 estão na `main`; os fluxos integrados ainda precisam do aceite final de E2E/axe. A atualização de dependências do Higor precisa de revisão e aceite próprios.
+> As caixas das tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done. Os PRs #21 e #22 estão na `main`; E2E e axe entraram nos PRs #43 e #44, e os fluxos integrados aguardam o aceite do responsável. A atualização de dependências do Higor precisa de revisão e aceite próprios.
 
 | MVP | Nome | O que dá para demonstrar no fim | Sprints |
 |---|---|---|---|
@@ -204,29 +213,29 @@ Desktop passaram.
 - [x] `T1.1.4` `PomodoroTimer` emite evento de troca de fase; ao fim de um Foco, credita +1 à missão em batalha — **Gustavo** · M · ⛓ T1.1.2
 - [x] `T1.1.5` Histórico diário de conclusões, com nível de 0 a 3 por dia e por mês (alimenta o `RoomMap`) — **Gustavo** · M · ⛓ T1.1.1
 - [x] `T1.1.6` Interface `TaskRepository` + adaptadores `localStorage` (web) e arquivo JSON (desktop) — **Gustavo** · M
-- [ ] `T1.1.7` Testes unitários das regras acima (meta: ≥ 90% de cobertura no core) — **Gustavo** · M
+- [x] `T1.1.7` Testes unitários das regras acima (meta: ≥ 90% de cobertura no core) — **Gustavo** · M
 
 #### Épico 1.2 — Tela Quadro
 
 > Como usuário, quero ver todas as missões do escopo de relance, sem rolar a tela, e mudá-las de coluna com um clique.
 
-- [ ] `T1.2.1` Layout em `100vh`: HUD + 3 colunas + lateral (grid do protótipo) — **Higor** · M · ⛓ T0.2.11 · integrado no PR #21; aguarda aceite E2E
-- [ ] `T1.2.2` HUD: `ScopeTabs` com contadores, barra de XP do dia e campo "Nova missão" com prioridade — **Higor** · M · ⛓ T1.2.1 · integrado no PR #21; aguarda aceite E2E
-- [ ] `T1.2.3` Colunas Missões / Em batalha / Conquistas, com estados vazios — **Higor** · M · ⛓ T1.2.1 · integrado no PR #21; aguarda aceite E2E
-- [ ] `T1.2.4` Densidade adaptativa: mais de 6 cartões → compactos; mais de 11 → "+N missões" com lista em popover — **Higor** · M · ⛓ T1.2.3 · integrado no PR #21; aguarda aceite E2E
-- [ ] `T1.2.5` Ações no cartão: concluir, BATALHAR/RECUAR, editar inline e excluir com confirmação — **Higor** · M · ⛓ T1.1.3 · integrado no PR #21; aguarda aceite E2E
-- [ ] `T1.2.6` Arrastar e soltar entre colunas, com alternativa por teclado — **Higor** · G · ⛓ T1.2.5 · integrado no PR #21; aguarda aceite E2E
-- [ ] `T1.2.7` Painel Mapa ligado ao histórico do core — **Higor** · P · ⛓ T1.1.5 · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.2.1` Layout em `100vh`: HUD + 3 colunas + lateral (grid do protótipo) — **Higor** · M · ⛓ T0.2.11 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
+- [ ] `T1.2.2` HUD: `ScopeTabs` com contadores, barra de XP do dia e campo "Nova missão" com prioridade — **Higor** · M · ⛓ T1.2.1 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
+- [ ] `T1.2.3` Colunas Missões / Em batalha / Conquistas, com estados vazios — **Higor** · M · ⛓ T1.2.1 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
+- [ ] `T1.2.4` Densidade adaptativa: mais de 6 cartões → compactos; mais de 11 → "+N missões" com lista em popover — **Higor** · M · ⛓ T1.2.3 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
+- [ ] `T1.2.5` Ações no cartão: concluir, BATALHAR/RECUAR, editar inline e excluir com confirmação — **Higor** · M · ⛓ T1.1.3 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
+- [ ] `T1.2.6` Arrastar e soltar entre colunas, com alternativa por teclado — **Higor** · G · ⛓ T1.2.5 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
+- [ ] `T1.2.7` Painel Mapa ligado ao histórico do core — **Higor** · P · ⛓ T1.1.5 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
 
 #### Épico 1.3 — Pomodoro e Modo foco
 
 > Como usuário, quero um timer que eu leia de longe e que me avise quando a fase virar.
 
 - [x] `T1.3.1` Hook `usePomodoro` (tick com `PomodoroTimer`, continua certo após recarregar a página) — **Gustavo** · M · ⛓ T1.1.4
-- [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1, T0.2.9 · integrado no PR #21; aguarda aceite E2E
-- [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1 · integrado no PR #21; aguarda aceite E2E
-- [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1 · integrado no PR #21; aguarda aceite E2E
-- [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · integrado no PR #21; aguarda aceite E2E
+- [ ] `T1.3.2` `PomodoroHUD` na lateral, ligado à missão em batalha — **Higor** · P · ⛓ T1.3.1, T0.2.9 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
+- [ ] `T1.3.3` Tela Modo foco (`/foco`): relógio gigante, missão atual e próximas 3 — **Higor** · M · ⛓ T1.3.1 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
+- [ ] `T1.3.4` Aviso de troca de fase: notificação do sistema + som 8-bit opcional — **Higor** · M · ⛓ T1.3.1 · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
+- [ ] `T1.3.5` Atalhos de teclado: `Espaço` (iniciar/pausar), `N` (nova missão), `1`/`2`/`3` (escopo), `F` (modo foco) — **Higor** · P · integrado no PR #21; E2E disponível (PR #43); aguarda aceite
 - [x] `T1.3.6` Configuração dos tempos (padrão 25/5/15, 4 ciclos), salva localmente — **Gustavo** · P
 
 #### Épico 1.4 — Temas, formatos de tela e acessibilidade
@@ -235,8 +244,8 @@ Desktop passaram.
 
 - [ ] `T1.4.1` Alternância Castelo/Pergaminho salva, respeitando `prefers-color-scheme` na primeira visita — **Higor** · P · código Web/Desktop integrado no PR #21; aguarda aceite final
 - [ ] `T1.4.2` Layouts para telas de até 1280px, monitor vertical e celular (no celular a rolagem é aceita) — **Higor** · M · ⛓ T1.2.1 · código e validação visual integrados no PR #21; aguarda aceite final
-- [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P · código integrado no PR #21; aguarda auditoria axe (`T1.4.4`, Gustavo)
-- [ ] `T1.4.4` Auditoria automática com axe nas telas (zero violações sérias) — **Gustavo** · M
+- [ ] `T1.4.3` `prefers-reduced-motion`, foco de teclado visível e `aria-label` nos botões de ícone — **Higor** · P · código integrado no PR #21; auditoria axe passou (`T1.4.4`); aguarda aceite
+- [x] `T1.4.4` Auditoria automática com axe nas telas (zero violações sérias) — **Gustavo** · M · PR #44
 
 #### Épico 1.5 — Desktop com a mesma interface
 
@@ -251,7 +260,7 @@ Desktop passaram.
 
 > Como time, queremos garantir que o fluxo principal nunca quebre e que cada merge gere uma versão testável.
 
-- [ ] `T1.6.1` Testes E2E (Playwright): criar → batalhar → concluir; troca de fase do Pomodoro; tela sem rolagem em 1280×720, 1440×900 e 1920×1080 — **Gustavo** · G · ⛓ T1.2.5
+- [x] `T1.6.1` Testes E2E (Playwright): criar → batalhar → concluir; troca de fase do Pomodoro; tela sem rolagem em 1280×720, 1440×900 e 1920×1080 — **Gustavo** · G · ⛓ T1.2.5 · PR #43
 - [ ] `T1.6.2` Rodar unitários e E2E no CI, com relatório de sucesso/falha (base do KPI de testes) — **Guilhermo** · M · ⛓ T1.6.1
 - [ ] `T1.6.3` Publicar a imagem `tasksorg-web` no GHCR a cada merge na `main` — **Guilhermo** · M
 - [ ] `T1.6.4` Ambiente de homologação do web, com deploy automático — **Guilhermo** · M · ⛓ T1.6.3
@@ -279,7 +288,7 @@ Web / Desktop ──► TaskRepository (HTTP) ──► API ──► PostgreSQL
 
 > Como usuário, quero minhas missões salvas na nuvem para não perdê-las e acessá-las de qualquer lugar.
 
-- [ ] `T2.1.1` Registrar a decisão de persistência (API + Postgres ou local-first com sync), pendente desde a POC — **Gustavo** · P
+- [ ] `T2.1.1` Registrar a decisão de persistência (API + Postgres ou local-first com sync), pendente desde a POC — **Gustavo** · P · proposta em revisão no PR #46
 - [ ] `T2.1.2` Estruturar `apps/api` reutilizando `@tasksorg/core` — **Gustavo** · M · ⛓ T2.1.1
 - [ ] `T2.1.3` Modelagem e migrations: `users`, `tasks`, `pomodoro_sessions`, `daily_progress` — **Gustavo** · M · ⛓ T2.1.2
 - [ ] `T2.1.4` CRUD de tarefas com validação — **Gustavo** · M · ⛓ T2.1.3
@@ -329,7 +338,7 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 - [ ] `T3.1.2` SAST no GitHub Actions com relatório no PR — **Guilhermo** · M · ⛓ T3.1.1 · workflow integrado no PR #22; passou na `main` em 02/11/2026; falta conferir o relatório publicado
 - [ ] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2 · lógica versionada; falta demonstrar o bloqueio com uma execução de teste
 - [x] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P · workflow integrado; passa no limite alto/crítico desde 02/11/2026
-- [ ] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2
+- [ ] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2 · sem alertas no core; API pendente de `T2.1.2`
 - [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2 · entradas validadas; Next/Electron/Vitest e transitivas atualizados; auditoria passa em alta/crítica; CodeQL passou na `main`, falta conferir o relatório
 
 > **Decisão da T3.1.1:** o projeto usará o **CodeQL** como SAST principal,
@@ -391,7 +400,7 @@ k8s/
 
 #### Épico 4.2 — Mobile (Expo)
 
-- [ ] `T4.2.1` Criar `apps/mobile` com Expo, consumindo `@tasksorg/core` — **Gustavo** · M
+- [ ] `T4.2.1` Criar `apps/mobile` com Expo, consumindo `@tasksorg/core` — **Gustavo** · M · em revisão no PR #47
 - [ ] `T4.2.2` Adaptar `packages/ui` para React Native (tokens + componentes principais) — **Higor** · G · base independente pronta em `@tasksorg/ui/native`: tokens numéricos, temas Castelo/Pergaminho e fábrica de `Panel`, `Button`, `Tag`, `StatBar` e `TaskCard`; ligação e validação visual no Expo aguardam `T4.2.1`
 - [ ] `T4.2.3` Tela Quadro mobile (uma coluna por aba) e Pomodoro — **Higor** · G · ⛓ T4.2.2 · bloqueada pela adaptação da UI
 - [ ] `T4.2.4` Login e sincronização no mobile — **Gustavo** · M · ⛓ T4.2.1

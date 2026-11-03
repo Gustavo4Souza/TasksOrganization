@@ -1,5 +1,9 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 02/11/2026 — Testes de aceite do MVP 1 e tarefas liberadas
+
+Entraram os testes E2E (`T1.6.1`, PR #43), a auditoria axe (`T1.4.4`, PR #44) e o limite de cobertura do core (`T1.1.7`, PR #45). O Roadmap agora lista o que cada integrante pode puxar. A proposta de persistência (`T2.1.1`, PR #46) e a base do mobile (`T4.2.1`, PR #47) estão em revisão.
+
 ## 02/11/2026 — Documentação alinhada ao estado da `main`
 
 Roadmap, Arquitetura e Próximos Passos alinhados a `1502ae6`: CI, CodeQL e auditoria
