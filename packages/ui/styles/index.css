@@ -374,6 +374,10 @@
   gap: var(--space-3);
   text-align: center;
 }
+/* O Panel renderiza o conteúdo em .px-panel__body: é ele que centraliza o HUD. */
+.px-pomo .px-panel__body {
+  align-items: center;
+}
 .px-pomo-phase {
   display: inline-flex;
   align-items: center;
