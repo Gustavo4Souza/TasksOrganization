@@ -7,6 +7,8 @@ O TasksOrg utilizará:
 - **Vercel** para hospedagem do frontend web (`apps/web`);
 - **Render** para hospedagem do backend/API (`apps/api`);
 - **Neon** como PostgreSQL gerenciado.
+- O web permanecerá integrado à Vercel em produção; um ambiente separado de
+  homologação não faz parte do MVP 1.
 
 Docker e GitHub Actions continuam sendo usados no desenvolvimento, na
 validação e na construção das imagens. Kubernetes permanece como evolução

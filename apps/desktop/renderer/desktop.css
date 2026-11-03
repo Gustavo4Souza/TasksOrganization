@@ -1,0 +1,21 @@
+.desktop-app { width: 100%; min-height: 100vh; padding: 16px 24px; display: flex; flex-direction: column; gap: 16px; }
+.desktop-header, .desktop-actions, .desktop-hud, .desktop-hud form, .desktop-card-actions { display: flex; align-items: center; gap: 12px; }
+.desktop-header { justify-content: space-between; }
+.desktop-header h1 { margin: 0; font-size: 24px; }
+.desktop-eyebrow { margin: 0; color: var(--ink-muted); font-size: 12px; text-transform: uppercase; }
+.desktop-hud { flex-wrap: wrap; padding: 8px 12px; border: 2px solid var(--edge); background: var(--surface); }
+.desktop-hud .px-stat { min-width: 180px; flex: 1; }
+.desktop-hud form { flex: 2; min-width: 300px; }
+.desktop-hud input, .desktop-hud select { min-width: 0; padding: 9px; color: var(--ink); background: var(--surface-sunken); border: 2px solid var(--edge); font: inherit; }
+.desktop-hud input { flex: 1; }
+.desktop-grid { min-height: 0; flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(260px, 25%); gap: 14px; }
+.desktop-column { min-width: 0; overflow: auto; }
+.desktop-card-actions { flex-wrap: wrap; }
+.desktop-card-actions .px-btn { min-height: 30px; font-size: 10px; padding: 5px 7px; }
+.desktop-sidebar { min-width: 0; display: flex; flex-direction: column; gap: 14px; overflow: auto; }
+.desktop-sidebar .px-panel { margin: 0; }
+.desktop-empty, .desktop-error { color: var(--ink-muted); }
+.desktop-error { color: var(--crimson); margin: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (max-width: 1100px) { .desktop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .desktop-sidebar { grid-column: span 2; } }
+@media (max-width: 700px) { .desktop-app { padding: 10px; } .desktop-header { align-items: flex-start; flex-direction: column; } .desktop-grid { display: flex; flex-direction: column; } .desktop-column { min-height: 220px; } .desktop-hud form { min-width: 100%; flex-wrap: wrap; } .desktop-hud input { flex-basis: 100%; } }

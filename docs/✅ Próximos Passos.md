@@ -5,9 +5,11 @@ Lista viva — marca como feito conforme avança, e adiciona itens novos conform
 - [x] Adotar GitHub Actions como CI/CD oficial
 - [x] Remover Jenkins e GitLab da configuração ativa do projeto
 - [x] Criar workflow de CI com qualidade, build e imagem Docker do web
-- [ ] Publicar a imagem `tasksorg-web` no GHCR (`T1.6.3`)
+- [x] Publicar a imagem `tasksorg-web` no GHCR (`T1.6.3`)
+- [x] Manter o web em produção pela integração existente com a Vercel
+- [ ] Validar instalador Windows no workflow `Desktop release` (`T1.5.4`)
+- [ ] Criar a tag `v0.1.0` após o merge da release (`T1.6.5`)
 - [ ] Escrever manifests do Kubernetes (`k8s/deployment.yaml`, `k8s/service.yaml`)
-- [ ] Adicionar etapa de deploy ao workflow do GitHub Actions
 
 ## Produto / Plataformas
 

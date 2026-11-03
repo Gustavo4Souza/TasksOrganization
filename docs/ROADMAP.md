@@ -52,6 +52,7 @@ MVP ──► entrega que dá para demonstrar e usar
 - **ID da task:** `T<mvp>.<épico>.<nº>` — ex.: `T1.2.4` = MVP 1, Épico 2, Task 4. Use o ID no nome da branch e do PR: `feat/T1.2.4-densidade-adaptativa`.
 - **Tamanho:** `P` (até meio dia) · `M` (1 dia) · `G` (2 dias — se passar disso, quebre em duas).
 - **Dependência:** `⛓ T0.2.1` = só começa depois dessa.
+- **Status especial:** `[—]` = retirado do escopo por decisão do grupo, não é uma entrega concluída.
 - **Board:** `Backlog → A fazer → Em andamento → Em revisão → Concluído` (o mesmo fluxo que o app ensina: Missões → Em batalha → Conquistas).
 
 ---
@@ -78,7 +79,7 @@ MVP ──► entrega que dá para demonstrar e usar
 
 | Quem | Liberado | Observação |
 |---|---|---|
-| Guilhermo | `T1.6.2`, `T1.5.1`, `T1.5.3`, `T1.6.3`, `T2.3.2`, `T3.2.1`–`T3.2.3`, `T3.2.8` | `T1.6.2` foi destravada por `T1.6.1`: rodar `pnpm test:e2e` e a cobertura do core no CI. Falta também demonstrar o bloqueio de `T3.1.2` e `T3.1.3`. |
+| Guilhermo | `T1.5.4`, `T2.3.2`, `T3.2.1`–`T3.2.3` | `T1.5.1`–`T1.5.3`, `T1.6.2`, `T1.6.3` e `T3.2.8` foram concluídas nesta etapa. `T1.5.4` aguarda uma execução Windows do workflow para validar o instalador como artefato. |
 | Higor | Aceite de `T1.2.x`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3`, `T4.2.2` e `T4.2.3` | A cobertura E2E local do Web e a implementação do Quadro/Pomodoro mobile estão prontas. Não resta implementação independente: faltam revisão por PR e validação visual em emulador/dispositivo; as integrações do MVP 2 dependem da API. |
 | Gustavo | `T2.1.2`, após a aprovação da `T2.1.1` | Proposta no PR #46. A base do mobile foi integrada pelo PR #47. |
 | Grupo | Decidir `T2.1.1` e revisar as entregas do Higor | A decisão libera o MVP 2; a revisão e a validação em dispositivo permitem o aceite das entregas Web/mobile. |
@@ -146,8 +147,8 @@ Desktop passaram.
 |---|---|---|
 | Integradas | `T3.1.1`, implementação de `T3.1.4` | O PR #22 incluiu a decisão CodeQL, Dependabot e o workflow de auditoria. Este último executa e, desde 02/11/2026, passa sem vulnerabilidades altas/críticas (restam 3 moderadas). |
 | Aguardando aceite | `T3.1.2`, `T3.1.3` | O CodeQL passou na `main` em 02/11/2026 (`1502ae6`); falta confirmar o relatório publicado e demonstrar o bloqueio por severidade. |
-| Próximas do MVP 1 | `T1.5.1`–`T1.5.4`, `T1.6.2`–`T1.6.5` | Renderer Electron compartilhado, janela/tray/instalador, E2E no CI, publicação e homologação não constam no código. `T1.6.2` depende de `T1.6.1` (Gustavo). |
-| Fases seguintes | `T2.3.1`–`T2.3.5`, `T3.2.1`–`T3.2.4`, `T3.2.6`, `T3.2.8`, `T4.1.1`–`T4.1.3`, `T4.2.5` | Infraestrutura da API, coleta de KPIs, cluster e release mobile ainda dependem dos pré-requisitos do roadmap. |
+| Próximas do MVP 1 | `T1.5.4`, `T1.6.5` | O instalador Windows e a tag da release aguardam execução/publicação; renderer, janela persistente e bandeja já foram implementados. A homologação foi retirada do escopo; o web segue com produção na Vercel. |
+| Fases seguintes | `T2.3.1`–`T2.3.5`, `T3.2.1`–`T3.2.4`, `T3.2.6`–`T3.2.7`, `T4.1.1`–`T4.1.3`, `T4.2.5` | Infraestrutura da API, coleta de KPIs baseada em dados reais, cluster e release mobile ainda dependem dos pré-requisitos do roadmap. |
 
 > As caixas das tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done. Os PRs #21, #22 e #40 estão na `main`; E2E e axe entraram nos PRs #43 e #44. Os fluxos Web e mobile desta branch aguardam revisão, e o mobile ainda requer conferência visual em emulador/dispositivo.
 
@@ -256,20 +257,20 @@ Desktop passaram.
 
 > Como usuário, quero o TasksOrg como janela própria no segundo monitor, sem depender de uma aba do navegador.
 
-- [ ] `T1.5.1` Renderer do Electron usando `packages/ui` e as mesmas telas do web — **Guilhermo** · M · ⛓ T1.2.1
-- [ ] `T1.5.2` Opção "sempre no topo" e lembrar posição, tamanho e monitor da janela — **Guilhermo** · M · ⛓ T1.5.1
-- [ ] `T1.5.3` Ícone na bandeja do sistema mostrando o tempo do Pomodoro — **Guilhermo** · M · ⛓ T1.3.1
-- [ ] `T1.5.4` Gerar instalador Windows (electron-builder) no CI como artefato — **Guilhermo** · M · ⛓ T1.5.1
+- [x] `T1.5.1` Renderer do Electron usando `packages/ui` e as mesmas telas do web — **Guilhermo** · M · ⛓ T1.2.1 · renderer React compartilhando `@tasksorg/core` e `@tasksorg/ui`
+- [x] `T1.5.2` Opção "sempre no topo" e lembrar posição, tamanho e monitor da janela — **Guilhermo** · M · ⛓ T1.5.1 · estado salvo em `userData/window-state.json` e controlado pelo preload seguro
+- [x] `T1.5.3` Ícone na bandeja do sistema mostrando o tempo do Pomodoro — **Guilhermo** · M · ⛓ T1.3.1 · bandeja com abrir, sempre no topo e sair; HUD compartilhado mostra fase e tempo
+- [ ] `T1.5.4` Gerar instalador Windows (electron-builder) no CI como artefato — **Guilhermo** · M · ⛓ T1.5.1 · configuração e workflow prontos; falta validar uma execução Windows no GitHub Actions
 
 #### Épico 1.6 — Qualidade e entrega do MVP 1
 
 > Como time, queremos garantir que o fluxo principal nunca quebre e que cada merge gere uma versão testável.
 
 - [x] `T1.6.1` Testes E2E (Playwright): criar → batalhar → concluir; troca de fase do Pomodoro; tela sem rolagem em 1280×720, 1440×900 e 1920×1080 — **Gustavo** · G · ⛓ T1.2.5 · PR #43
-- [ ] `T1.6.2` Rodar unitários e E2E no CI, com relatório de sucesso/falha (base do KPI de testes) — **Guilhermo** · M · ⛓ T1.6.1
-- [ ] `T1.6.3` Publicar a imagem `tasksorg-web` no GHCR a cada merge na `main` — **Guilhermo** · M
-- [ ] `T1.6.4` Ambiente de homologação do web, com deploy automático — **Guilhermo** · M · ⛓ T1.6.3
-- [ ] `T1.6.5` Release `v0.1.0` com changelog e tag — **Guilhermo** · P · ⛓ T1.6.4
+- [x] `T1.6.2` Rodar unitários e E2E no CI, com relatório de sucesso/falha (base do KPI de testes) — **Guilhermo** · M · ⛓ T1.6.1 · workflow configurado; validação local: 105 testes do core com 98,92% de statements e 31 cenários E2E
+- [x] `T1.6.3` Publicar a imagem `tasksorg-web` no GHCR a cada merge na `main` — **Guilhermo** · M · workflow condicionado a push na `main`, com `GITHUB_TOKEN` e tags `sha`/`latest`
+- [—] `T1.6.4` Ambiente de homologação do web, com deploy automático — **Guilhermo** · M · fora do escopo por decisão do grupo; a produção permanece na Vercel
+- [ ] `T1.6.5` Release `v0.1.0` com changelog e tag — **Guilhermo** · P · ⛓ T1.6.3 · changelog preparado; falta criar a tag `v0.1.0` após o merge na `main`
 
 **✔️ Critérios de aceite do MVP 1**
 - Nenhuma barra de rolagem na tela Quadro em 1280×720, 1440×900 e 1920×1080.
@@ -368,7 +369,7 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 - [ ] `T3.2.5` Modelo de dados e endpoints dos KPIs, com os cálculos validados por testes — **Gustavo** · M · ⛓ T2.1.2
 - [ ] `T3.2.6` Registrar Lead Time, sucesso e duração dos pipelines — **Guilhermo** · M · ⛓ T1.6.2
 - [ ] `T3.2.7` Registrar cobertura, defeitos escapados e testes instáveis — **Gustavo** · M · ⛓ T1.6.2
-- [ ] `T3.2.8` Registrar o catálogo completo de KPIs e o contrato de dados — **Guilhermo** · P
+- [x] `T3.2.8` Registrar o catálogo completo de KPIs e o contrato de dados — **Guilhermo** · P · catálogo e contrato documentados em `docs/KPIs de DevOps e DevSecOps.md`
 
 > Fórmulas, fontes, dependências, periodicidade e contrato de dados estão no
 > [catálogo de KPIs](KPIs%20de%20DevOps%20e%20DevSecOps.md).
