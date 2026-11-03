@@ -14,9 +14,12 @@ Documentação viva do projeto **TasksOrg** — app de organização de tarefas 
 
 ## Páginas
 
-- [[Projetos/TasksOrg - DevOps/📋 Visão Geral]]
-- [[Projetos/TasksOrg - DevOps/🏗️ Arquitetura e Stack|Arquitetura & Stack]]
+> [!important] Fonte oficial
+> Esta pasta `docs/` é a única documentação do projeto. O andamento das tasks fica no [[ROADMAP]].
+
+- [[📋 Visão Geral]]
+- [[🏗️ Arquitetura e Stack|Arquitetura & Stack]]
 - [[🐳 DevOps]]
-- [[Projetos/TasksOrg - DevOps/✅ Próximos Passos]]
-- [[Projetos/TasksOrg - DevOps/🗓️ Log de Atualizações]]
+- [[✅ Próximos Passos]]
+- [[🗓️ Log de Atualizações]]
 - [[🗳️ Decisões|Decisões]] — base de decisões (estilo ADR)

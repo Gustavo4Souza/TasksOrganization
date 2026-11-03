@@ -80,7 +80,7 @@ MVP ──► entrega que dá para demonstrar e usar
 |---|---|---|
 | Integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11`, `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Código do Quadro, Modo foco, temas e acessibilidade integrado pelos PRs #14, #16, #19 e #21. O aceite final de acessibilidade aguarda a auditoria axe `T1.4.4`. |
 
-Validação local: 15 testes do Web e 105 do UI passaram; lint, typecheck e build do
+Validação local da época (hoje são 23 do Web e 108 do UI): 15 testes do Web e 105 do UI passaram; lint, typecheck e build do
 Web, além do build do Desktop, passaram. A imagem Docker de produção foi
 construída e respondeu HTTP 200 em `/`, `/foco` e `/design`. O Quadro vazio foi
 conferido em 1280×720, 1440×900, 1920×1080, monitor vertical e celular. O
@@ -95,7 +95,7 @@ Veja
 |---|---|---|
 | Implementação integrada no PR #21 | `T2.2.1`, `T2.2.3`, `T3.3.1` | Login/cadastro com estados de carregamento/erro e protótipo de KPIs em `/design/kpis`; faltam apenas os critérios de aceite externos indicados nas respectivas tasks. |
 | Interface pronta, integração bloqueada | `T2.2.2`, `T3.3.2`, `T3.3.3` | Login/cadastro já chamam o contrato de autenticação. A rota `/kpis` consome registros do catálogo, filtra 7/30/90 dias e mostra valores, qualidade, origem e histórico. Dados reais dependem das APIs `T2.1.6` e `T3.2.5`. |
-| Parte independente pronta | `T3.1.6`, `T4.2.2` | Entradas Web/Desktop validadas; Next 15.5.28, Electron 42.11.16 e Vitest 4.1.12 validados localmente. A auditoria não tem mais achados altos/críticos. `@tasksorg/ui/native` expõe tokens e componentes base. A nova execução remota do CodeQL e o app Expo ainda são necessários para o aceite final. |
+| Parte independente pronta | `T3.1.6`, `T4.2.2` | Entradas Web/Desktop validadas; Next 15.5.28, Electron 42.11.16 e Vitest 4.1.12 validados localmente. A auditoria não tem mais achados altos/críticos. `@tasksorg/ui/native` expõe tokens e componentes base. O CodeQL já passou na `main`; a revisão desses achados e o app Expo ainda são necessários para o aceite final. |
 | Bloqueadas por dependências | `T2.2.4`, `T2.2.5`, `T4.1.5`, `T4.2.3` | Dependem, respectivamente, do repositório HTTP, autenticação, cluster Kubernetes e criação/definição do app mobile. |
 
 O PR #22 adicionou as verificações de segurança. A atualização local de Next
@@ -103,8 +103,8 @@ O PR #22 adicionou as verificações de segurança. A atualização local de Nex
 nos 23 testes do Web, 92 do core, 108 do UI, lint, typecheck e builds
 Web/Desktop. A auditoria caiu de 7 críticas/37 altas para 0 críticas/0 altas
 (restam três achados moderados na auditoria com pnpm 9). As transitivas foram atualizadas por overrides
-controlados no workspace. O upload SARIF duplicado foi removido do CodeQL; falta
-a execução remota publicar o relatório para encerrar `T3.1.6`.
+controlados no workspace. O upload SARIF duplicado foi removido do CodeQL e a
+execução na `main` passou; falta conferir o relatório para encerrar `T3.1.6`.
 
 Validação desta etapa: 23 testes do Web e 108 do UI passaram; as telas de autenticação foram
 conferidas em 1280×720 nos temas do sistema e em 390×844. O protótipo de KPIs foi
@@ -124,14 +124,14 @@ Desktop passaram.
 | Correção integrada | — | `output: "standalone"` do Next só no build do Docker (`NEXT_OUTPUT=standalone`). Correção integrada no PR #15. |
 | Prontas para começar | `T1.1.7`, `T2.1.1` | Cobertura ≥ 90% no core; proposta da decisão de persistência para o grupo. |
 | Liberada para implementação/validação | `T1.6.1` | O fluxo do Quadro está integrado à `main` pelo PR #21; os testes E2E de Gustavo podem começar. `T0.2.9` e `T0.2.10` foram integradas pelo PR #17. |
-| Segurança compartilhada | `T3.1.5`, apoio a `T3.1.6` | Vitest 4.1.12 e suas transitivas seguras foram validados no core, UI e Web; a auditoria local passa no limite alto/crítico. Falta a execução remota publicar o relatório CodeQL. |
+| Segurança compartilhada | `T3.1.5`, apoio a `T3.1.6` | Vitest 4.1.12 e suas transitivas seguras foram validados no core, UI e Web; a auditoria passa no limite alto/crítico. O CodeQL passou na `main`; falta conferir o relatório. |
 
 ### Estado das entregas do Guilhermo — 02/11/2026
 
 | Status | Tasks | Situação |
 |---|---|---|
-| Integradas | `T3.1.1`, implementação de `T3.1.4` | O PR #22 incluiu a decisão CodeQL, Dependabot e o workflow de auditoria. Este último executa e falha diante das vulnerabilidades altas/críticas do lockfile. |
-| Aguardando execução remota | `T3.1.2`, `T3.1.3` | O upload SARIF duplicado foi removido da branch `Higor`. A próxima execução precisa publicar o relatório e demonstrar o bloqueio por severidade antes do aceite. |
+| Integradas | `T3.1.1`, implementação de `T3.1.4` | O PR #22 incluiu a decisão CodeQL, Dependabot e o workflow de auditoria. Este último executa e, desde 02/11/2026, passa sem vulnerabilidades altas/críticas (restam 3 moderadas). |
+| Aguardando aceite | `T3.1.2`, `T3.1.3` | O CodeQL passou na `main` em 02/11/2026 (`1502ae6`); falta confirmar o relatório publicado e demonstrar o bloqueio por severidade. |
 | Próximas do MVP 1 | `T1.5.1`–`T1.5.4`, `T1.6.2`–`T1.6.5` | Renderer Electron compartilhado, janela/tray/instalador, E2E no CI, publicação e homologação não constam no código. `T1.6.2` depende de `T1.6.1` (Gustavo). |
 | Fases seguintes | `T2.3.1`–`T2.3.5`, `T3.2.1`–`T3.2.4`, `T3.2.6`, `T3.2.8`, `T4.1.1`–`T4.1.3`, `T4.2.5` | Infraestrutura da API, coleta de KPIs, cluster e release mobile ainda dependem dos pré-requisitos do roadmap. |
 
@@ -326,11 +326,11 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 > Como time, queremos que vulnerabilidades sejam encontradas antes do deploy.
 
 - [x] `T3.1.1` Escolher a ferramenta SAST e registrar a decisão — **Guilhermo** · P
-- [ ] `T3.1.2` SAST no GitHub Actions com relatório no PR — **Guilhermo** · M · ⛓ T3.1.1 · workflow integrado no PR #22, mas a execução falha por upload SARIF duplicado; aguarda relatório publicado
-- [ ] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2 · lógica versionada, ainda sem execução válida do CodeQL
-- [x] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P · workflow integrado e falhando por vulnerabilidades detectadas; correção das dependências por responsável técnico
+- [ ] `T3.1.2` SAST no GitHub Actions com relatório no PR — **Guilhermo** · M · ⛓ T3.1.1 · workflow integrado no PR #22; passou na `main` em 02/11/2026; falta conferir o relatório publicado
+- [ ] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2 · lógica versionada; falta demonstrar o bloqueio com uma execução de teste
+- [x] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P · workflow integrado; passa no limite alto/crítico desde 02/11/2026
 - [ ] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2
-- [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2 · entradas validadas; Next/Electron/Vitest e transitivas atualizados; auditoria local passa em alta/crítica; aguarda relatório remoto do CodeQL
+- [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2 · entradas validadas; Next/Electron/Vitest e transitivas atualizados; auditoria passa em alta/crítica; CodeQL passou na `main`, falta conferir o relatório
 
 > **Decisão da T3.1.1:** o projeto usará o **CodeQL** como SAST principal,
 > analisando JavaScript/TypeScript com a query suite `security-extended`.
@@ -454,8 +454,8 @@ Sprints de 2 semanas.
 |---|---|
 | Linguagem | TypeScript |
 | Monorepo | pnpm Workspaces + Turborepo |
-| Web | Vercel + Next.js 14 + React 18 |
-| Desktop | Electron 32 |
+| Web | Vercel + Next.js 15 + React 18 |
+| Desktop | Electron 42 |
 | Mobile | Expo / React Native — MVP 4 |
 | Regras de negócio | `@tasksorg/core` |
 | Interface | `packages/ui` (Design System pixel) — MVP 0 |
