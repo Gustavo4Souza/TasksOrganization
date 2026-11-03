@@ -10,3 +10,5 @@ out/
 .env.local
 coverage/
 apps/desktop/release/
+playwright-report/
+test-results/
