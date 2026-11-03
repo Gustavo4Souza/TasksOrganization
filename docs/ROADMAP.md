@@ -74,22 +74,25 @@ MVP ──► entrega que dá para demonstrar e usar
 
 ## 🗺️ Roadmap
 
-### O que cada um pode puxar agora — 02/11/2026
+### O que cada um pode puxar agora — 03/11/2026
 
 | Quem | Liberado | Observação |
 |---|---|---|
 | Guilhermo | `T1.6.2`, `T1.5.1`, `T1.5.3`, `T1.6.3`, `T2.3.2`, `T3.2.1`–`T3.2.3`, `T3.2.8` | `T1.6.2` foi destravada por `T1.6.1`: rodar `pnpm test:e2e` e a cobertura do core no CI. Falta também demonstrar o bloqueio de `T3.1.2` e `T3.1.3`. |
-| Higor | Aceite de `T1.2.x`, `T1.3.2`–`T1.3.5` e `T1.4.1`–`T1.4.3` | E2E e axe já existem (PRs #43 e #44). Arrastar e soltar, avisos de fase, atalhos e layouts em monitor vertical/celular não são cobertos por eles. As integrações do MVP 2 dependem da API. |
-| Gustavo | `T2.1.2`, após a aprovação da `T2.1.1` | Proposta no PR #46. A base do mobile está no PR #47. |
-| Grupo | Decidir `T2.1.1` e revisar o PR #47 | A decisão libera o MVP 2. |
+| Higor | Aceite de `T1.2.x`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3`, `T4.2.2` e `T4.2.3` | A cobertura E2E local do Web e a implementação do Quadro/Pomodoro mobile estão prontas. Não resta implementação independente: faltam revisão por PR e validação visual em emulador/dispositivo; as integrações do MVP 2 dependem da API. |
+| Gustavo | `T2.1.2`, após a aprovação da `T2.1.1` | Proposta no PR #46. A base do mobile foi integrada pelo PR #47. |
+| Grupo | Decidir `T2.1.1` e revisar as entregas do Higor | A decisão libera o MVP 2; a revisão e a validação em dispositivo permitem o aceite das entregas Web/mobile. |
 
-### Estado das entregas do Higor — 02/11/2026
+### Estado das entregas do Higor — 03/11/2026
 
 | Status | Tasks | Situação |
 |---|---|---|
-| Integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11`, `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3` | Código do Quadro, Modo foco, temas e acessibilidade integrado pelos PRs #14, #16, #19 e #21. A auditoria axe `T1.4.4` passou no PR #44. |
+| Integradas à `main` | `T0.1.4`, `T0.2.4`–`T0.2.8`, `T0.2.11`, `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3`, `T3.1.6` | Código do Quadro, Modo foco, temas e acessibilidade integrado pelos PRs #14, #16, #19 e #21. As correções de segurança entraram pelo PR #40; CodeQL, auditoria e build passaram no commit atual da `main`. |
 
-Validação local da época (hoje são 23 do Web e 108 do UI): 15 testes do Web e 105 do UI passaram; lint, typecheck e build do
+Validação atual da branch: 92 testes do core, 109 do UI, 23 do Web, 1 do mobile
+e 31 cenários E2E passaram. Lint e typecheck passaram em todos os apps/pacotes
+aplicáveis, assim como os builds do core, UI, Web e Desktop. Na validação visual
+original, 15 testes do Web e 105 do UI passaram; lint, typecheck e build do
 Web, além do build do Desktop, passaram. A imagem Docker de produção foi
 construída e respondeu HTTP 200 em `/`, `/foco` e `/design`. O Quadro vazio foi
 conferido em 1280×720, 1440×900, 1920×1080, monitor vertical e celular. O
@@ -104,8 +107,8 @@ Veja
 |---|---|---|
 | Implementação integrada no PR #21 | `T2.2.1`, `T2.2.3`, `T3.3.1` | Login/cadastro com estados de carregamento/erro e protótipo de KPIs em `/design/kpis`; faltam apenas os critérios de aceite externos indicados nas respectivas tasks. |
 | Interface pronta, integração bloqueada | `T2.2.2`, `T3.3.2`, `T3.3.3` | Login/cadastro já chamam o contrato de autenticação. A rota `/kpis` consome registros do catálogo, filtra 7/30/90 dias e mostra valores, qualidade, origem e histórico. Dados reais dependem das APIs `T2.1.6` e `T3.2.5`. |
-| Parte independente pronta | `T3.1.6`, `T4.2.2` | Entradas Web/Desktop validadas; Next 15.5.28, Electron 42.11.16 e Vitest 4.1.12 validados localmente. A auditoria não tem mais achados altos/críticos. `@tasksorg/ui/native` expõe tokens e componentes base. O CodeQL já passou na `main`; a revisão desses achados e o app Expo ainda são necessários para o aceite final. |
-| Bloqueadas por dependências | `T2.2.4`, `T2.2.5`, `T4.1.5`, `T4.2.3` | Dependem, respectivamente, do repositório HTTP, autenticação, cluster Kubernetes e criação/definição do app mobile. |
+| Parte independente pronta | `T4.2.2`, `T4.2.3` | `@tasksorg/ui/native` está ligado ao Expo, e o Quadro mobile já possui temas, abas, ciclo das missões e Pomodoro. O bundle Android foi gerado localmente; faltam revisão e conferência visual em emulador/dispositivo para o aceite final. |
+| Bloqueadas por dependências | `T2.2.4`, `T2.2.5`, `T4.1.5` | Dependem, respectivamente, do repositório HTTP, autenticação e cluster Kubernetes. |
 
 O PR #22 adicionou as verificações de segurança. A atualização local de Next
 14.2.15 → 15.5.28, Electron 32.3.3 → 42.11.16 e Vitest 2.1.9 → 4.1.12 passou
@@ -113,7 +116,8 @@ nos 23 testes do Web, 92 do core, 108 do UI, lint, typecheck e builds
 Web/Desktop. A auditoria caiu de 7 críticas/37 altas para 0 críticas/0 altas
 (restam três achados moderados na auditoria com pnpm 9). As transitivas foram atualizadas por overrides
 controlados no workspace. O upload SARIF duplicado foi removido do CodeQL e a
-execução na `main` passou; falta conferir o relatório para encerrar `T3.1.6`.
+execução na `main` passou. O check CodeQL do commit `cb86f34` foi conferido em
+03/11/2026, junto da auditoria e do build, encerrando `T3.1.6`.
 
 Validação desta etapa: 23 testes do Web e 108 do UI passaram; as telas de autenticação foram
 conferidas em 1280×720 nos temas do sistema e em 390×844. O protótipo de KPIs foi
@@ -132,7 +136,8 @@ Desktop passaram.
 | Concluídas | `T1.3.1`, `T1.3.6` | Hooks `usePomodoro` e `usePomodoroSettings` em `@tasksorg/ui/hooks`: relógio pelo tempo real (aba em segundo plano continua certa), retoma ao recarregar descontando só até o fim da fase, `skip` sem crédito e tempos validados e salvos localmente. Mergeados no PR #12; liberam `T1.3.2`–`T1.3.4` (Higor) e `T1.5.3` (Guilhermo). |
 | Correção integrada | — | `output: "standalone"` do Next só no build do Docker (`NEXT_OUTPUT=standalone`). Correção integrada no PR #15. |
 | Concluídas | `T1.1.7`, `T1.4.4`, `T1.6.1` | Cobertura do core em 98,9% com limite de 90% (PR #45); axe sem violações sérias em 7 rotas e no Quadro, nos dois temas (PR #44); 9 testes E2E (PR #43). |
-| Em revisão | `T2.1.1`, `T4.2.1` | Proposta de persistência no PR #46; base do app Expo no PR #47. |
+| Concluída | `T4.2.1` | Base do app Expo integrada pelo PR #47. |
+| Em revisão | `T2.1.1` | Proposta de persistência no PR #46. |
 | Segurança compartilhada | `T3.1.5`, apoio a `T3.1.6` | Sem alertas do CodeQL para o core na aba Security (consulta de 02/11/2026). A parte da API só pode ser avaliada depois de `T2.1.2`. |
 
 ### Estado das entregas do Guilhermo — 02/11/2026
@@ -144,7 +149,7 @@ Desktop passaram.
 | Próximas do MVP 1 | `T1.5.1`–`T1.5.4`, `T1.6.2`–`T1.6.5` | Renderer Electron compartilhado, janela/tray/instalador, E2E no CI, publicação e homologação não constam no código. `T1.6.2` depende de `T1.6.1` (Gustavo). |
 | Fases seguintes | `T2.3.1`–`T2.3.5`, `T3.2.1`–`T3.2.4`, `T3.2.6`, `T3.2.8`, `T4.1.1`–`T4.1.3`, `T4.2.5` | Infraestrutura da API, coleta de KPIs, cluster e release mobile ainda dependem dos pré-requisitos do roadmap. |
 
-> As caixas das tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done. Os PRs #21 e #22 estão na `main`; E2E e axe entraram nos PRs #43 e #44, e os fluxos integrados aguardam o aceite do responsável. A atualização de dependências do Higor precisa de revisão e aceite próprios.
+> As caixas das tasks só passam para concluídas depois da revisão por PR e dos demais critérios da Definition of Done. Os PRs #21, #22 e #40 estão na `main`; E2E e axe entraram nos PRs #43 e #44. Os fluxos Web e mobile desta branch aguardam revisão, e o mobile ainda requer conferência visual em emulador/dispositivo.
 
 | MVP | Nome | O que dá para demonstrar no fim | Sprints |
 |---|---|---|---|
@@ -339,7 +344,7 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 - [ ] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2 · lógica versionada; falta demonstrar o bloqueio com uma execução de teste
 - [x] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P · workflow integrado; passa no limite alto/crítico desde 02/11/2026
 - [ ] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2 · sem alertas no core; API pendente de `T2.1.2`
-- [ ] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2 · entradas validadas; Next/Electron/Vitest e transitivas atualizados; auditoria passa em alta/crítica; CodeQL passou na `main`, falta conferir o relatório
+- [x] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2 · integrada pelo PR #40; entradas validadas, auditoria sem achados altos/críticos e CodeQL conferido com sucesso na `main` (`cb86f34`)
 
 > **Decisão da T3.1.1:** o projeto usará o **CodeQL** como SAST principal,
 > analisando JavaScript/TypeScript com a query suite `security-extended`.
@@ -400,9 +405,9 @@ k8s/
 
 #### Épico 4.2 — Mobile (Expo)
 
-- [ ] `T4.2.1` Criar `apps/mobile` com Expo, consumindo `@tasksorg/core` — **Gustavo** · M · em revisão no PR #47
-- [ ] `T4.2.2` Adaptar `packages/ui` para React Native (tokens + componentes principais) — **Higor** · G · base independente pronta em `@tasksorg/ui/native`: tokens numéricos, temas Castelo/Pergaminho e fábrica de `Panel`, `Button`, `Tag`, `StatBar` e `TaskCard`; ligação e validação visual no Expo aguardam `T4.2.1`
-- [ ] `T4.2.3` Tela Quadro mobile (uma coluna por aba) e Pomodoro — **Higor** · G · ⛓ T4.2.2 · bloqueada pela adaptação da UI
+- [x] `T4.2.1` Criar `apps/mobile` com Expo, consumindo `@tasksorg/core` — **Gustavo** · M · integrada pelo PR #47
+- [ ] `T4.2.2` Adaptar `packages/ui` para React Native (tokens + componentes principais) — **Higor** · G · tokens e componentes `@tasksorg/ui/native` ligados ao app Expo com alternância Castelo/Pergaminho; falta validar visualmente no emulador/dispositivo antes do aceite
+- [ ] `T4.2.3` Tela Quadro mobile (uma coluna por aba) e Pomodoro — **Higor** · G · ⛓ T4.2.2 · implementação local com abas Hoje/Semana/Ano, ciclo das missões e Pomodoro; exportação Android validada, aguarda conferência visual em emulador/dispositivo e revisão por PR
 - [ ] `T4.2.4` Login e sincronização no mobile — **Gustavo** · M · ⛓ T4.2.1
 - [ ] `T4.2.5` Build e release mobile no CI (EAS) — **Guilhermo** · M · ⛓ T4.2.1
 

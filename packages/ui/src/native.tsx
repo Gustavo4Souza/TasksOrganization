@@ -89,9 +89,9 @@ type NativeProps = {
 };
 
 export interface NativePrimitives {
-  View: ElementType;
-  Text: ElementType;
-  Pressable: ElementType;
+  View: unknown;
+  Text: unknown;
+  Pressable: unknown;
 }
 
 const mergeStyles = (...styles: unknown[]) => styles.filter(Boolean);
@@ -101,7 +101,9 @@ const mergeStyles = (...styles: unknown[]) => styles.filter(Boolean);
  * O app Expo injeta View, Text e Pressable uma vez na inicialização.
  */
 export function createNativeComponents(primitives: NativePrimitives, themeName: NativeThemeName = "castelo") {
-  const { View, Text, Pressable } = primitives;
+  const View = primitives.View as ElementType;
+  const Text = primitives.Text as ElementType;
+  const Pressable = primitives.Pressable as ElementType;
   const theme = createNativeTheme(themeName);
 
   function Panel({ title, children, style, ...props }: NativeProps & { title?: string }) {

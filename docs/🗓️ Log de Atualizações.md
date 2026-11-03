@@ -1,5 +1,26 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 03/11/2026 — Quadro mobile e testes de aceite do Higor
+
+O pacote `@tasksorg/ui/native` foi ligado ao app Expo e compatibilizado com as
+versões de React do Web e do mobile. O app ganhou alternância entre os temas
+Castelo e Pergaminho, abas Hoje/Semana/Ano, criação e ciclo completo das missões,
+além do Pomodoro integrado à missão em batalha. A exportação Android pelo Expo,
+os testes, lint e typecheck do mobile/UI e os builds de UI/Web passaram. A
+conferência visual em emulador ou dispositivo continua como critério de aceite.
+
+Foi adicionada uma suíte E2E específica para os critérios do Higor: atalhos,
+arrastar e soltar, alternativa por teclado, persistência do tema, layouts em
+monitor vertical/celular e avisos de fase. Toda a suíte E2E passou localmente:
+31 cenários, incluindo os seis novos critérios do Higor.
+O servidor de testes agora pode reutilizar uma instância local, mantendo uma
+inicialização isolada no CI. Com isso, não resta implementação independente do
+Higor; as demais tasks aguardam API, autenticação, cluster ou revisão do time.
+
+A `T3.1.6` também foi encerrada: as correções de segurança já estavam integradas
+pelo PR #40, e os checks públicos do commit atual da `main` (`cb86f34`) confirmam
+CodeQL, auditoria de dependências e build concluídos com sucesso.
+
 ## 02/11/2026 — Testes de aceite do MVP 1 e tarefas liberadas
 
 Entraram os testes E2E (`T1.6.1`, PR #43), a auditoria axe (`T1.4.4`, PR #44) e o limite de cobertura do core (`T1.1.7`, PR #45). O Roadmap agora lista o que cada integrante pode puxar. A proposta de persistência (`T2.1.1`, PR #46) e a base do mobile (`T4.2.1`, PR #47) estão em revisão.
