@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Test security gate logic
+        run: node --test scripts/check-sarif.test.mjs
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -47,16 +50,4 @@ jobs:
             exit 1
           fi
 
-          jq -e '
-            [
-              .runs[] as $run
-              | $run.tool.driver.rules[] as $rule
-              | ($run.results[]? | select(.ruleId == $rule.id)
-                | ($rule.properties["security-severity"] // "0" | tonumber) as $severity
-                | select($severity >= 7)
-                | {ruleId, severity: $severity})
-            ] | length == 0
-          ' "$sarif_file" > /dev/null || {
-            echo "CodeQL found high or critical severity vulnerabilities."
-            exit 1
-          }
+          node scripts/check-sarif.mjs "$sarif_file"

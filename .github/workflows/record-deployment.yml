@@ -1,0 +1,39 @@
+name: Record deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment name
+        required: true
+        default: production
+      version:
+        description: Deployed version or image SHA
+        required: true
+      status:
+        description: Deployment outcome
+        required: true
+        type: choice
+        options: [success, failure, rollback, hotfix]
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish deployment event
+        env:
+          KPI_API_URL: ${{ secrets.KPI_API_URL }}
+          KPI_INGEST_SECRET: ${{ secrets.KPI_INGEST_SECRET }}
+          KPI_EVENT_TYPE: deployment
+          INPUT_ENVIRONMENT: ${{ inputs.environment }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_STATUS: ${{ inputs.status }}
+        run: |
+          now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          export KPI_PAYLOAD="$(jq -nc \
+            --arg environment "$INPUT_ENVIRONMENT" --arg version "$INPUT_VERSION" \
+            --arg sha "$GITHUB_SHA" --arg status "$INPUT_STATUS" --arg run "$GITHUB_RUN_ID" --arg now "$now" \
+            '{environment:$environment,version:$version,commitSha:$sha,status:$status,workflowRunId:$run,startedAt:$now,completedAt:$now}')"
+          node scripts/publish-kpi-event.mjs

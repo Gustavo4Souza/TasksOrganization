@@ -30,7 +30,7 @@ describe("Autenticação", () => {
   });
 
   it("exibe erro amigável enquanto a API não está configurada", () => {
-    render(<AuthForm mode="login" />);
+    render(<AuthForm mode="login" apiBaseUrl="" />);
     fireEvent.change(screen.getByLabelText("E-mail"), { target: { value: "higor@example.com" } });
     fireEvent.change(screen.getByLabelText("Senha"), { target: { value: "senha-segura" } });
     fireEvent.submit(screen.getByRole("button", { name: "Entrar" }).closest("form")!);

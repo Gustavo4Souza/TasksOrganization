@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button, Panel, PixelIcon } from "@tasksorg/ui";
 import "@tasksorg/ui/styles.css";
 import "./auth.css";
+import { migrateWebTasksToAccount } from "../task-repository";
 
 type AuthMode = "login" | "register";
 type Theme = "castelo" | "pergaminho";
@@ -64,6 +65,7 @@ export function AuthForm({ mode, apiBaseUrl = apiUrl }: { mode: AuthMode; apiBas
         body: JSON.stringify(register ? { name, email, password } : { email, password }),
       });
       if (!response.ok) throw new Error(await responseMessage(response));
+      await migrateWebTasksToAccount(window.localStorage, apiBaseUrl);
       window.location.assign("/");
     } catch (reason) {
       setError(messageFrom(reason));

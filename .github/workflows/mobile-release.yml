@@ -1,0 +1,44 @@
+name: Mobile release
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: EAS build profile
+        required: true
+        type: choice
+        options: [preview, production]
+        default: preview
+      platform:
+        required: true
+        type: choice
+        options: [android, ios, all]
+        default: android
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Validate mobile app
+        run: pnpm --filter @tasksorg/mobile lint && pnpm --filter @tasksorg/mobile typecheck && pnpm --filter @tasksorg/mobile test
+      - name: Create EAS build
+        working-directory: apps/mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+          BUILD_PROFILE: ${{ inputs.profile }}
+          BUILD_PLATFORM: ${{ inputs.platform }}
+        run: |
+          test -n "$EXPO_TOKEN"
+          pnpm dlx eas-cli@latest build --platform "$BUILD_PLATFORM" --profile "$BUILD_PROFILE" --non-interactive --no-wait

@@ -1,6 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
+  createHttpTaskRepository,
+  createOfflineTaskRepository,
+  migrateTasksToRepository,
   type KeyValueStorage,
+  type TaskRepository,
   type TextFileSystem,
   TaskRepositoryError,
   createInMemoryTaskRepository,
@@ -9,7 +13,7 @@ import {
   normalizeTask,
   parseStoredTasks,
 } from "../repository.js";
-import { TaskStore, createTask } from "../task.js";
+import { TaskStore, createTask, type Task } from "../task.js";
 
 function fakeStorage(initial: Record<string, string> = {}): KeyValueStorage & { data: Record<string, string> } {
   const data = { ...initial };
@@ -130,6 +134,136 @@ describe("createInMemoryTaskRepository", () => {
   it("começa com as tarefas iniciais", async () => {
     const task = createTask({ title: "Inicial" });
     expect(await createInMemoryTaskRepository([task]).list()).toEqual([task]);
+  });
+});
+
+describe("createHttpTaskRepository", () => {
+  it("lista e normaliza tarefas recebidas da API", async () => {
+    const task = createTask({ title: "Sincronizada" });
+    const fetch = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ tasks: [task] }) }));
+    const repo = createHttpTaskRepository({ baseUrl: "https://api.example.test/", fetch });
+
+    expect(await repo.list()).toEqual([task]);
+    expect(fetch).toHaveBeenCalledWith("https://api.example.test/tasks", expect.objectContaining({ credentials: "include" }));
+  });
+
+  it("salva e remove usando o contrato HTTP e token opcional", async () => {
+    const task = createTask({ title: "Enviar" });
+    const fetch = vi.fn(async () => ({ ok: true, status: 204, json: async () => ({}) }));
+    const repo = createHttpTaskRepository({ baseUrl: "https://api.example.test", fetch, getToken: () => "token-mobile" });
+
+    await repo.save(task);
+    await repo.remove(task.id);
+
+    expect(fetch).toHaveBeenNthCalledWith(1, `https://api.example.test/tasks/${task.id}`, expect.objectContaining({
+      method: "PUT",
+      body: JSON.stringify(task),
+      headers: expect.objectContaining({ authorization: "Bearer token-mobile", "content-type": "application/json" }),
+    }));
+    expect(fetch).toHaveBeenNthCalledWith(2, `https://api.example.test/tasks/${task.id}`, expect.objectContaining({ method: "DELETE" }));
+  });
+
+  it("converte falhas de rede e respostas inválidas em erro de repositório", async () => {
+    const networkRepo = createHttpTaskRepository({ baseUrl: "https://api.example.test", fetch: async () => { throw new Error("offline"); } });
+    await expect(networkRepo.list()).rejects.toThrow(TaskRepositoryError);
+
+    const rejectedRepo = createHttpTaskRepository({ baseUrl: "https://api.example.test", fetch: async () => ({ ok: false, status: 401, json: async () => ({}) }) });
+    await expect(rejectedRepo.list()).rejects.toThrow("401");
+  });
+});
+
+describe("createOfflineTaskRepository", () => {
+  it("ignora uma fila persistida corrompida ou com operações inválidas", () => {
+    const invalidJson = createOfflineTaskRepository({
+      local: createInMemoryTaskRepository(),
+      remote: createInMemoryTaskRepository(),
+      storage: fakeStorage({ "tasksorg:sync-queue": "{inválido" }),
+    });
+    expect(invalidJson.pendingCount()).toBe(0);
+
+    const invalidOperations = createOfflineTaskRepository({
+      local: createInMemoryTaskRepository(),
+      remote: createInMemoryTaskRepository(),
+      storage: fakeStorage({ "tasksorg:sync-queue": JSON.stringify([null, { type: "remove" }, { type: "save", task: {} }, { type: "desconhecida" }]) }),
+    });
+    expect(invalidOperations.pendingCount()).toBe(0);
+  });
+
+  it("mantém a alteração local e enfileira enquanto a API está offline", async () => {
+    const storage = fakeStorage();
+    const local = createInMemoryTaskRepository();
+    const remote: TaskRepository = { list: async () => { throw new Error("offline"); }, save: async () => { throw new Error("offline"); }, remove: async () => { throw new Error("offline"); } };
+    const repo = createOfflineTaskRepository({ local, remote, storage });
+    const task = createTask({ title: "Sem rede" });
+    await repo.save(task);
+    expect(await repo.list()).toEqual([task]);
+    expect(repo.pendingCount()).toBe(1);
+  });
+
+  it("envia a fila ao reconectar e atualiza o cache", async () => {
+    const storage = fakeStorage();
+    const local = createInMemoryTaskRepository();
+    let online = false;
+    const server = new Map<string, Task>();
+    const remote: TaskRepository = {
+      list: async () => { if (!online) throw new Error("offline"); return [...server.values()]; },
+      save: async (task) => { if (!online) throw new Error("offline"); server.set(task.id, task); },
+      remove: async (id) => { if (!online) throw new Error("offline"); server.delete(id); },
+    };
+    const repo = createOfflineTaskRepository({ local, remote, storage });
+    const task = createTask({ title: "Fila" });
+    await repo.save(task);
+    online = true;
+    expect(await repo.sync()).toEqual([task]);
+    expect(repo.pendingCount()).toBe(0);
+  });
+
+  it("preserva só a última operação pendente de cada missão", async () => {
+    const storage = fakeStorage();
+    const local = createInMemoryTaskRepository();
+    const remote: TaskRepository = { list: async () => { throw new Error("offline"); }, save: async () => { throw new Error("offline"); }, remove: async () => { throw new Error("offline"); } };
+    const repo = createOfflineTaskRepository({ local, remote, storage });
+    const task = createTask({ title: "Remover" });
+    await repo.save(task);
+    await repo.remove(task.id);
+    expect(repo.pendingCount()).toBe(1);
+    expect(JSON.parse(storage.getItem("tasksorg:sync-queue")!)[0]).toEqual({ type: "remove", id: task.id });
+  });
+
+  it("confirma salvamento e remoção online sem deixar operações na fila", async () => {
+    const storage = fakeStorage();
+    const local = createInMemoryTaskRepository();
+    const remote = createInMemoryTaskRepository();
+    const repo = createOfflineTaskRepository({ local, remote, storage, queueKey: "fila-personalizada" });
+    const task = createTask({ title: "Online" });
+
+    await repo.save(task);
+    expect(await remote.list()).toEqual([task]);
+    await repo.remove(task.id);
+
+    expect(await remote.list()).toEqual([]);
+    expect(repo.pendingCount()).toBe(0);
+    expect(JSON.parse(storage.getItem("fila-personalizada")!)).toEqual([]);
+  });
+
+  it("reconcilia o cache local removendo uma missão ausente no servidor", async () => {
+    const obsolete = createTask({ title: "Obsoleta" });
+    const current = createTask({ title: "Atual" });
+    const local = createInMemoryTaskRepository([obsolete]);
+    const remote = createInMemoryTaskRepository([current]);
+    const repo = createOfflineTaskRepository({ local, remote, storage: fakeStorage() });
+
+    await expect(repo.sync()).resolves.toEqual([current]);
+    expect(await local.list()).toEqual([current]);
+  });
+});
+
+describe("migrateTasksToRepository", () => {
+  it("copia as missões locais para a conta", async () => {
+    const tasks = [createTask({ title: "Antiga" }), createTask({ title: "Outra" })];
+    const target = createInMemoryTaskRepository();
+    await expect(migrateTasksToRepository(createInMemoryTaskRepository(tasks), target)).resolves.toBe(2);
+    expect(await target.list()).toEqual(tasks);
   });
 });
 

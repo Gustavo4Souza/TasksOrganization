@@ -1,0 +1,34 @@
+name: Database backup
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 3 * * *"
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - name: Require production database secret
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: test -n "$DATABASE_URL"
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install --yes postgresql-client
+
+      - name: Create compressed backup
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pg_dump --dbname="$DATABASE_URL" --format=custom --no-owner --no-privileges --file="tasksorg-${GITHUB_RUN_ID}.dump"
+
+      - name: Upload restricted backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tasksorg-database-${{ github.run_id }}
+          path: tasksorg-${{ github.run_id }}.dump
+          retention-days: 14
+          if-no-files-found: error

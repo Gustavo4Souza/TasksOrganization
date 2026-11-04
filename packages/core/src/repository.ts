@@ -170,3 +170,181 @@ export function createInMemoryTaskRepository(initial: Task[] = []): TaskReposito
     },
   });
 }
+
+export interface HttpResponseLike {
+  ok: boolean;
+  status: number;
+  json(): Promise<unknown>;
+}
+
+export interface HttpFetchLike {
+  (url: string, init?: {
+    method?: string;
+    headers?: Record<string, string>;
+    body?: string;
+    credentials?: "include";
+  }): Promise<HttpResponseLike>;
+}
+
+export interface HttpTaskRepositoryOptions {
+  baseUrl: string;
+  fetch: HttpFetchLike;
+  /** Token opcional para clientes sem cookie, como o app mobile. */
+  getToken?: () => string | undefined;
+}
+
+/** Adaptador do MVP 2: mantém as telas dependentes apenas de TaskRepository. */
+export function createHttpTaskRepository(options: HttpTaskRepositoryOptions): TaskRepository {
+  const baseUrl = options.baseUrl.replace(/\/$/, "");
+  if (!baseUrl) throw new TaskRepositoryError("A URL da API é obrigatória.");
+
+  function headers(withBody = false): Record<string, string> {
+    const result: Record<string, string> = { accept: "application/json" };
+    if (withBody) result["content-type"] = "application/json";
+    const token = options.getToken?.();
+    if (token) result.authorization = `Bearer ${token}`;
+    return result;
+  }
+
+  async function request(path: string, init?: Parameters<HttpFetchLike>[1]): Promise<HttpResponseLike> {
+    let response: HttpResponseLike;
+    try {
+      response = await options.fetch(`${baseUrl}${path}`, { credentials: "include", ...init });
+    } catch (error) {
+      throw new TaskRepositoryError("Não foi possível acessar a API.", { cause: error });
+    }
+    if (!response.ok) throw new TaskRepositoryError(`A API recusou a operação (${response.status}).`);
+    return response;
+  }
+
+  return {
+    async list() {
+      const payload = await (await request("/tasks", { headers: headers() })).json();
+      const tasks = isRecord(payload) ? payload.tasks : undefined;
+      if (!Array.isArray(tasks)) throw new TaskRepositoryError("A API retornou uma lista de tarefas inválida.");
+      return tasks.map(normalizeTask);
+    },
+    async save(task) {
+      await request(`/tasks/${encodeURIComponent(task.id)}`, { method: "PUT", headers: headers(true), body: JSON.stringify(task) });
+    },
+    async remove(id) {
+      await request(`/tasks/${encodeURIComponent(id)}`, { method: "DELETE", headers: headers() });
+    },
+  };
+}
+
+type PendingTaskOperation =
+  | { type: "save"; task: Task }
+  | { type: "remove"; id: string };
+
+export interface OfflineTaskRepository extends TaskRepository {
+  /** Tenta enviar a fila e atualizar o cache local com a versão da API. */
+  sync(): Promise<Task[]>;
+  pendingCount(): number;
+}
+
+export interface OfflineTaskRepositoryOptions {
+  local: TaskRepository;
+  remote: TaskRepository;
+  storage: KeyValueStorage;
+  queueKey?: string;
+}
+
+function readQueue(storage: KeyValueStorage, key: string): PendingTaskOperation[] {
+  const text = storage.getItem(key);
+  if (!text) return [];
+  try {
+    const parsed = JSON.parse(text) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.flatMap((item): PendingTaskOperation[] => {
+      if (!isRecord(item)) return [];
+      if (item.type === "remove" && typeof item.id === "string") return [{ type: "remove", id: item.id }];
+      if (item.type === "save") {
+        try { return [{ type: "save", task: normalizeTask(item.task) }]; } catch { return []; }
+      }
+      return [];
+    });
+  } catch {
+    return [];
+  }
+}
+
+function writeQueue(storage: KeyValueStorage, key: string, queue: PendingTaskOperation[]): void {
+  storage.setItem(key, JSON.stringify(queue));
+}
+
+/**
+ * Cache local-first com fila persistente. A interface continua sendo
+ * TaskRepository; quando a API volta, `sync` reaplica as operações na ordem e
+ * substitui o cache pelo estado autorizado do servidor.
+ */
+export function createOfflineTaskRepository(options: OfflineTaskRepositoryOptions): OfflineTaskRepository {
+  const queueKey = options.queueKey ?? "tasksorg:sync-queue";
+  let queue = readQueue(options.storage, queueKey);
+
+  function enqueue(operation: PendingTaskOperation): void {
+    const id = operation.type === "save" ? operation.task.id : operation.id;
+    queue = [...queue.filter((item) => (item.type === "save" ? item.task.id : item.id) !== id), operation];
+    writeQueue(options.storage, queueKey, queue);
+  }
+
+  async function flush(): Promise<void> {
+    while (queue.length) {
+      const operation = queue[0]!;
+      if (operation.type === "save") await options.remote.save(operation.task);
+      else await options.remote.remove(operation.id);
+      queue = queue.slice(1);
+      writeQueue(options.storage, queueKey, queue);
+    }
+  }
+
+  async function replaceLocal(tasks: Task[]): Promise<void> {
+    const nextIds = new Set(tasks.map((task) => task.id));
+    for (const existing of await options.local.list()) {
+      if (!nextIds.has(existing.id)) await options.local.remove(existing.id);
+    }
+    for (const task of tasks) await options.local.save(task);
+  }
+
+  async function sync(): Promise<Task[]> {
+    await flush();
+    const tasks = await options.remote.list();
+    await replaceLocal(tasks);
+    return tasks;
+  }
+
+  return {
+    async list() {
+      try { return await sync(); } catch { return options.local.list(); }
+    },
+    async save(task) {
+      await options.local.save(task);
+      try {
+        await options.remote.save(task);
+        queue = queue.filter((item) => (item.type === "save" ? item.task.id : item.id) !== task.id);
+        writeQueue(options.storage, queueKey, queue);
+      } catch {
+        enqueue({ type: "save", task });
+      }
+    },
+    async remove(id) {
+      await options.local.remove(id);
+      try {
+        await options.remote.remove(id);
+        queue = queue.filter((item) => (item.type === "save" ? item.task.id : item.id) !== id);
+        writeQueue(options.storage, queueKey, queue);
+      } catch {
+        enqueue({ type: "remove", id });
+      }
+    },
+    sync,
+    pendingCount: () => queue.length,
+  };
+}
+
+/** Copia tarefas locais para a conta sem apagar a origem, que vira cache offline. */
+export async function migrateTasksToRepository(source: TaskRepository, target: TaskRepository): Promise<number> {
+  const tasks = await source.list();
+  for (const task of tasks) await target.save(task);
+  return tasks.length;
+}

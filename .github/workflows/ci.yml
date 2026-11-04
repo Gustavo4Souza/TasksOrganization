@@ -7,12 +7,44 @@ on:
 jobs:
   quality-and-build:
     runs-on: ubuntu-latest
+    env:
+      TEST_DATABASE_URL: postgresql://tasksorg:tasksorg@localhost:5432/tasksorg_test
+      DATABASE_URL: postgresql://tasksorg:tasksorg@localhost:5432/tasksorg_test
+      ALLOWED_ORIGINS: http://localhost:3100
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      E2E_API_URL: http://localhost:3001
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: tasksorg_test
+          POSTGRES_USER: tasksorg
+          POSTGRES_PASSWORD: tasksorg
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U tasksorg -d tasksorg_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
     permissions:
       contents: read
       packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Record pipeline start
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          echo "KPI_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+          if [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ] && git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null; then
+            first_commit="$(git log --reverse --format=%cI "$BEFORE_SHA..$GITHUB_SHA" | head -n 1)"
+          else
+            first_commit="$(git show -s --format=%cI "$GITHUB_SHA")"
+          fi
+          echo "KPI_FIRST_COMMIT_AT=$first_commit" >> "$GITHUB_ENV"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -43,10 +75,23 @@ jobs:
         if: always()
         run: pnpm --filter @tasksorg/core test:coverage
 
+      - name: Install Playwright browser
+        if: always()
+        run: pnpm --filter @tasksorg/web exec playwright install --with-deps chromium
+
       - name: End-to-end tests
         id: e2e_tests
         if: always()
-        run: pnpm test:e2e
+        run: |
+          pnpm --filter @tasksorg/core build
+          pnpm --filter @tasksorg/api build
+          pnpm --filter @tasksorg/api start > /tmp/tasksorg-api.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3001/ready > /dev/null; then break; fi
+            if [ "$attempt" = 30 ]; then cat /tmp/tasksorg-api.log; exit 1; fi
+            sleep 1
+          done
+          pnpm test:e2e
 
       - name: Publish test summary
         if: always()
@@ -65,11 +110,14 @@ jobs:
             echo "| End-to-end tests | ${E2E_TESTS_OUTCOME} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Build web and desktop
-        run: pnpm turbo run build --filter=@tasksorg/web --filter=@tasksorg/desktop
+      - name: Build web, desktop and API
+        run: pnpm turbo run build --filter=@tasksorg/web --filter=@tasksorg/desktop --filter=@tasksorg/api
 
       - name: Build web production image
         run: docker build -f apps/web/Dockerfile -t tasksorg-web:${{ github.sha }} .
+
+      - name: Build API production image
+        run: docker build -f apps/api/Dockerfile -t tasksorg-api:${{ github.sha }} .
 
       - name: Log in to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -79,12 +127,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract image metadata
+      - name: Extract web image metadata
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository_owner }}/tasksorg-web
+          tags: |
+            type=sha
+            type=raw,value=latest
+
+      - name: Extract API image metadata
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: api_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/tasksorg-api
           tags: |
             type=sha
             type=raw,value=latest
@@ -98,3 +156,43 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Publish API production image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: true
+          tags: ${{ steps.api_meta.outputs.tags }}
+          labels: ${{ steps.api_meta.outputs.labels }}
+
+      - name: Record pipeline and test results
+        if: always() && github.event_name != 'pull_request'
+        env:
+          KPI_API_URL: ${{ secrets.KPI_API_URL }}
+          KPI_INGEST_SECRET: ${{ secrets.KPI_INGEST_SECRET }}
+          KPI_EVENT_TYPE: pipeline
+          PIPELINE_STATUS: ${{ job.status }}
+          UNIT_TESTS_OUTCOME: ${{ steps.unit_tests.outcome }}
+          CORE_COVERAGE_OUTCOME: ${{ steps.core_coverage.outcome }}
+          E2E_TESTS_OUTCOME: ${{ steps.e2e_tests.outcome }}
+        run: |
+          passed=0
+          coverage=""
+          if [ -f packages/core/coverage/lcov.info ]; then
+            coverage="$(awk -F: '/^LF:/{found+=$2}/^LH:/{hit+=$2}END{if(found)printf "%.2f",100*hit/found}' packages/core/coverage/lcov.info)"
+          fi
+          for outcome in "$UNIT_TESTS_OUTCOME" "$CORE_COVERAGE_OUTCOME" "$E2E_TESTS_OUTCOME"; do
+            if [ "$outcome" = "success" ]; then passed=$((passed + 1)); fi
+          done
+          status="$PIPELINE_STATUS"
+          if [ "$status" = "cancelled" ]; then status="cancelled"; elif [ "$status" = "success" ]; then status="success"; else status="failure"; fi
+          export KPI_PAYLOAD="$(jq -nc \
+            --arg run "$GITHUB_RUN_ID" --arg sha "$GITHUB_SHA" --arg branch "$GITHUB_REF_NAME" \
+            --arg status "$status" --arg started "$KPI_STARTED_AT" --arg completed "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg firstCommit "$KPI_FIRST_COMMIT_AT" \
+            --arg coverage "$coverage" \
+            --argjson passed "$passed" \
+            '{workflowRunId:$run,commitSha:$sha,branch:$branch,status:$status,startedAt:$started,completedAt:$completed,firstCommitAt:$firstCommit,testsTotal:3,testsPassed:$passed,flakyTests:0} + (if $coverage == "" then {} else {coveragePercentage:($coverage|tonumber)} end)')"
+          node scripts/publish-kpi-event.mjs
