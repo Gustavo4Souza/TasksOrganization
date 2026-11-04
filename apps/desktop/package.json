@@ -18,14 +18,14 @@
     "@tasksorg/core": "workspace:*",
     "@tasksorg/ui": "workspace:*",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@tasksorg/eslint-config": "workspace:^",
     "@tasksorg/tsconfig": "workspace:^",
     "@types/node": "^20.16.11",
     "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.1",
+    "@types/react-dom": "^19.3.0",
     "electron-builder": "^26.0.12",
     "electron": "^42.11.16",
     "esbuild": "^0.28.2",
