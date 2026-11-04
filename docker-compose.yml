@@ -15,6 +15,7 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: development
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
       # necessário pro hot-reload funcionar de forma confiável com bind mount,
       # especialmente rodando o Docker Desktop no Windows
       WATCHPACK_POLLING: "true"
@@ -29,9 +30,60 @@ services:
       - /app/apps/web/node_modules
       - /app/apps/web/.next
       - /app/apps/desktop/node_modules
+      - /app/apps/api/node_modules
       - /app/packages/core/node_modules
       # cache do pnpm entre reinicializações do container (instala mais rápido)
       - pnpm-store:/root/.local/share/pnpm/store
+    depends_on:
+      api:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: deps
+    working_dir: /app
+    command: sh -c "pnpm install --frozen-lockfile && pnpm --filter @tasksorg/core build && pnpm --filter @tasksorg/api dev"
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 3001
+      DATABASE_URL: ${DATABASE_URL:-postgresql://tasksorg:tasksorg@postgres:5432/tasksorg}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/api/node_modules
+      - /app/packages/core/node_modules
+      - pnpm-store:/root/.local/share/pnpm/store
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3001/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-tasksorg}
+      POSTGRES_USER: ${POSTGRES_USER:-tasksorg}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tasksorg}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
 volumes:
   pnpm-store:
+  postgres-data:

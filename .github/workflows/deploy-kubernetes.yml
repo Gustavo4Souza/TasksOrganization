@@ -1,0 +1,73 @@
+name: Deploy Kubernetes
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: GitHub environment and target cluster
+        required: true
+        type: choice
+        options: [homologation, production]
+        default: homologation
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure cluster access
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          test -n "$KUBE_CONFIG"
+          mkdir -p "$HOME/.kube"
+          printf '%s' "$KUBE_CONFIG" | base64 --decode > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+      - name: Create runtime secrets
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          KPI_INGEST_SECRET: ${{ secrets.KPI_INGEST_SECRET }}
+        run: |
+          kubectl create namespace tasksorg --dry-run=client -o yaml | kubectl apply -f -
+          kubectl -n tasksorg create secret generic tasksorg-secrets \
+            --from-literal=POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+            --from-literal=DATABASE_URL="$DATABASE_URL" \
+            --from-literal=KPI_INGEST_SECRET="$KPI_INGEST_SECRET" \
+            --dry-run=client -o yaml | kubectl apply -f -
+      - name: Apply manifests and immutable image versions
+        id: deploy
+        continue-on-error: true
+        env:
+          IMAGE_OWNER: ${{ github.repository_owner }}
+        run: |
+          kubectl apply -f k8s/namespace.yaml -f k8s/configmap.yaml -f k8s/postgres.yaml -f k8s/api.yaml -f k8s/web.yaml
+          owner="$(printf '%s' "$IMAGE_OWNER" | tr '[:upper:]' '[:lower:]')"
+          kubectl -n tasksorg set image deployment/api api="ghcr.io/$owner/tasksorg-api:sha-${GITHUB_SHA::7}"
+          kubectl -n tasksorg set image deployment/web web="ghcr.io/$owner/tasksorg-web:sha-${GITHUB_SHA::7}"
+          kubectl -n tasksorg rollout status deployment/api --timeout=180s
+          kubectl -n tasksorg rollout status deployment/web --timeout=180s
+      - name: Record deployment result
+        if: always()
+        env:
+          KPI_API_URL: ${{ secrets.KPI_API_URL }}
+          KPI_INGEST_SECRET: ${{ secrets.KPI_INGEST_SECRET }}
+          KPI_EVENT_TYPE: deployment
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          TARGET_ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          status="failure"
+          if [ "$DEPLOY_OUTCOME" = "success" ]; then status="success"; fi
+          now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          export KPI_PAYLOAD="$(jq -nc \
+            --arg environment "$TARGET_ENVIRONMENT" --arg version "sha-${GITHUB_SHA::7}" \
+            --arg sha "$GITHUB_SHA" --arg status "$status" --arg run "$GITHUB_RUN_ID" --arg now "$now" \
+            '{environment:$environment,version:$version,commitSha:$sha,status:$status,workflowRunId:$run,startedAt:$now,completedAt:$now}')"
+          node scripts/publish-kpi-event.mjs
+      - name: Enforce deployment result
+        if: steps.deploy.outcome != 'success'
+        run: exit 1

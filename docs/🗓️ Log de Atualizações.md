@@ -1,5 +1,106 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 04/11/2026 — Integrações independentes do Higor concluídas
+
+As pendências locais do Higor nos MVPs 1, 2 e 3 foram encerradas. Os aceites do
+Quadro, Pomodoro, temas, responsividade e acessibilidade passaram na suíte E2E.
+Web e Desktop agora autenticam contra a API; o Electron guarda a sessão com
+`safeStorage`. Um repositório local-first persiste a fila de alterações, reenvia
+ao reconectar, reconcilia o cache e migra as missões locais no primeiro login.
+
+O dashboard de KPIs foi ligado ao endpoint real e o cenário Playwright percorre
+cadastro, migração, reconexão offline e a tela de indicadores contra API e
+PostgreSQL. A política CORS foi corrigida para liberar `PUT` e `DELETE` da origem
+Web e recebeu teste de integração.
+
+Passaram lint, typecheck, builds, 102 testes do Core, 110 do UI, 25 do Web, 9 da
+API com PostgreSQL real, 7 do Desktop, 5 do Mobile e 32 cenários E2E. São 258
+testes unitários/de integração, além dos E2E. A cobertura do Core ficou em
+97,56% de statements e 91,62% de branches. Permanecem somente tarefas externas:
+artefato/tag no GitHub, secrets e relatório CodeQL, cluster Kubernetes, validação
+visual Android e release EAS.
+
+## 03/11/2026 — Atividades de Gustavo e Guilhermo executadas por Higor
+
+Higor executou as atividades independentes que estavam atribuídas a Gustavo e
+Guilhermo do MVP 2 ao MVP 4. A decisão de persistência foi aceita e virou uma
+API Fastify com PostgreSQL, migrations, CRUD de missões, Pomodoro, progresso,
+autenticação por sessão, isolamento por usuário e adaptador HTTP no Core. Oito
+testes da API passaram contra um PostgreSQL 17 real em container. O backup foi
+restaurado em um banco temporário e as três migrations foram conferidas antes
+da remoção segura desse banco de auditoria.
+
+A infraestrutura ganhou containers de API/banco, health checks, imagem de
+produção, backup automatizado com runbook e coleta de KPIs. Deploys, falhas,
+incidentes, pipelines, Lead Time, cobertura, defeitos escapados e testes
+instáveis possuem modelo, endpoints e automações; o gate SARIF ganhou três
+testes locais. A auditoria não encontrou vulnerabilidades altas ou críticas.
+
+No MVP 4, Higor criou os manifests de Web, API e PostgreSQL, probes e o CD com
+`kubectl`, imagens imutáveis e espera de rollout. O mobile recebeu
+cadastro/login, sessão no SecureStore, sincronização pelo `TaskRepository` HTTP
+e logout com revogação do token. Cinco testes, lint, typecheck e a exportação
+Android passaram. O EAS está preparado, mas secrets GitHub/Expo, associação do
+projeto, backup real e validação no cluster permanecem pendências externas e
+não foram marcadas como concluídas.
+
+## 03/11/2026 — Persistência JSON integrada ao Desktop
+
+A integração pendente de `T1.1.6` foi concluída no Electron. O renderer agora
+usa o adaptador `createJsonFileTaskRepository` do Core através de uma ponte IPC
+restrita no preload, enquanto o processo principal lê e grava exclusivamente
+`userData/tasks.json`. O conteúdo recebido é limitado e validado antes da
+escrita.
+
+Para evitar perda de dados, a primeira abertura detecta as missões salvas pela
+versão anterior no `localStorage`, grava cada uma no arquivo JSON e só remove a
+chave antiga depois que a migração termina com sucesso. Dois testes cobrem a
+leitura/escrita pela ponte e a migração, elevando o Desktop a 7 testes. Testes,
+lint, typecheck e build passaram.
+
+## 03/11/2026 — Colunas por status no Quadro mobile
+
+A `T4.2.3` foi completada no código com uma segunda navegação por abas no
+Mobile: além dos escopos Hoje/Semana/Ano, o usuário alterna entre Missões, Em
+batalha e Conquistas. Cada aba mostra seu contador e estado vazio, e as ações do
+cartão movem a missão para a coluna correspondente. Ao criar uma missão, o app
+retorna à coluna Missões.
+
+Foram adicionados testes para o filtro por coluna. O componente nativo de botão
+também foi corrigido para preservar `role="tab"` e o estado selecionado para
+leitores de tela. Os 2 testes do Mobile, os 110 testes do UI, lint, typecheck,
+build do UI e a exportação Android com 625 módulos passaram. A task permanece
+sem o aceite final até a conferência visual em emulador/dispositivo e a revisão
+por PR.
+
+## 03/11/2026 — Identidade visual e acessibilidade restauradas no Desktop
+
+A migração do renderer Electron para React no PR #50 removeu as declarações
+locais das fontes e parte do comportamento acessível que já existia. O novo
+renderer voltou a carregar Silkscreen, Pixelify Sans e Jersey 10 a partir dos
+arquivos empacotados. A primeira visita volta a escolher Castelo/Pergaminho por
+`prefers-color-scheme`, sem substituir uma escolha salva pelo usuário.
+
+Também foram restaurados o foco visível de teclado e o respeito a
+`prefers-reduced-motion`. A chave `lib` duplicada no `tsconfig` do UI foi
+removida, eliminando o aviso do empacotador. Build, lint e typecheck do Desktop,
+além do typecheck e build do UI, passaram; o Electron iniciou a janela
+`TasksOrg — Desktop`. As correções aguardam revisão por PR.
+
+A auditoria completa acrescentou cinco testes automatizados ao Desktop para
+tema, relógio da bandeja, estado corrompido e restauração segura da janela. O monitor salvo agora é
+usado e posições inválidas são limitadas à área visível. A bandeja passou a usar
+o ícone do projeto, mostrar fase/tempo do Pomodoro no tooltip e manter a janela
+disponível ao fechá-la. O comando de desenvolvimento deixou de depender de uma
+segunda resolução do pnpm. O instalador NSIS e o executável Windows foram gerados
+e iniciados localmente com sucesso.
+
+No mobile, `react-dom` foi alinhado ao React 19.3 usado pelo Expo, removendo o
+conflito de peer dependency. A documentação de `T1.6.2` foi corrigida de 105 para
+92 testes do core, que é a contagem real da suíte com 98,92% de statements.
+O `esbuild` direto foi atualizado para uma versão corrigida; a auditoria caiu
+para cinco achados moderados transitivos, sem alertas altos ou críticos.
+
 ## 03/11/2026 — Integração do desktop com a UI compartilhada
 
 O renderer do Electron foi migrado do HTML manual para React, reutilizando
@@ -27,7 +128,7 @@ o merge desta documentação na `main`.
 A `T1.6.2` foi concluída no workflow de CI: além dos testes unitários, o pipeline
 executa a cobertura do `@tasksorg/core` com limiar de 90%, os testes E2E e publica
 um resumo tabular de sucesso/falha no Summary do GitHub Actions. A validação local
-passou com 105 testes do core, 98,92% de statements e 31 cenários E2E; lint,
+passou com 92 testes do core, 98,92% de statements e 31 cenários E2E; lint,
 typecheck e builds Web/Desktop também passaram.
 
 A `T1.6.3` foi concluída: pushes na `main` fazem login no GHCR com o

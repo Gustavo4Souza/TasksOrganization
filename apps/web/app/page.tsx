@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { createLocalStorageTaskRepository, TaskStore, weekProgress, yearProgress, type Task, type TaskPriority, type TaskScope } from "@tasksorg/core";
+import { TaskStore, weekProgress, yearProgress, type Task, type TaskPriority, type TaskRepository, type TaskScope } from "@tasksorg/core";
 import { Button, Panel, PomodoroHUD, RoomMap, ScopeTabs, StatBar, TaskCard, roomsFromWeek, roomsFromYear, usePomodoro, usePomodoroSettings } from "@tasksorg/ui";
 import "@tasksorg/ui/styles.css";
 import "./quadro.css";
 import { PhaseAlertOptions, usePhaseAlerts } from "./phase-alerts";
+import { createWebTaskRepository } from "./task-repository";
 
 const scopes: TaskScope[] = ["daily", "weekly", "yearly"];
 const TASK_TITLE_MAX_LENGTH = 160;
@@ -28,7 +29,7 @@ export default function HomePage() {
   const [draftDueDate, setDraftDueDate] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const storeRef = useRef(new TaskStore());
-  const repoRef = useRef<ReturnType<typeof createLocalStorageTaskRepository> | null>(null);
+  const repoRef = useRef<TaskRepository | null>(null);
   const loadedRef = useRef(false);
   const pendingCreditsRef = useRef(0);
   const { config } = usePomodoroSettings();
@@ -47,7 +48,7 @@ export default function HomePage() {
   useEffect(() => {
     let active = true;
     try {
-      const repo = createLocalStorageTaskRepository(window.localStorage);
+      const repo = createWebTaskRepository(window.localStorage);
       repoRef.current = repo;
       void repo.list().then((items) => { if (active) {
         storeRef.current = new TaskStore(items);

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tasksorg-config
+  namespace: tasksorg
+data:
+  POSTGRES_DB: tasksorg
+  POSTGRES_USER: tasksorg
+  ALLOWED_ORIGINS: https://tasksorg.example.com
+  NEXT_PUBLIC_API_URL: https://api.tasksorg.example.com

@@ -1,0 +1,55 @@
+name: Record incident
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: Incident title
+        required: true
+      severity:
+        required: true
+        type: choice
+        options: [low, medium, high, critical]
+      status:
+        required: true
+        type: choice
+        options: [open, resolved]
+      detected_at:
+        description: Detection time in ISO-8601 UTC
+        required: true
+      resolved_at:
+        description: Resolution time in ISO-8601 UTC (required when resolved)
+        required: false
+      notes:
+        required: false
+      escaped_defect:
+        description: Defect discovered after CI/deployment
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish incident event
+        env:
+          KPI_API_URL: ${{ secrets.KPI_API_URL }}
+          KPI_INGEST_SECRET: ${{ secrets.KPI_INGEST_SECRET }}
+          KPI_EVENT_TYPE: incident
+          INPUT_TITLE: ${{ inputs.title }}
+          INPUT_SEVERITY: ${{ inputs.severity }}
+          INPUT_STATUS: ${{ inputs.status }}
+          INPUT_DETECTED_AT: ${{ inputs.detected_at }}
+          INPUT_RESOLVED_AT: ${{ inputs.resolved_at }}
+          INPUT_NOTES: ${{ inputs.notes }}
+          INPUT_ESCAPED_DEFECT: ${{ inputs.escaped_defect }}
+        run: |
+          export KPI_PAYLOAD="$(jq -nc \
+            --arg title "$INPUT_TITLE" --arg severity "$INPUT_SEVERITY" --arg status "$INPUT_STATUS" \
+            --arg detected "$INPUT_DETECTED_AT" --arg resolved "$INPUT_RESOLVED_AT" --arg notes "$INPUT_NOTES" \
+            --arg escaped "$INPUT_ESCAPED_DEFECT" \
+            '{title:$title,severity:$severity,status:$status,detectedAt:$detected,notes:$notes,escapedDefect:($escaped == "true")} + (if $resolved == "" then {} else {resolvedAt:$resolved} end)')"
+          node scripts/publish-kpi-event.mjs

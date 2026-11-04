@@ -113,9 +113,9 @@ export function createNativeComponents(primitives: NativePrimitives, themeName: 
     </View>;
   }
 
-  function Button({ children, variant = "primary", disabled = false, style, ...props }: NativeProps & { variant?: NativeButtonVariant; disabled?: boolean }) {
+  function Button({ children, variant = "primary", disabled = false, style, accessibilityRole = "button", accessibilityState, ...props }: NativeProps & { variant?: NativeButtonVariant; disabled?: boolean; accessibilityRole?: string; accessibilityState?: Record<string, unknown> }) {
     const variantStyle = variant === "danger" ? theme.styles.buttonDanger : variant === "secondary" ? theme.styles.buttonSecondary : theme.styles.buttonPrimary;
-    return <Pressable {...props} disabled={disabled} accessibilityRole="button" accessibilityState={{ disabled }} style={mergeStyles(theme.styles.button, variantStyle, disabled && { opacity: 0.55 }, style)}>
+    return <Pressable {...props} disabled={disabled} accessibilityRole={accessibilityRole} accessibilityState={{ ...accessibilityState, disabled }} style={mergeStyles(theme.styles.button, variantStyle, disabled && { opacity: 0.55 }, style)}>
       <Text style={mergeStyles(theme.styles.buttonText, variant === "secondary" && theme.styles.buttonTextSecondary)}>{children}</Text>
     </Pressable>;
   }

@@ -25,4 +25,11 @@ describe("base React Native do Design System", () => {
     const element = kit.StatBar({ label: "Testes", value: 140, max: 100 });
     expect(element.props.accessibilityValue).toEqual({ min: 0, max: 100, now: 100 });
   });
+
+  it("preserva o papel e o estado acessível de uma aba", () => {
+    const kit = createNativeComponents({ View: primitive, Text: primitive, Pressable: primitive });
+    const element = kit.Button({ children: "Missões", accessibilityRole: "tab", accessibilityState: { selected: true } });
+    expect(element.props.accessibilityRole).toBe("tab");
+    expect(element.props.accessibilityState).toEqual({ selected: true, disabled: false });
+  });
 });

@@ -9,12 +9,18 @@ Lista viva — marca como feito conforme avança, e adiciona itens novos conform
 - [x] Manter o web em produção pela integração existente com a Vercel
 - [ ] Validar instalador Windows no workflow `Desktop release` (`T1.5.4`)
 - [ ] Criar a tag `v0.1.0` após o merge da release (`T1.6.5`)
-- [ ] Escrever manifests do Kubernetes (`k8s/deployment.yaml`, `k8s/service.yaml`)
+- [x] Criar manifests Kubernetes para Web, API e PostgreSQL (`k8s/*.yaml`); validação em cluster real permanece pendente
+- [ ] Fornecer cluster/credencial Kubernetes e validar API, banco e Web (`T4.1.4`–`T4.1.5`)
+- [ ] Cadastrar os secrets administrativos do GitHub (`T2.3.2`) e conferir o relatório CodeQL publicado (`T3.1.2`)
 
 ## Produto / Plataformas
 
-- [ ] Criar `apps/mobile` com Expo (React Native), reaproveitando `@tasksorg/core`
-- [ ] Persistência real — hoje os dados ficam só no dispositivo (`localStorage` no web). Decidir entre backend próprio (API + Postgres) ou local-first com sync
+- [x] Criar `apps/mobile` com Expo (React Native), reaproveitando `@tasksorg/core`
+- [x] Definir persistência com API própria e PostgreSQL; API, migrations, autenticação e adaptador HTTP já estão implementados
+- [x] Integrar login Web/Desktop, migração dos dados locais e fila de sincronização offline (`T2.2.1`–`T2.2.5`)
+- [x] Integrar os cards, histórico e filtros de KPIs à API real (`T3.3.1`–`T3.3.3`)
+- [ ] Conferir o mobile em emulador/dispositivo Android (`T4.2.2`–`T4.2.3`)
+- [ ] Vincular o projeto Expo, cadastrar `EXPO_TOKEN` e executar a primeira release EAS (`T4.2.5`)
 - [ ] Levantar com o grupo o restante dos requisitos de produto (hoje só tarefas diária/semanal/anual + pomodoro)
 
 ## Qualidade / Arquitetura
@@ -25,4 +31,4 @@ Lista viva — marca como feito conforme avança, e adiciona itens novos conform
 ## Documentação
 
 - [x] Estruturar essa página do Notion (Visão Geral, Arquitetura, DevOps, Decisões, Log de Atualizações)
-- [ ] Manter o Log de Atualizações em dia a cada sessão de trabalho
+- [x] Manter o Log de Atualizações em dia a cada sessão de trabalho

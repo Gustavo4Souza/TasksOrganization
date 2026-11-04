@@ -12,3 +12,4 @@ coverage/
 apps/desktop/release/
 playwright-report/
 test-results/
+k8s/secret.yaml

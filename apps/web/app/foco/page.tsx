@@ -2,18 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { createLocalStorageTaskRepository, TaskStore, type PomodoroTimer, type Task } from "@tasksorg/core";
+import { TaskStore, type PomodoroTimer, type Task, type TaskRepository } from "@tasksorg/core";
 import { Button, usePomodoro, usePomodoroSettings } from "@tasksorg/ui";
 import "@tasksorg/ui/styles.css";
 import "./foco.css";
 import { PhaseAlertOptions, usePhaseAlerts } from "../phase-alerts";
+import { createWebTaskRepository } from "../task-repository";
 
 const labels = { focus: "Foco", shortBreak: "Pausa curta", longBreak: "Pausa longa" };
 export default function FocusPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const alerts = usePhaseAlerts();
   const storeRef = useRef(new TaskStore());
-  const repoRef = useRef<ReturnType<typeof createLocalStorageTaskRepository> | null>(null);
+  const repoRef = useRef<TaskRepository | null>(null);
   const loadedRef = useRef(false);
   const pendingCreditsRef = useRef(0);
   const { config } = usePomodoroSettings();
@@ -34,7 +35,7 @@ export default function FocusPage() {
       document.documentElement.dataset.theme = theme;
       window.localStorage.setItem("tasksorg:theme", theme);
     } catch { /* tema padrão */ }
-    try { const repo = createLocalStorageTaskRepository(window.localStorage); repoRef.current = repo; void repo.list().then((items) => {
+    try { const repo = createWebTaskRepository(window.localStorage); repoRef.current = repo; void repo.list().then((items) => {
       storeRef.current = new TaskStore(items);
       loadedRef.current = true;
       const battle = storeRef.current.getBattle();

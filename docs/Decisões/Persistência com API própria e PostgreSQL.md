@@ -1,4 +1,4 @@
-**Categoria:** Arquitetura · **Status:** Proposta · **Data:** 2026-11-02
+**Categoria:** Arquitetura · **Status:** Aceita · **Data:** 2026-11-02 · **Aceite registrado por Higor em:** 2026-11-03
 
 ## Contexto
 
@@ -15,7 +15,7 @@ Hoje as missões ficam só no dispositivo (`localStorage` no web). O MVP 2 pede 
 
 ## O que foi decidido
 
-Proposta para aprovação do grupo: **API própria em `apps/api` + PostgreSQL (Neon)**.
+Decisão aprovada: **API própria em `apps/api` + PostgreSQL (Neon)**.
 
 - As telas continuam falando só com `TaskRepository`. O adaptador HTTP (`T2.1.7`) substitui o local sem mudar as telas.
 - O servidor é a fonte da verdade. O modo offline (`T2.2.4`) é uma fila local de alterações, enviada ao reconectar.
@@ -23,12 +23,12 @@ Proposta para aprovação do grupo: **API própria em `apps/api` + PostgreSQL (N
 - A regra "uma só missão em batalha" é garantida também no servidor.
 - Cada registro pertence a um usuário, e toda consulta filtra por ele (`T2.1.6`).
 
-## Pontos a confirmar com o grupo
+## Decisões complementares
 
-1. **Conflito:** *last write wins* basta? Pode perder uma edição feita em dois dispositivos ao mesmo tempo. É um risco aceitável para um app pessoal.
-2. **Sessão:** a tela de login usa cookie (`credentials: "include"`). Com web na Vercel e API no Render em domínios diferentes, o cookie exige `SameSite=None; Secure`, CORS restrito e proteção contra CSRF, ou um domínio comum. O mobile tende a precisar de token.
-3. **Framework da API:** a escolha fica para a `T2.1.2`.
-4. **`updatedAt`:** o `Task` precisa ganhar esse campo no core, com migração dos dados locais.
+1. **Conflito:** será usado *last write wins* por `updatedAt`, risco aceito para o escopo pessoal do MVP.
+2. **Sessão:** cookie HTTP-only no Web/Desktop, CORS restrito por origem e validação de `Origin` nas mutações. O Mobile poderá usar o mesmo token por cabeçalho quando `T4.2.4` for executada.
+3. **Framework da API:** Fastify, pela API pequena, validação explícita e testes por injeção HTTP.
+4. **`updatedAt`:** o campo já existe no `Task`; dados antigos são normalizados pelo Core.
 
 ## Consequências / Próximos passos
 
