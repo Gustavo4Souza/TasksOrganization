@@ -26,7 +26,7 @@
 - Auditoria de acessibilidade sem violações sérias nas rotas cobertas.
 - Lint, typecheck e builds Web/Desktop executados no CI.
 - Instalador Windows NSIS validado localmente com ícone e fontes do projeto.
-- Nove testes da API passaram contra PostgreSQL 17 real; mobile passou em cinco testes e exportação Android.
+- Dez testes da API passaram contra PostgreSQL 17 real, incluindo rate limiting; mobile passou em cinco testes e exportação Android.
 - Gate SARIF coberto por testes de severidade e auditoria sem achados altos/críticos.
 
 > A tag Git `v0.1.0` deve ser criada após o merge desta documentação na `main`.

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import rateLimit from "@fastify/rate-limit";
 import type { Task } from "@tasksorg/core";
 import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from "fastify";
 import { z } from "zod";
@@ -195,6 +196,11 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     credentials: true,
     methods: ["GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"],
   });
+  await app.register(rateLimit, {
+    global: true,
+    max: 120,
+    timeWindow: "1 minute",
+  });
 
   app.addHook("onRequest", async (request, reply) => {
     if (["GET", "HEAD", "OPTIONS"].includes(request.method)) return;
@@ -212,7 +218,7 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     }
   });
 
-  app.post("/auth/register", async (request, reply) => {
+  app.post("/auth/register", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } }, async (request, reply) => {
     const parsed = registerSchema.safeParse(request.body);
     if (!parsed.success) return sendValidation(reply, parsed.error);
     const userId = randomUUID();
@@ -229,7 +235,7 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     return reply.code(201).send({ user: { id: userId, name: parsed.data.name, email: parsed.data.email }, token: session.token });
   });
 
-  app.post("/auth/login", async (request, reply) => {
+  app.post("/auth/login", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } }, async (request, reply) => {
     const parsed = loginSchema.safeParse(request.body);
     if (!parsed.success) return sendValidation(reply, parsed.error);
     const result = await pool.query<{ id: string; name: string; email: string; password_hash: string }>("SELECT id, name, email, password_hash FROM users WHERE email = $1", [parsed.data.email]);

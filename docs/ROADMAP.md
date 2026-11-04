@@ -94,8 +94,8 @@ MVP ──► entrega que dá para demonstrar e usar
 | Concluídas localmente nesta etapa | `T1.2.1`–`T1.2.7`, `T1.3.2`–`T1.3.5`, `T1.4.1`–`T1.4.3`, `T2.2.1`–`T2.2.5`, `T3.3.1`–`T3.3.3` | Aceites do MVP 1 encerrados; Web e Desktop autenticam e sincronizam, mantêm fila offline e migram dados locais; dashboard consome KPIs reais. O cenário E2E percorre cadastro, migração, reconexão e KPIs. |
 | Preparadas, aguardando acesso externo | `T2.3.2`, `T4.1.4`, `T4.2.5` | `.env` e EAS/CD estão versionados; faltam secrets, associação Expo, cluster e primeiras execuções remotas. O backup/restauração já foi validado localmente. |
 
-Validação atual da branch em 04/11/2026: 102 testes do Core, 110 do UI, 25 do Web, 9 da API
-com PostgreSQL real, 7 do Desktop, 5 do Mobile e 32 cenários E2E passaram (258 testes unitários/de integração).
+Validação atual da branch em 04/11/2026: 102 testes do Core, 110 do UI, 25 do Web, 10 da API
+com PostgreSQL real, 7 do Desktop, 5 do Mobile e 32 cenários E2E passaram (259 testes unitários/de integração).
 O Core ficou com 97,56% de statements e 91,62% de branches, acima do limiar de 90%.
 Lint e typecheck passaram em todos os apps/pacotes
 aplicáveis, assim como os builds do core, UI, Web e Desktop. Na validação visual
@@ -309,7 +309,7 @@ Web / Desktop ──► TaskRepository (HTTP) ──► API ──► PostgreSQL
 - [x] `T2.1.5` Sessões de Pomodoro e histórico diário (alimentam o mapa) — **Gustavo** · M · ⛓ T2.1.4 · implementada por **Higor**
 - [x] `T2.1.6` Autenticação e autorização (cada usuário só vê as próprias missões) — **Gustavo** · G · ⛓ T2.1.3 · implementada por **Higor** com senha scrypt e sessão revogável
 - [x] `T2.1.7` Adaptador `TaskRepository` HTTP no core (troca o local sem mudar as telas) — **Gustavo** · M · ⛓ T2.1.4 · implementada por **Higor**
-- [x] `T2.1.8` Testes de API e de integração com banco real em container — **Gustavo** · M · ⛓ T2.1.4 · implementada por **Higor**; 9 testes passaram com PostgreSQL 17 real
+- [x] `T2.1.8` Testes de API e de integração com banco real em container — **Gustavo** · M · ⛓ T2.1.4 · implementada por **Higor**; 10 testes passaram com PostgreSQL 17 real, incluindo rate limiting
 
 #### Épico 2.2 — Frontend integrado
 
@@ -352,7 +352,7 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 - [ ] `T3.1.2` SAST no GitHub Actions com relatório no PR — **Guilhermo** · M · ⛓ T3.1.1 · workflow integrado no PR #22; passou na `main` em 02/11/2026; falta conferir o relatório publicado
 - [x] `T3.1.3` Security Gate: bloquear PR com severidade alta ou crítica — **Guilhermo** · P · ⛓ T3.1.2 · gate SARIF e 3 testes (inclusive alto/crítico) implementados por **Higor**
 - [x] `T3.1.4` Auditoria de dependências (`pnpm audit` / Dependabot) — **Guilhermo** · P · workflow integrado; passa no limite alto/crítico desde 02/11/2026
-- [x] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2 · executada por **Higor**; auditoria local sem achados altos/críticos (5 moderados transitivos)
+- [x] `T3.1.5` Corrigir achados no core e na API — **Gustavo** · M · ⛓ T3.1.2 · executada por **Higor**; auditoria local sem achados altos/críticos e rate limiting global/específico na autenticação
 - [x] `T3.1.6` Corrigir achados no web/desktop e validar entradas do usuário — **Higor** · M · ⛓ T3.1.2 · integrada pelo PR #40; entradas validadas, auditoria sem achados altos/críticos e CodeQL conferido com sucesso na `main` (`cb86f34`)
 
 > **Decisão da T3.1.1:** o projeto usará o **CodeQL** como SAST principal,

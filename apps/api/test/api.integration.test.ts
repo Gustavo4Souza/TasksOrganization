@@ -32,8 +32,27 @@ integration("API com PostgreSQL real", () => {
   }
 
   it("expõe health e ready", async () => {
-    expect((await app.inject({ method: "GET", url: "/health" })).statusCode).toBe(200);
+    const health = await app.inject({ method: "GET", url: "/health" });
+    expect(health.statusCode).toBe(200);
+    expect(health.headers["x-ratelimit-limit"]).toBe("120");
     expect((await app.inject({ method: "GET", url: "/ready" })).statusCode).toBe(200);
+  });
+
+  it("limita tentativas repetidas de autenticação", async () => {
+    const isolatedApp = await buildApp(pool, {
+      databaseUrl: databaseUrl!, host: "127.0.0.1", port: 3001,
+      allowedOrigins: ["http://localhost:3000"], sessionDays: 30, secureCookies: false,
+      kpiIngestSecret: "segredo-de-coleta",
+    });
+    try {
+      const attempt = () => isolatedApp.inject({ method: "POST", url: "/auth/login", payload: {} });
+      for (let index = 0; index < 10; index += 1) expect((await attempt()).statusCode).toBe(400);
+      const blocked = await attempt();
+      expect(blocked.statusCode).toBe(429);
+      expect(blocked.headers["retry-after"]).toBeDefined();
+    } finally {
+      await isolatedApp.close();
+    }
   });
 
   it("registra, autentica e isola as missões por usuário", async () => {

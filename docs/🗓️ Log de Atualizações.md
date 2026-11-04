@@ -1,5 +1,18 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 04/11/2026 — Correções dos checks do PR #51
+
+O teste de autenticação foi isolado da variável `NEXT_PUBLIC_API_URL` usada no
+CI, eliminando a espera indevida por uma resposta remota. A API recebeu
+`@fastify/rate-limit`: todas as rotas têm limite global de 120 requisições por
+minuto e cadastro/login têm limite específico de 10 tentativas por minuto. Um
+teste de integração confirma os cabeçalhos e o bloqueio HTTP 429.
+
+O CI passou a instalar explicitamente o Chromium compatível com a versão do
+Playwright, sem depender da imagem do runner. Localmente passaram os 25 testes
+Web com as variáveis do CI, 10 testes da API com PostgreSQL real e os 32 E2E no
+endereço de produção usado pelo workflow (`localhost:3100`).
+
 ## 04/11/2026 — Integrações independentes do Higor concluídas
 
 As pendências locais do Higor nos MVPs 1, 2 e 3 foram encerradas. Os aceites do

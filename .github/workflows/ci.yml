@@ -75,6 +75,10 @@ jobs:
         if: always()
         run: pnpm --filter @tasksorg/core test:coverage
 
+      - name: Install Playwright browser
+        if: always()
+        run: pnpm --filter @tasksorg/web exec playwright install --with-deps chromium
+
       - name: End-to-end tests
         id: e2e_tests
         if: always()
