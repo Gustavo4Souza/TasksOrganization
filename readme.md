@@ -59,6 +59,12 @@ conceito de que dá pra compartilhar lógica de verdade entre as plataformas.
 
 Pré-requisitos: Node 20+ e pnpm (`corepack enable` já resolve).
 
+> **Overrides de segurança do pnpm.** O projeto fixa o pnpm 9.12 (`packageManager`), que lê
+> os overrides de `package.json` (`pnpm.overrides`). O pnpm 10+ lê só os de
+> `pnpm-workspace.yaml` e avisa que ignorou o `package.json`: com um pnpm global
+> mais novo, esse aviso é esperado e inofensivo. Ao alterar um override, mude **os
+> dois arquivos**; o CI confere com `node scripts/check-pnpm-overrides.mjs`.
+
 ```bash
 pnpm install
 
