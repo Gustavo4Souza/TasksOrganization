@@ -38,6 +38,8 @@ spec:
               value: production
             - name: PORT
               value: "3001"
+            - name: TRUST_PROXY
+              value: "1"
             - name: ALLOWED_ORIGINS
               valueFrom:
                 configMapKeyRef:

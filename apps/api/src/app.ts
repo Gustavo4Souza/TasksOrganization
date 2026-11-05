@@ -3,7 +3,7 @@ import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
 import type { Task } from "@tasksorg/core";
-import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from "fastify";
+import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest, type FastifyServerOptions } from "fastify";
 import { z } from "zod";
 import type { ApiConfig } from "./config.js";
 import type { DatabaseClient, DatabasePool } from "./database.js";
@@ -161,10 +161,17 @@ async function saveTask(pool: DatabasePool, userId: string, task: Task): Promise
   try {
     await client.query("BEGIN");
     const previous = await client.query<TaskRow>("SELECT * FROM tasks WHERE id = $1 AND user_id = $2 FOR UPDATE", [task.id, userId]);
+    const current = previous.rows[0];
+    // Last write wins pelo updatedAt: uma alteração antiga (ex.: fila offline de outro
+    // dispositivo) não sobrescreve uma mais recente. Devolve o estado vigente do servidor.
+    if (current && new Date(current.updated_at).getTime() > new Date(task.updatedAt).getTime()) {
+      await client.query("ROLLBACK");
+      return taskFromRow(current);
+    }
     if (task.status === "doing") {
       await client.query("UPDATE tasks SET status = 'todo', completed_at = NULL, updated_at = now() WHERE user_id = $1 AND status = 'doing' AND id <> $2", [userId, task.id]);
     }
-    await updateCompletedProgress(client, userId, previous.rows[0], task);
+    await updateCompletedProgress(client, userId, current, task);
     const result = await client.query<TaskRow>(
       `INSERT INTO tasks(id, user_id, title, description, scope, status, priority, due_date, pomodoros, completed_at, created_at, updated_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
@@ -189,7 +196,14 @@ async function saveTask(pool: DatabasePool, userId: string, task: Task): Promise
 }
 
 export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<FastifyInstance> {
-  const app = Fastify({ logger: false, bodyLimit: 1_000_000 });
+  const hops = config.trustProxy;
+  // Número de proxies: confia nos N saltos mais próximos (a tipagem do Fastify 5 não aceita número).
+  const trustProxy: FastifyServerOptions["trustProxy"] = typeof hops === "number" ? (_address: string, hop: number) => hop < hops : hops;
+  const app = Fastify({ logger: false, bodyLimit: 1_000_000, trustProxy });
+  const cookieOptions = { httpOnly: true, secure: config.secureCookies, sameSite: config.secureCookies ? "none" : "lax", path: "/" } as const;
+  // Hash de referência para o login gastar o mesmo tempo quando o e-mail não existe,
+  // evitando descobrir pela demora quais e-mails têm conta.
+  const dummyPasswordHash = await hashPassword(randomUUID());
   await app.register(cookie);
   await app.register(cors, {
     origin: config.allowedOrigins,
@@ -231,7 +245,7 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     const session = createSessionToken();
     const expiresAt = new Date(Date.now() + config.sessionDays * 86_400_000);
     await pool.query("INSERT INTO sessions(token_hash, user_id, expires_at) VALUES ($1,$2,$3)", [session.hash, userId, expiresAt]);
-    reply.setCookie(SESSION_COOKIE, session.token, { httpOnly: true, secure: config.secureCookies, sameSite: config.secureCookies ? "none" : "lax", path: "/", expires: expiresAt });
+    reply.setCookie(SESSION_COOKIE, session.token, { ...cookieOptions, expires: expiresAt });
     return reply.code(201).send({ user: { id: userId, name: parsed.data.name, email: parsed.data.email }, token: session.token });
   });
 
@@ -240,11 +254,12 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     if (!parsed.success) return sendValidation(reply, parsed.error);
     const result = await pool.query<{ id: string; name: string; email: string; password_hash: string }>("SELECT id, name, email, password_hash FROM users WHERE email = $1", [parsed.data.email]);
     const user = result.rows[0];
-    if (!user || !(await verifyPassword(parsed.data.password, user.password_hash))) return reply.code(401).send({ error: "E-mail ou senha inválidos." });
+    const validPassword = await verifyPassword(parsed.data.password, user?.password_hash ?? dummyPasswordHash);
+    if (!user || !validPassword) return reply.code(401).send({ error: "E-mail ou senha inválidos." });
     const session = createSessionToken();
     const expiresAt = new Date(Date.now() + config.sessionDays * 86_400_000);
     await pool.query("INSERT INTO sessions(token_hash, user_id, expires_at) VALUES ($1,$2,$3)", [session.hash, user.id, expiresAt]);
-    reply.setCookie(SESSION_COOKIE, session.token, { httpOnly: true, secure: config.secureCookies, sameSite: config.secureCookies ? "none" : "lax", path: "/", expires: expiresAt });
+    reply.setCookie(SESSION_COOKIE, session.token, { ...cookieOptions, expires: expiresAt });
     return { user: { id: user.id, name: user.name, email: user.email }, token: session.token };
   });
 
@@ -252,7 +267,7 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     const authorization = request.headers.authorization;
     const token = authorization?.startsWith("Bearer ") ? authorization.slice(7) : request.cookies[SESSION_COOKIE];
     if (token) await pool.query("DELETE FROM sessions WHERE token_hash = $1", [hashToken(token)]);
-    reply.clearCookie(SESSION_COOKIE, { path: "/" });
+    reply.clearCookie(SESSION_COOKIE, cookieOptions);
     return reply.code(204).send();
   });
 

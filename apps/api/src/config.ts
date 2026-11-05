@@ -6,6 +6,17 @@ export interface ApiConfig {
   sessionDays: number;
   secureCookies: boolean;
   kpiIngestSecret?: string;
+  /** Quantos proxies confiar (ex.: o balanceador do Render), para o rate limit usar o IP real do cliente. */
+  trustProxy: boolean | number;
+}
+
+function parseTrustProxy(value: string | undefined): boolean | number {
+  const normalized = value?.trim().toLowerCase();
+  if (!normalized || normalized === "false" || normalized === "0") return false;
+  if (normalized === "true") return true;
+  const hops = Number(normalized);
+  if (!Number.isInteger(hops) || hops < 0) throw new Error("TRUST_PROXY inválida: use true, false ou o número de proxies.");
+  return hops;
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
@@ -21,5 +32,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     sessionDays: 30,
     secureCookies: env.NODE_ENV === "production",
     kpiIngestSecret: env.KPI_INGEST_SECRET?.trim() || undefined,
+    trustProxy: parseTrustProxy(env.TRUST_PROXY),
   };
 }
