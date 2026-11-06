@@ -73,6 +73,29 @@ pnpm --filter @tasksorg/web dev       # Next.js em http://localhost:3000
 pnpm --filter @tasksorg/desktop dev   # builda e abre a janela do Electron
 ```
 
+### Testes E2E (Playwright)
+
+```bash
+pnpm --filter @tasksorg/web exec playwright install chromium   # uma vez
+
+# só as telas (sem API): o teste de sincronização é pulado
+pnpm test:e2e
+
+# suíte completa, com API e PostgreSQL
+docker compose up -d --wait postgres
+export DATABASE_URL=postgresql://tasksorg:<senha do .env>@localhost:<porta>/tasksorg_test
+export E2E_API_URL=http://localhost:3001 NEXT_PUBLIC_API_URL=http://localhost:3001
+pnpm test:e2e
+```
+
+- O `pnpm test:e2e` builda web e API; com `E2E_API_URL` definido, o Playwright
+  sobe a API sozinho e reaproveita uma que já esteja rodando (como no CI).
+- `NEXT_PUBLIC_API_URL` entra no **build** do web: sem ela, o teste de
+  sincronização falha mesmo com a API no ar.
+- A porta do PostgreSQL aparece em `docker compose port postgres 5432`. O banco
+  `tasksorg_test` é criado uma vez com
+  `docker compose exec postgres psql -U tasksorg -d tasksorg -c "CREATE DATABASE tasksorg_test"`.
+
 ## O que já foi validado nesta POC
 
 - `packages/core` com 13 testes unitários passando (tarefas + pomodoro).
