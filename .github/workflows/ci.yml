@@ -135,7 +135,7 @@ jobs:
       - name: Extract web image metadata
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository_owner }}/tasksorg-web
           tags: |
@@ -145,7 +145,7 @@ jobs:
       - name: Extract API image metadata
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: api_meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository_owner }}/tasksorg-api
           tags: |
