@@ -16,7 +16,7 @@ integration("API com PostgreSQL real", () => {
     app = await buildApp(pool, {
       databaseUrl: databaseUrl!, host: "127.0.0.1", port: 3001,
       allowedOrigins: ["http://localhost:3000"], sessionDays: 30, secureCookies: false,
-      kpiIngestSecret: "segredo-de-coleta",
+      kpiIngestSecret: "segredo-de-coleta", trustProxy: false,
     });
   });
 
@@ -42,7 +42,7 @@ integration("API com PostgreSQL real", () => {
     const isolatedApp = await buildApp(pool, {
       databaseUrl: databaseUrl!, host: "127.0.0.1", port: 3001,
       allowedOrigins: ["http://localhost:3000"], sessionDays: 30, secureCookies: false,
-      kpiIngestSecret: "segredo-de-coleta",
+      kpiIngestSecret: "segredo-de-coleta", trustProxy: false,
     });
     try {
       const attempt = () => isolatedApp.inject({ method: "POST", url: "/auth/login", payload: {} });
@@ -93,6 +93,44 @@ integration("API com PostgreSQL real", () => {
     expect(session.statusCode).toBe(201);
     const progress = (await app.inject({ method: "GET", url: "/progress", headers: auth })).json<{ days: Array<{ focus_count: number; level: number }> }>();
     expect(progress.days[0]).toMatchObject({ focus_count: 1, level: 1 });
+  });
+
+  it("ignora alteração mais antiga que a do servidor (last write wins)", async () => {
+    const token = await register("lww@example.test");
+    const auth = { authorization: `Bearer ${token}` };
+    const task = (await app.inject({ method: "POST", url: "/tasks", headers: auth, payload: { title: "Original" } })).json<{ task: Record<string, unknown> }>().task;
+    const newer = new Date(Date.now() + 60_000).toISOString();
+    const older = new Date(Date.now() - 60_000).toISOString();
+
+    const recent = await app.inject({ method: "PUT", url: `/tasks/${task.id}`, headers: auth, payload: { ...task, title: "Recente", updatedAt: newer } });
+    expect(recent.json<{ task: { title: string } }>().task.title).toBe("Recente");
+
+    const stale = await app.inject({ method: "PUT", url: `/tasks/${task.id}`, headers: auth, payload: { ...task, title: "Antiga", status: "done", completedAt: older, updatedAt: older } });
+    expect(stale.statusCode).toBe(200);
+    expect(stale.json<{ task: { title: string; status: string } }>().task).toMatchObject({ title: "Recente", status: "todo" });
+    const progress = (await app.inject({ method: "GET", url: "/progress", headers: auth })).json<{ days: unknown[] }>();
+    expect(progress.days).toHaveLength(0);
+  });
+
+  it("login com e-mail inexistente responde 401 sem revelar a conta", async () => {
+    const response = await app.inject({ method: "POST", url: "/auth/login", payload: { email: "ninguem@example.test", password: "senha-segura" } });
+    expect(response.statusCode).toBe(401);
+    expect(response.json()).toEqual({ error: "E-mail ou senha inválidos." });
+  });
+
+  it("usa o IP real do cliente atrás de um proxy confiável", async () => {
+    const proxied = await buildApp(pool, {
+      databaseUrl: databaseUrl!, host: "127.0.0.1", port: 3001,
+      allowedOrigins: ["http://localhost:3000"], sessionDays: 30, secureCookies: false, trustProxy: 1,
+    });
+    try {
+      const attempt = (ip: string) => proxied.inject({ method: "POST", url: "/auth/login", headers: { "x-forwarded-for": ip }, payload: {} });
+      for (let index = 0; index < 10; index += 1) expect((await attempt("203.0.113.1")).statusCode).toBe(400);
+      expect((await attempt("203.0.113.1")).statusCode).toBe(429);
+      expect((await attempt("203.0.113.2")).statusCode).toBe(400);
+    } finally {
+      await proxied.close();
+    }
   });
 
   it("rejeita mutação de origem não permitida", async () => {
