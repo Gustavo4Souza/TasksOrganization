@@ -23,7 +23,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "test:e2e": "turbo run build --filter=@tasksorg/web && pnpm --filter @tasksorg/web test:e2e"
+    "test:e2e": "turbo run build --filter=@tasksorg/web --filter=@tasksorg/api && pnpm --filter @tasksorg/web test:e2e"
   },
   "devDependencies": {
     "turbo": "^2.11.10",
