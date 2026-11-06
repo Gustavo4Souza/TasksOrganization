@@ -5,6 +5,14 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    ignore:
+      # O app mobile fixa a versão exata de React exigida pelo SDK do Expo, e
+      # web/desktop/ui seguem a mesma versão. React sobe junto com o Expo, à mão,
+      # nunca por PR isolado do Dependabot (ver PRs #58 e #59).
+      - dependency-name: react
+      - dependency-name: react-dom
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
 
   - package-ecosystem: github-actions
     directory: /
