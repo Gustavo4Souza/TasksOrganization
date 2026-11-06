@@ -26,7 +26,7 @@ jobs:
         run: pg_dump --dbname="$DATABASE_URL" --format=custom --no-owner --no-privileges --file="tasksorg-${GITHUB_RUN_ID}.dump"
 
       - name: Upload restricted backup artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: tasksorg-database-${{ github.run_id }}
           path: tasksorg-${{ github.run_id }}.dump
