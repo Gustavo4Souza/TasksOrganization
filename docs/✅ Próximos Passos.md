@@ -8,7 +8,9 @@ Lista viva — marca como feito conforme avança, e adiciona itens novos conform
 - [x] Publicar a imagem `tasksorg-web` no GHCR (`T1.6.3`)
 - [x] Manter o web em produção pela integração existente com a Vercel
 - [ ] Validar instalador Windows no workflow `Desktop release` (`T1.5.4`)
-- [ ] Criar a tag `v0.1.0` após o merge da release (`T1.6.5`)
+- [ ] Criar a tag `v0.1.0` (`T1.6.5`); o merge na `main` já foi feito no PR #52
+- [ ] Mesclar as atualizações de GitHub Actions do Dependabot (#26–#28), que exigem credencial com escopo `workflow`
+- [ ] Avaliar `@eslint/js` 10 junto do ESLint 10, Electron 45 (testar o desktop à mão), jsdom 30 e Vitest 5
 - [x] Criar manifests Kubernetes para Web, API e PostgreSQL (`k8s/*.yaml`); validação em cluster real permanece pendente
 - [ ] Fornecer cluster/credencial Kubernetes e validar API, banco e Web (`T4.1.4`–`T4.1.5`)
 - [ ] Cadastrar os secrets administrativos do GitHub (`T2.3.2`) e conferir o relatório CodeQL publicado (`T3.1.2`)

@@ -1,5 +1,32 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 06/11/2026 — Revisão da API, dependências e E2E (Gustavo)
+
+O ambiente local foi atualizado para a `main` (`7cf8fd1`) e validado: lint,
+typecheck, build, 257 testes unitários/de integração (incluindo 10 da API com
+PostgreSQL real) e os 32 E2E passaram. Em seguida, cada pendência virou uma
+branch e um PR:
+
+- **#53 — revisão da API.** O `PUT /tasks/:id` passou a aplicar o *last write
+  wins* pelo `updatedAt`, como define a decisão de persistência; antes, uma fila
+  offline antiga sobrescrevia edições novas. A variável `TRUST_PROXY` faz o rate
+  limit usar o IP real atrás do Render/Ingress, e o login com e-mail inexistente
+  gasta o mesmo tempo, sem revelar quais contas existem. Ficaram anotados para
+  depois: exclusão vencendo edição antiga (exige *tombstones*), limpeza de
+  sessões expiradas e progresso diário em UTC.
+- **#54 — overrides do pnpm.** O aviso sobre `pnpm.overrides` vem do pnpm 10+
+  global; o projeto usa o 9.12, e o lockfile confirma os overrides aplicados. Um
+  script no CI garante que `package.json` e `pnpm-workspace.yaml` fiquem iguais.
+- **#55 — dependências.** React 19 em web, desktop e ui (React e React DOM
+  juntos), turbo, `globals` 17 e `typescript-eslint` 8.72.1, com os 32 E2E
+  passando. Ficaram de fora `@eslint/js` 10, `@types/node` 26, Electron 45,
+  jsdom 30 e Vitest 5.
+- **#56 — E2E.** O Playwright sobe a API sozinho quando há `E2E_API_URL`. A
+  instabilidade em paralelo não se repetiu (93/93 com `--repeat-each=3`).
+
+A credencial usada não tem o escopo `workflow`; por isso o passo de CI do #54 e
+as atualizações de Actions do Dependabot aguardam um push com essa permissão.
+
 ## 04/11/2026 — Correções dos checks do PR #51
 
 O teste de autenticação foi isolado da variável `NEXT_PUBLIC_API_URL` usada no

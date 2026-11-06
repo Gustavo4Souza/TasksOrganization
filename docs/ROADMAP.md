@@ -75,14 +75,29 @@ MVP ──► entrega que dá para demonstrar e usar
 
 ## 🗺️ Roadmap
 
-### O que cada um pode puxar agora — 04/11/2026
+### O que falta para encerrar o projeto — 06/11/2026
 
-| Quem | Liberado | Observação |
+O trabalho do PR #52 já está na `main` (`7cf8fd1`), com CI, CodeQL e auditoria verdes. Restam 9 tasks abertas, e nenhuma depende de código novo: faltam validação, publicação e acessos externos.
+
+| Situação | Tasks | O que falta |
 |---|---|---|
-| Guilhermo | Configurar os secrets GitHub/Expo e executar os workflows de backup, Kubernetes e EAS | A implementação foi adiantada por Higor; faltam credenciais e contas externas. `T1.5.4` e `T1.6.5` continuam dependendo da publicação na `main`. |
-| Higor | Validar `T4.1.5`, `T4.2.2` e `T4.2.3` quando houver cluster e dispositivo/emulador Android | Todas as implementações independentes de Web, Desktop, sincronização offline, migração e KPIs foram concluídas e validadas de ponta a ponta. |
-| Gustavo | Revisar a API/KPIs e executar `T4.1.4` quando houver cluster | As atividades `T2.1.x`, `T3.1.5`, `T3.2.5`, `T3.2.7` e `T4.2.4` foram implementadas por Higor nesta branch. |
-| Grupo | Revisar esta branch e fornecer cluster, secrets GitHub e projeto Expo | Sem essas credenciais não é possível validar backup, deploy Kubernetes nem uma release EAS real. |
+| Liberadas agora | `T3.1.2` | Conferir o relatório publicado do CodeQL na aba Security. |
+| Liberadas agora | `T1.5.4` → `T1.6.5` | Rodar o workflow `Desktop release` manualmente e validar o instalador; depois criar a tag `v0.1.0`, que publica a release. |
+| Acesso de administrador | `T2.3.2` | Cadastrar os secrets do GitHub (`DATABASE_URL`, `POSTGRES_PASSWORD`, `KPI_API_URL`, `KPI_INGEST_SECRET`, `KUBE_CONFIG`, `EXPO_TOKEN`) e os ambientes `homologation`/`production`. |
+| Conta Expo | `T4.2.5` | Vincular o projeto, cadastrar `EXPO_TOKEN` e rodar a primeira build. |
+| Dispositivo Android | `T4.2.2`, `T4.2.3` | Conferência visual em emulador ou celular. |
+| Cluster Kubernetes | `T4.1.4`, `T4.1.5` | Definir o cluster (local com kind/minikube ou na nuvem) e validar API, banco e Web. |
+
+#### Revisões em andamento — 06/11/2026
+
+| PR | Conteúdo |
+|---|---|
+| #53 | Revisão da API: last write wins pelo `updatedAt`, `TRUST_PROXY` para o rate limit usar o IP real e login sem enumeração de e-mails. |
+| #54 | Verificação no CI de que os overrides do pnpm estão iguais em `package.json` e `pnpm-workspace.yaml`. |
+| #55 | React 19, turbo, `globals` 17 e `typescript-eslint` 8.72.1 (consolida PRs do Dependabot). |
+| #56 | Playwright sobe a API sozinho no E2E de sincronização; readme explica a suíte completa. |
+
+> Alterações em `.github/workflows` exigem uma credencial com o escopo `workflow`: as atualizações de Actions do Dependabot (#26–#28) e o passo de CI do PR #54 dependem disso.
 
 ### Estado das entregas do Higor — 04/11/2026
 
@@ -155,10 +170,10 @@ Desktop passaram.
 | Executadas por Higor | `T2.3.1`, `T2.3.3`, `T2.3.5`, `T3.2.1`–`T3.2.4`, `T3.2.6`, `T4.1.1`–`T4.1.3` | Infraestrutura, backup, KPIs e configuração Kubernetes foram implementados por Higor; autoria original de Guilhermo preservada. |
 | Aguardando acesso externo | `T2.3.2`, `T4.2.5` | Faltam secrets administrativos do GitHub e a conta/projeto Expo para concluir configuração remota e primeira release EAS. |
 
-> Nesta branch, as caixas das atividades assumidas por Higor foram marcadas após
-> implementação e validação local, preservando na própria linha o responsável
-> original. Revisão/integração na `main` e validações externas continuam descritas
-> separadamente e não foram tratadas como concluídas.
+> As caixas das atividades assumidas por Higor foram marcadas após implementação
+> e validação local, preservando na própria linha o responsável original, e foram
+> integradas à `main` pelos PRs #49, #50 e #52. Validações externas continuam
+> descritas separadamente e não foram tratadas como concluídas.
 
 | MVP | Nome | O que dá para demonstrar no fim | Sprints |
 |---|---|---|---|
@@ -278,7 +293,7 @@ Desktop passaram.
 - [x] `T1.6.2` Rodar unitários e E2E no CI, com relatório de sucesso/falha (base do KPI de testes) — **Guilhermo** · M · ⛓ T1.6.1 · workflow configurado; validação local em 04/11/2026: 102 testes do Core, 97,56% de statements, 91,62% de branches e 32 cenários E2E
 - [x] `T1.6.3` Publicar a imagem `tasksorg-web` no GHCR a cada merge na `main` — **Guilhermo** · M · workflow condicionado a push na `main`, com `GITHUB_TOKEN` e tags `sha`/`latest`
 - [—] `T1.6.4` Ambiente de homologação do web, com deploy automático — **Guilhermo** · M · fora do escopo por decisão do grupo; a produção permanece na Vercel
-- [ ] `T1.6.5` Release `v0.1.0` com changelog e tag — **Guilhermo** · P · ⛓ T1.6.3 · changelog preparado; falta criar a tag `v0.1.0` após o merge na `main`
+- [ ] `T1.6.5` Release `v0.1.0` com changelog e tag — **Guilhermo** · P · ⛓ T1.6.3 · changelog preparado; merge na `main` feito (PR #52); falta validar `T1.5.4` e criar a tag `v0.1.0`
 
 **✔️ Critérios de aceite do MVP 1**
 - Nenhuma barra de rolagem na tela Quadro em 1280×720, 1440×900 e 1920×1080.

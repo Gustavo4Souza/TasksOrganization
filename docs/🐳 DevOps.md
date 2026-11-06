@@ -66,9 +66,10 @@ continuam registradas em `docs/Decisões/`.
 
 ## Próximas etapas de DevOps
 
-- Criar a tag `v0.1.0` após o merge da release.
-- Executar o workflow `Desktop release` em uma tag `v*.*.*` para publicar o
-  instalador Windows como artefato (`T1.5.4`).
-- Criar manifests Kubernetes quando o deploy estiver pronto.
+- Executar o workflow `Desktop release` manualmente (`workflow_dispatch`) e
+  validar o instalador Windows gerado como artefato (`T1.5.4`).
+- Criar a tag `v0.1.0`; ela dispara o mesmo workflow e publica a release (`T1.6.5`).
+- Definir o cluster e validar os manifests de `k8s/` (`T4.1.4`–`T4.1.5`).
+- Em produção, a API precisa de `TRUST_PROXY=1` atrás do Render ou do Ingress (PR #53).
 - Incorporar backend, banco e health checks quando essas partes forem
   implementadas.
