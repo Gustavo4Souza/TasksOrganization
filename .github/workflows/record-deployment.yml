@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Publish deployment event
         env:
           KPI_API_URL: ${{ secrets.KPI_API_URL }}
