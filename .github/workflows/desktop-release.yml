@@ -29,6 +29,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # O dist:win builda só o desktop; num runner limpo, @tasksorg/core e
+      # @tasksorg/ui ainda não têm dist/. O Turborepo builda as dependências antes (^build).
+      - name: Build desktop and its workspace dependencies
+        run: pnpm turbo run build --filter=@tasksorg/desktop
+
       - name: Build Windows installer
         run: pnpm --filter @tasksorg/desktop dist:win
 
