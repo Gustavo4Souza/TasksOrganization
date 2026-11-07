@@ -14,7 +14,7 @@
   "dependencies": {
     "@tasksorg/core": "workspace:*",
     "@tasksorg/ui": "workspace:*",
-    "next": "15.5.28",
+    "next": "16.4.5",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
