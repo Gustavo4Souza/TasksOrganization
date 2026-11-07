@@ -23,7 +23,7 @@
     "@tasksorg/eslint-config": "workspace:^",
     "@tasksorg/tsconfig": "workspace:^",
     "@vitest/coverage-v8": "^5.1.0",
-    "eslint": "^9",
+    "eslint": "^10",
     "typescript": "^6.0.3",
     "vitest": "^5.1.0"
   }
