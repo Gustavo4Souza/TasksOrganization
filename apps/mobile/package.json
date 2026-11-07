@@ -16,7 +16,7 @@
     "@types/react": "~19.3.0",
     "typescript": "~6.0.3",
     "@tasksorg/eslint-config": "workspace:*",
-    "eslint": "^9.0.0",
+    "eslint": "^10.14.0",
     "vitest": "^5.1.0"
   },
   "scripts": {
