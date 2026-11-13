@@ -49,6 +49,11 @@ pull request. Ele executa:
 6. build da imagem de produção do `apps/web`;
 7. publicação da imagem no GHCR em pushes na `main`, usando o `GITHUB_TOKEN`.
 
+O `pnpm-lock.yaml` deve permanecer válido e sem chaves duplicadas, pois tanto o
+CI quanto a auditoria executam `pnpm install --frozen-lockfile`. O build do
+Web compila `packages/core` antes do Next.js para que o deploy, inclusive na
+Vercel, use os exports atuais do pacote compartilhado.
+
 O deploy de produção do web continua sendo gerenciado pela integração existente
 com a Vercel. Não haverá ambiente separado de homologação neste MVP.
 

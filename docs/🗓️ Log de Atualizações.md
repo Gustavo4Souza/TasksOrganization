@@ -1,5 +1,21 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 13/11/2026 — Correção do fluxo de CI/CD
+
+Os checks `CI / quality-and-build` e `Dependency Audit / Audit
+dependencies` falharam ainda na instalação das dependências. A causa era uma
+chave `acorn@8.19.0` duplicada no `pnpm-lock.yaml`, deixando o YAML inválido
+para `pnpm install --frozen-lockfile`. A entrada duplicada foi removida.
+
+O deploy da Vercel também falhava porque o Web consumia um `packages/core/dist`
+antigo, sem os exports de sincronização presentes no código-fonte. O script de
+build de `apps/web` passou a compilar o Core antes de executar `next build`.
+
+Após a correção, a instalação congelada, o audit com limite `high`, o build do
+Web, os typechecks da API e do Core e os testes focados do dashboard de KPIs
+passaram. O audit ainda informa três vulnerabilidades moderadas, mas elas não
+atingem o limite configurado para falha.
+
 ## 13/11/2026 — Configuração das KPIs do roadmap
 
 A tela de KPIs passou a apresentar todo o catálogo definido no roadmap, com
