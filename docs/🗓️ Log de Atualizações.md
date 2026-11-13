@@ -1,5 +1,30 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 13/11/2026 — Sincronização diária dos deploys Vercel
+
+Além do registro em tempo real por `deployment_status`, foi adicionada uma
+reconciliação diária às 03:15 UTC em
+`sync-vercel-deployments.yml`. A rotina consulta a API de deployments do
+GitHub, filtra os deployments criados pela integração Vercel, busca o último
+estado concluído dos últimos 90 dias e envia os registros para a API de KPIs.
+
+O workflow também pode ser executado manualmente. O identificador do deployment
+é usado como versão estável (`vercel-<id>`), e a API mantém a operação
+idempotente; por isso, a sincronização não cria duplicatas.
+
+## 13/11/2026 — Registro dos deploys automáticos da Vercel
+
+Foi identificado que o deploy automático da Vercel não passava pelos workflows
+de deploy manual ou Kubernetes e, por isso, nunca chamava
+`/internal/kpis/deployments`. Foi criado o workflow
+`record-vercel-deployment.yml`, acionado pelos eventos `deployment_status` do
+GitHub, para registrar deploys concluídos com sucesso, falha ou erro.
+
+O evento usa o SHA, ambiente, identificador/URL da implantação e os horários
+fornecidos pela Vercel. A coleta usa `KPI_API_URL` e `KPI_INGEST_SECRET` no
+ambiente `production`; estados pendentes são ignorados para não contar uma
+implantação antes da conclusão.
+
 ## 13/11/2026 — Correção do fluxo de CI/CD
 
 Os checks `CI / quality-and-build` e `Dependency Audit / Audit
