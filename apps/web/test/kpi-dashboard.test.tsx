@@ -16,7 +16,7 @@ describe("Tela real de KPIs", () => {
   it("não inventa valores quando a API ainda não está configurada", async () => {
     render(<KpiDashboard apiBaseUrl="" />);
     expect(await screen.findByRole("alert")).toHaveProperty("textContent", expect.stringContaining("ainda não foi configurada"));
-    expect(screen.getAllByText("—")).toHaveLength(4);
+    expect(screen.getAllByText("—")).toHaveLength(20);
   });
 
   it("mostra métricas, qualidade e histórico recebidos da API", async () => {
