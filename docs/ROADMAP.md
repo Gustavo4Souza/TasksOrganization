@@ -397,6 +397,11 @@ Git Push ──► GitHub Actions ──► SAST ──► Security Gate ──�
 > Fórmulas, fontes, dependências, periodicidade e contrato de dados estão no
 > [catálogo de KPIs](KPIs%20de%20DevOps%20e%20DevSecOps.md).
 
+> **Validação de CI/CD (13/11/2026):** o lockfile teve uma chave duplicada
+> removida, restaurando `pnpm install --frozen-lockfile` no CI e no Dependency
+> Audit. O build do Web passou a compilar o Core antes do Next.js, corrigindo o
+> consumo de exports desatualizados no deploy da Vercel.
+
 #### Épico 3.3 — Tela de KPIs de DevOps
 
 > Como time, queremos ver os KPIs dentro do próprio TasksOrg, no mesmo visual.
