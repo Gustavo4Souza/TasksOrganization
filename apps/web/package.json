@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "tsc -p ../../packages/core/tsconfig.json && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test"
