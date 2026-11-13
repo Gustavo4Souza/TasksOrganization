@@ -11,6 +11,7 @@
     "src/desktop-logic.ts",
     "src/desktop-repository.ts",
     "src/preload.ts",
-    "src/renderer.tsx"
+    "src/renderer.tsx",
+    "src/css.d.ts"
   ]
 }
