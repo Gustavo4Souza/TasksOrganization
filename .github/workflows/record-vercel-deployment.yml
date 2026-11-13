@@ -1,0 +1,39 @@
+name: Record Vercel deployment
+
+on:
+  deployment_status:
+
+jobs:
+  record:
+    if: github.event.deployment_status.state == 'success' || github.event.deployment_status.state == 'failure' || github.event.deployment_status.state == 'error'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - name: Publish Vercel deployment event
+        env:
+          KPI_API_URL: ${{ secrets.KPI_API_URL }}
+          KPI_INGEST_SECRET: ${{ secrets.KPI_INGEST_SECRET }}
+          KPI_EVENT_TYPE: deployment
+          DEPLOYMENT_STATE: ${{ github.event.deployment_status.state }}
+          DEPLOYMENT_ID: ${{ github.event.deployment.id }}
+          DEPLOYMENT_SHA: ${{ github.event.deployment.sha }}
+          DEPLOYMENT_ENVIRONMENT: ${{ github.event.deployment.environment }}
+          DEPLOYMENT_CREATED_AT: ${{ github.event.deployment.created_at }}
+          DEPLOYMENT_COMPLETED_AT: ${{ github.event.deployment_status.created_at }}
+        run: |
+          status="failure"
+          if [ "$DEPLOYMENT_STATE" = "success" ]; then status="success"; fi
+          commit_sha="$DEPLOYMENT_SHA"
+          if [ -z "$commit_sha" ] || [ "$commit_sha" = "null" ]; then commit_sha="$GITHUB_SHA"; fi
+          environment="$DEPLOYMENT_ENVIRONMENT"
+          if [ -z "$environment" ] || [ "$environment" = "null" ]; then environment="production"; fi
+          version="vercel-$DEPLOYMENT_ID"
+          export KPI_PAYLOAD="$(jq -nc \
+            --arg environment "$environment" --arg version "$version" \
+            --arg sha "$commit_sha" --arg status "$status" --arg run "$DEPLOYMENT_ID" \
+            --arg started "$DEPLOYMENT_CREATED_AT" --arg completed "$DEPLOYMENT_COMPLETED_AT" \
+            '{environment:$environment,version:$version,commitSha:$sha,status:$status,workflowRunId:$run,startedAt:$started,completedAt:$completed}')"
+          node scripts/publish-kpi-event.mjs

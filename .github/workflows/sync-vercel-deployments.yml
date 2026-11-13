@@ -1,0 +1,23 @@
+name: Sync Vercel deployments
+
+on:
+  schedule:
+    - cron: "15 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      deployments: read
+    steps:
+      - uses: actions/checkout@v7
+      - name: Synchronize Vercel deployments
+        env:
+          KPI_API_URL: ${{ secrets.KPI_API_URL }}
+          KPI_INGEST_SECRET: ${{ secrets.KPI_INGEST_SECRET }}
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node scripts/sync-vercel-deployments.mjs

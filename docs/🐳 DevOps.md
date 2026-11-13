@@ -54,6 +54,19 @@ CI quanto a auditoria executam `pnpm install --frozen-lockfile`. O build do
 Web compila `packages/core` antes do Next.js para que o deploy, inclusive na
 Vercel, use os exports atuais do pacote compartilhado.
 
+Deploys automáticos da Vercel são registrados pelo workflow
+`.github/workflows/record-vercel-deployment.yml`, acionado pelo evento
+`deployment_status` do GitHub. Ele envia estados concluídos (`success`,
+`failure` ou `error`) para `/internal/kpis/deployments`; estados pendentes não
+entram na frequência nem na taxa de falha. O workflow usa os secrets
+`KPI_API_URL` e `KPI_INGEST_SECRET` do ambiente `production`.
+
+Como reconciliação, `.github/workflows/sync-vercel-deployments.yml` roda
+diariamente às 03:15 UTC e também pode ser acionado manualmente. Ele consulta
+os deployments Vercel dos últimos 90 dias na API do GitHub e reenvia os estados
+concluídos. O endpoint é idempotente para o mesmo deployment, portanto a rotina
+não duplica os registros.
+
 O deploy de produção do web continua sendo gerenciado pela integração existente
 com a Vercel. Não haverá ambiente separado de homologação neste MVP.
 
