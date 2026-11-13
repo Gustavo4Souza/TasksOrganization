@@ -1,5 +1,24 @@
 Registro cronológico do que foi feito em cada sessão de trabalho. Pra decisões estruturadas (o porquê das escolhas), ver a base de [[🗳️ Decisões]] — aqui é mais "o que mudou", em ordem de tempo.
 
+## 13/11/2026 — Configuração das KPIs do roadmap
+
+A tela de KPIs passou a apresentar todo o catálogo definido no roadmap, com
+filtros de 7, 30 e 90 dias, origem, janela e qualidade dos dados. O endpoint
+`GET /kpis` agora calcula, a partir de deploys, incidentes e pipelines, os
+indicadores de frequência de implantação, lead time, falhas, MTTR, sucesso e
+duração de pipelines, sucesso e cobertura de testes, defeitos escapados,
+rollback/hotfix e testes instáveis.
+
+As métricas de DevSecOps e operação que ainda não possuem fonte integrada
+também são retornadas com `data_quality: unavailable`, `value: null` e uma
+explicação. A interface exibe `—` em vez de inventar dados. O catálogo
+[`KPIs de DevOps e DevSecOps`](./KPIs%20de%20DevOps%20e%20DevSecOps.md) foi
+atualizado com o status, as agregações e as dependências atuais.
+
+O teste focado do dashboard passou. Os checks completos de API e typecheck
+ficaram impedidos neste ambiente por dependências locais ausentes ou
+incompatíveis, sem relação com a alteração das métricas.
+
 ## 06/11/2026 — Revisão da API, dependências e E2E (Gustavo)
 
 O ambiente local foi atualizado para a `main` (`7cf8fd1`) e validado: lint,

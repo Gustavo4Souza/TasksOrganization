@@ -12,10 +12,26 @@ type LoadState = "idle" | "loading" | "ready" | "error";
 
 const defaultApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 const definitions = [
-  { id: "deployment_frequency", title: "Deployments", unit: "count" },
-  { id: "change_failure_rate", title: "Taxa de falha", unit: "percentage" },
+  { id: "deployment_frequency", title: "Frequência de implantação", unit: "count" },
+  { id: "lead_time_for_changes", title: "Lead time de mudanças", unit: "minutes" },
+  { id: "change_failure_rate", title: "Taxa de falha de alterações", unit: "percentage" },
   { id: "mttr", title: "MTTR", unit: "minutes" },
-  { id: "test_success_rate", title: "Testes", unit: "percentage" },
+  { id: "pipeline_success_rate", title: "Sucesso do pipeline", unit: "percentage" },
+  { id: "pipeline_duration", title: "Duração do pipeline", unit: "minutes" },
+  { id: "test_success_rate", title: "Sucesso dos testes", unit: "percentage" },
+  { id: "test_coverage", title: "Cobertura de testes", unit: "percentage" },
+  { id: "escaped_defect_rate", title: "Defeitos escapados", unit: "percentage" },
+  { id: "rollback_hotfix_rate", title: "Rollback / hotfix", unit: "percentage" },
+  { id: "flaky_test_rate", title: "Testes instáveis", unit: "percentage" },
+  { id: "sast_findings_by_severity", title: "Achados SAST", unit: "count" },
+  { id: "vulnerability_remediation_time", title: "Correção de vulnerabilidades", unit: "minutes" },
+  { id: "dependency_vulnerability_count", title: "Vulnerabilidades de dependências", unit: "count" },
+  { id: "secret_scan_findings", title: "Achados de secret scanning", unit: "count" },
+  { id: "sast_false_positive_rate", title: "Falsos positivos SAST", unit: "percentage" },
+  { id: "availability", title: "Disponibilidade", unit: "percentage" },
+  { id: "application_error_rate", title: "Taxa de erro", unit: "percentage" },
+  { id: "latency_p50_p95_p99", title: "Latência P50 / P95 / P99", unit: "minutes" },
+  { id: "critical_operation_success_rate", title: "Operações críticas", unit: "percentage" },
 ] as const;
 
 const qualityLabel: Record<KpiQuality, string> = { complete: "Completo", partial: "Parcial", unavailable: "Indisponível" };

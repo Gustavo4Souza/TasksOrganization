@@ -25,15 +25,34 @@ registrar `data_quality: unavailable` e explicar a dependência.
 
 ## Status de implementação
 
-- **Planejado agora:** definição e contrato dos Grupos 1 e 2 na Fase 1;
-  persistência e integração na Fase 2.
-- **Dependente de CI:** métricas de workflow podem começar quando os dados do
-  GitHub Actions forem coletados.
-- **Dependente de deploy:** frequência, change failure rate, rollback/hotfix e
-  lead time completo exigem deploy real.
-- **Dependente de backend/produção:** MTTR, disponibilidade, erros e latência
-  exigem incidentes e observabilidade.
-- **Dependente de segurança:** SAST, SCA e secret scanning entram na Fase 5.
+O endpoint autenticado `GET /kpis?period=7d|30d|90d` e a tela Web de KPIs já
+estão integrados às tabelas de deploys, incidentes e pipelines. Os indicadores
+com dados disponíveis são calculados em cada janela solicitada:
+
+| Estado | Indicadores |
+|---|---|
+| **Disponível** | `deployment_frequency`, `lead_time_for_changes`, `change_failure_rate`, `mttr`, `pipeline_success_rate`, `pipeline_duration`, `test_success_rate`, `test_coverage`, `escaped_defect_rate`, `rollback_hotfix_rate`, `flaky_test_rate` |
+| **Indisponível até integrar a fonte** | `sast_findings_by_severity`, `vulnerability_remediation_time`, `dependency_vulnerability_count`, `secret_scan_findings`, `sast_false_positive_rate`, `availability`, `application_error_rate`, `latency_p50_p95_p99`, `critical_operation_success_rate` |
+
+Quando não há registros ou a fonte ainda não existe, a API retorna `value:
+null`, `data_quality: unavailable` e uma nota explicando a dependência. A
+interface exibe `—` nesses casos; nenhum valor demonstrativo é apresentado.
+
+Detalhes das agregações atuais:
+
+- `deployment_frequency` conta todos os deploys concluídos na janela.
+- `lead_time_for_changes` usa a média entre `first_commit_at` e
+  `completed_at` dos pipelines que possuem o primeiro commit associado.
+- `pipeline_duration` e `mttr` são exibidos em minutos.
+- `test_coverage` é a média dos percentuais de cobertura coletados.
+- `escaped_defect_rate` usa incidentes marcados como `escaped_defect` em
+  relação aos deploys da janela; deve ser refinado quando a integração com
+  issues estiver disponível.
+
+As fontes de GitHub Actions são alimentadas pelos workflows por meio dos
+endpoints internos de coleta. A integração de SAST/SCA, secret scanning,
+monitoramento e APM permanece planejada; esses indicadores não devem ser
+simulados.
 
 ## Grupo 1 — DORA e entrega
 
