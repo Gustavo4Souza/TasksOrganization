@@ -102,6 +102,28 @@ pnpm test:e2e
   `tasksorg_test` é criado uma vez com
   `docker compose exec postgres psql -U tasksorg -d tasksorg -c "CREATE DATABASE tasksorg_test"`.
 
+### Indicadores (KPIs)
+
+A tela `/kpis` não consulta o GitHub diretamente no navegador. O web precisa
+ser construído com `NEXT_PUBLIC_API_URL` apontando para a API pública, e a API
+precisa estar com `DATABASE_URL`, `ALLOWED_ORIGINS` e `KPI_INGEST_SECRET`
+configurados. Como `/kpis` é uma rota autenticada, também é necessário entrar
+em uma conta antes de consultar os indicadores.
+
+Os dados são coletados pelos workflows e gravados na API:
+
+1. configure `KPI_API_URL` e `KPI_INGEST_SECRET` como secrets do ambiente
+   `production` no GitHub;
+2. configure o mesmo valor de `KPI_INGEST_SECRET` na API;
+3. configure `NEXT_PUBLIC_API_URL` no ambiente de build do web e faça um novo
+   deploy;
+4. execute o workflow de CI novamente (e o de sincronização de deployments,
+   se necessário) para popular os registros históricos.
+
+O fato de o repositório ser público não substitui essa configuração: o GitHub
+fornece os eventos, mas a aplicação ainda precisa enviá-los à API e persistir
+os registros no PostgreSQL.
+
 ## O que já foi validado nesta POC
 
 - `packages/core` com 13 testes unitários passando (tarefas + pomodoro).
