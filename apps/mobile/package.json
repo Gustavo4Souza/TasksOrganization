@@ -17,7 +17,7 @@
     "typescript": "~6.0.3",
     "@tasksorg/eslint-config": "workspace:*",
     "eslint": "^10.14.0",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   },
   "scripts": {
     "start": "expo start",
