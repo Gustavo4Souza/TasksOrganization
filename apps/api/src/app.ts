@@ -420,16 +420,18 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     const periodEnd = new Date();
     const periodStart = new Date(periodEnd.getTime() - days * 86_400_000);
     const [deployments, incidents, tests] = await Promise.all([
-      pool.query<{ total: string; successes: string; failures: string; recovery_actions: string }>(
+      pool.query<{ total: string; successes: string; failures: string; recovery_actions: string; escaped_deployments: string }>(
         `SELECT count(*)::text AS total,
                 count(*) FILTER (WHERE status = 'success')::text AS successes,
                 count(*) FILTER (WHERE status IN ('failure','rollback','hotfix'))::text AS failures,
-                count(*) FILTER (WHERE status IN ('rollback','hotfix'))::text AS recovery_actions
+                count(*) FILTER (WHERE status IN ('rollback','hotfix'))::text AS recovery_actions,
+                count(*) FILTER (WHERE EXISTS (
+                  SELECT 1 FROM incidents i WHERE i.deployment_id = deployments.id AND i.escaped_defect
+                ))::text AS escaped_deployments
          FROM deployments WHERE completed_at >= $1 AND completed_at <= $2`, [periodStart, periodEnd]),
-      pool.query<{ count: string; average_minutes: string | null; escaped: string }>(
+      pool.query<{ count: string; average_minutes: string | null }>(
         `SELECT count(*)::text AS count,
-                avg(extract(epoch FROM (resolved_at - detected_at)) / 60)::text AS average_minutes,
-                count(*) FILTER (WHERE escaped_defect)::text AS escaped
+                avg(extract(epoch FROM (resolved_at - detected_at)) / 60)::text AS average_minutes
          FROM incidents WHERE status = 'resolved' AND resolved_at >= $1 AND resolved_at <= $2`, [periodStart, periodEnd]),
       pool.query<{
         total: string;
@@ -457,7 +459,7 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     const test = tests.rows[0]!;
     const totalDeployments = Number(deploy.total);
     const totalTests = Number(test.tests_total ?? 0);
-    const metric = (metricId: string, value: number | null, unit: "count" | "percentage" | "minutes", source: string, notes?: string) => ({
+    const metric = (metricId: string, value: number | null, unit: "count" | "percentage" | "minutes" | "milliseconds", source: string, notes?: string) => ({
       metric_id: metricId,
       period_start: periodStart.toISOString(),
       period_end: periodEnd.toISOString(),
@@ -478,7 +480,7 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
       metric("pipeline_duration", Number(test.total) ? Number(Number(test.duration_minutes).toFixed(2)) : null, "minutes", "pipeline_runs", Number(test.total) ? undefined : "Nenhum pipeline registrado no período."),
       metric("test_success_rate", totalTests ? Number(((Number(test.tests_passed) / totalTests) * 100).toFixed(2)) : null, "percentage", "pipeline_runs", totalTests ? undefined : "Nenhum resultado de testes registrado no período."),
       metric("test_coverage", test.coverage ? Number(Number(test.coverage).toFixed(2)) : null, "percentage", "pipeline_runs", test.coverage ? undefined : "Nenhuma cobertura registrada no período."),
-      metric("escaped_defect_rate", totalDeployments ? Number(((Number(incident.escaped) / totalDeployments) * 100).toFixed(2)) : null, "percentage", "incidents", totalDeployments ? undefined : "Nenhum deploy registrado no período."),
+      metric("escaped_defect_rate", totalDeployments ? Number(((Number(deploy.escaped_deployments) / totalDeployments) * 100).toFixed(2)) : null, "percentage", "deployments+incidents", totalDeployments ? "Deploys do período com ao menos um incidente de defeito escapado." : "Nenhum deploy registrado no período."),
       metric("rollback_hotfix_rate", totalDeployments ? Number(((Number(deploy.recovery_actions) / totalDeployments) * 100).toFixed(2)) : null, "percentage", "deployments", totalDeployments ? undefined : "Nenhum deploy registrado no período."),
       metric("flaky_test_rate", totalTests ? Number(((Number(test.flaky ?? 0) / totalTests) * 100).toFixed(2)) : null, "percentage", "pipeline_runs", totalTests ? undefined : "Nenhum resultado de testes registrado no período."),
       metric("sast_findings_by_severity", null, "count", "sast", "Fonte SAST ainda não integrada."),
@@ -488,7 +490,7 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
       metric("sast_false_positive_rate", null, "percentage", "sast", "Revisões SAST ainda não integradas."),
       metric("availability", null, "percentage", "monitoring", "Monitoramento de disponibilidade ainda não integrado."),
       metric("application_error_rate", null, "percentage", "apm", "Logs e APM ainda não integrados."),
-      metric("latency_p50_p95_p99", null, "minutes", "apm", "Métricas de latência ainda não integradas."),
+      metric("latency_p50_p95_p99", null, "milliseconds", "apm", "Métricas de latência ainda não integradas."),
       metric("critical_operation_success_rate", null, "percentage", "api-frontend", "Telemetria de operações críticas ainda não integrada."),
     ] };
   });

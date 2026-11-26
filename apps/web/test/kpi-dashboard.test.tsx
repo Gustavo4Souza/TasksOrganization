@@ -19,11 +19,21 @@ describe("Tela real de KPIs", () => {
     expect(screen.getAllByText("—")).toHaveLength(20);
   });
 
+  it("não mostra o selo de dados reais quando todos os indicadores vêm vazios", async () => {
+    const empty = metrics.map((metric) => ({ ...metric, value: null, data_quality: "unavailable" }));
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ metrics: empty }), { status: 200 })));
+    render(<KpiDashboard apiBaseUrl="https://api.example.test" />);
+    expect(await screen.findByText("Sem dados no período")).toBeTruthy();
+    expect(screen.queryByText("Dados reais")).toBeNull();
+  });
+
   it("mostra métricas, qualidade e histórico recebidos da API", async () => {
     const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(new Response(JSON.stringify({ metrics }), { status: 200, headers: { "content-type": "application/json" } })));
     vi.stubGlobal("fetch", fetchMock);
     render(<KpiDashboard apiBaseUrl="https://api.example.test" />);
     expect(await screen.findByText("31")).toBeTruthy();
+    expect(screen.getByText("deploys em 30 dias")).toBeTruthy();
+    expect(screen.getByText("Dados reais")).toBeTruthy();
     expect(screen.getByText("9%")).toBeTruthy();
     expect(screen.getByText("94%")).toBeTruthy();
     expect(screen.getByText("Sem incidentes registrados.")).toBeTruthy();

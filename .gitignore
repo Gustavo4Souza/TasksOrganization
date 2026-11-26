@@ -13,3 +13,6 @@ apps/desktop/release/
 playwright-report/
 test-results/
 k8s/secret.yaml
+.pnpm-store/
+# Gerado pelo Next 16 a cada `next dev`
+apps/web/AGENTS.md

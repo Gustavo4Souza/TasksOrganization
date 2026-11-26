@@ -4,6 +4,9 @@ import tsParser from "@typescript-eslint/parser";
 
 export default [
   {
+    ignores: [".next/**", "out/**", "next-env.d.ts"],
+  },
+  {
     files: ["**/*.{js,jsx,ts,tsx,mjs}"],
     plugins: {
       "@next/next": nextPlugin,
