@@ -1,5 +1,7 @@
 name: Sync Vercel deployments
 
+# Importa os deploys de produção da Vercel para os KPIs, a partir dos status
+# "Vercel – <projeto>" nos commits do main (ver scripts/sync-vercel-deployments.mjs).
 on:
   schedule:
     - cron: "15 3 * * *"
@@ -8,12 +10,17 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    environment: production
+    # Sem "environment:": um job com environment cria um "deployment" falso no
+    # GitHub a cada execução. Os secrets usados são do repositório.
     permissions:
       contents: read
-      deployments: read
+      statuses: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Test sync logic
+        run: node --test scripts/sync-vercel-deployments.test.mjs
       - name: Synchronize Vercel deployments
         env:
           KPI_API_URL: ${{ secrets.KPI_API_URL }}
