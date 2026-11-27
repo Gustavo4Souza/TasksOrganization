@@ -11,7 +11,9 @@
         "dist/**"
       ],
       "env": [
-        "NEXT_OUTPUT"
+        "NEXT_OUTPUT",
+        "API_ORIGIN",
+        "NEXT_PUBLIC_API_URL"
       ]
     },
     "dev": {
