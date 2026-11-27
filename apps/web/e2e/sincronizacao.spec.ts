@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 test("migra missões locais e reenvia alterações feitas offline", async ({ page }) => {
   test.skip(!process.env.E2E_API_URL, "Requer a API real do ambiente E2E.");
   const email = `e2e-${Date.now()}@tasksorg.test`;
+  const apiRoutes = `${new URL(process.env.E2E_API_URL!).origin}/**`;
 
   await page.goto("/");
   await page.getByLabel("Nova missão").fill("Missão anterior à conta");
@@ -26,16 +27,17 @@ test("migra missões locais e reenvia alterações feitas offline", async ({ pag
   await expect(page.getByText("Missão anterior à conta")).toBeVisible();
 
   await page.goto("/kpis");
-  await expect(page.getByText("Dados reais")).toBeVisible();
+  // A API respondeu: "Dados reais" se houver indicadores, "Sem dados no período" num banco vazio.
+  await expect(page.getByText(/^(Dados reais|Sem dados no período)$/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Saúde da entrega" })).toBeVisible();
   await page.goto("/");
 
-  await page.route("http://localhost:3001/**", (route) => route.abort());
+  await page.route(apiRoutes, (route) => route.abort());
   await page.getByLabel("Nova missão").fill("Missão criada offline");
   await page.getByRole("button", { name: "Criar", exact: true }).click();
   await expect(page.getByText("Missão criada offline")).toBeVisible();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("tasksorg:sync-queue") ?? "[]").length)).toBe(1);
-  await page.unroute("http://localhost:3001/**");
+  await page.unroute(apiRoutes);
   await page.reload();
   await expect(page.getByText("Missão criada offline")).toBeVisible();
 
