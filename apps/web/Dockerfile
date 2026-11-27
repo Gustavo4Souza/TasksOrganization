@@ -5,7 +5,7 @@
 # qualquer lugar (servidor, Kubernetes no futuro, etc.).
 
 # ---- deps: instala dependências de todo o monorepo (aproveita cache) ----
-FROM node:20-bullseye AS deps
+FROM node:22-bullseye AS deps
 RUN corepack enable
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
@@ -18,7 +18,7 @@ COPY apps/desktop/package.json ./apps/desktop/package.json
 RUN pnpm install --frozen-lockfile
 
 # ---- builder: builda só o pacote @tasksorg/web (e o que ele depende) ----
-FROM node:20-bullseye AS builder
+FROM node:22-bullseye AS builder
 RUN corepack enable
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -30,7 +30,7 @@ ENV NEXT_OUTPUT=standalone
 RUN pnpm turbo run build --filter=@tasksorg/web
 
 # ---- runner: imagem final, enxuta, só com o output "standalone" ----
-FROM node:20-bullseye-slim AS runner
+FROM node:22-bullseye-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000

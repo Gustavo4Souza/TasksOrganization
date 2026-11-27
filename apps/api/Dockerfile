@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS deps
+FROM node:22-bookworm-slim AS deps
 WORKDIR /app
 RUN corepack enable
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
@@ -14,7 +14,7 @@ COPY packages/tsconfig packages/tsconfig
 COPY apps/api apps/api
 RUN pnpm --filter @tasksorg/core build && pnpm --filter @tasksorg/api build
 
-FROM node:20-bookworm-slim AS runner
+FROM node:22-bookworm-slim AS runner
 ENV NODE_ENV=production
 WORKDIR /app
 RUN groupadd --system --gid 1001 nodejs && useradd --system --uid 1001 --gid nodejs api

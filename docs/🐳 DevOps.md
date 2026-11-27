@@ -91,3 +91,14 @@ continuam registradas em `docs/Decisões/`.
 - Em produção, a API precisa de `TRUST_PROXY=1` atrás do Render ou do Ingress (PR #53).
 - Incorporar backend, banco e health checks quando essas partes forem
   implementadas.
+
+## API na Vercel
+
+A API roda como função da Vercel, em um projeto separado do site:
+
+- **Projeto `tasksorg-api`**: raiz `apps/api`. A entrada é `apps/api/api/index.ts`, que sobe o mesmo app Fastify do `server.ts` e aplica as migrações na primeira requisição de cada instância. O `apps/api/vercel.json` manda todos os caminhos para essa função.
+  - Variáveis: `DATABASE_URL` (Postgres Neon, use a URL com *pooling*), `KPI_INGEST_SECRET`, `ALLOWED_ORIGINS` (domínio do site), `TRUST_PROXY=true` e `NODE_ENV=production`.
+- **Projeto `tasks-organization`** (site): o `next.config.mjs` repassa `/api/*` para a API quando `API_ORIGIN` está definida.
+  - Variáveis: `NEXT_PUBLIC_API_URL=/api` e `API_ORIGIN=<endereço do projeto tasksorg-api>`.
+  - Para o navegador, site e API ficam no mesmo domínio, então o cookie de sessão é de primeira parte.
+- **Secrets do GitHub**: `KPI_API_URL` (endereço da API) e `KPI_INGEST_SECRET` (o mesmo valor da API), usados pelo CI e pelos workflows de coleta de KPIs.

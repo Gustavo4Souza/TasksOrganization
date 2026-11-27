@@ -3,7 +3,7 @@
 # Essa imagem só precisa ter Node + pnpm prontos; o `pnpm install` roda
 # no `command:` do compose, contra o código montado do host.
 
-FROM node:20-bullseye
+FROM node:22-bullseye
 
 RUN corepack enable
 
