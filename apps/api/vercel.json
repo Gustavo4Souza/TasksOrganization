@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "",
+  "buildCommand": "echo \"Sem build: a Vercel compila api/index.ts\"",
   "outputDirectory": ".",
   "functions": {
     "api/index.ts": {
