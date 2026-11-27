@@ -5,7 +5,7 @@ export interface KpiRecord {
   period_start: string;
   period_end: string;
   value: number | null;
-  unit: "count" | "percentage" | "minutes" | "hours" | "days";
+  unit: "count" | "percentage" | "milliseconds" | "minutes" | "hours" | "days";
   source: string;
   collected_at: string;
   owner: string;

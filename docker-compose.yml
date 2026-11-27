@@ -53,6 +53,8 @@ services:
       PORT: 3001
       DATABASE_URL: ${DATABASE_URL:-postgresql://tasksorg:tasksorg@postgres:5432/tasksorg}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      # Segredo da coleta de KPIs (/internal/kpis/*). O padrão serve só para desenvolvimento local.
+      KPI_INGEST_SECRET: ${KPI_INGEST_SECRET:-local-dev-kpi-secret}
     volumes:
       - .:/app
       - /app/node_modules

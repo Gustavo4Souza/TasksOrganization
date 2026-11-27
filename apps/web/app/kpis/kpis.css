@@ -15,7 +15,11 @@
 .metrics-card .px-panel__body { display: grid; align-content: start; gap: 12px; }
 .metrics-card p { margin: 0; color: var(--ink-muted); }
 .metrics-card .metrics-value { color: var(--ink); font-family: var(--font-digits); font-size: clamp(48px, 5vw, 72px); line-height: .9; white-space: nowrap; }
+.metrics-card .metrics-value-period { margin-top: -6px; color: var(--ink-muted); }
 .metrics-card .px-tag { justify-self: start; }
+/* No card o título e o valor já aparecem acima: a barra ocupa a largura toda. */
+.metrics-card .px-stat { grid-template-columns: 1fr; }
+.metrics-card .px-stat .px-bar__label, .metrics-card .px-stat .px-bar__value { display: none; }
 .metrics-history { margin: 0; }
 .metrics-history p { color: var(--ink-muted); }
 .metrics-table-wrap { overflow-x: auto; }

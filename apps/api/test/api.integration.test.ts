@@ -185,6 +185,8 @@ integration("API com PostgreSQL real", () => {
       expect.objectContaining({ metric_id: "change_failure_rate", value: 0 }),
       expect.objectContaining({ metric_id: "mttr", value: 5 }),
       expect.objectContaining({ metric_id: "test_success_rate", value: 98 }),
+      expect.objectContaining({ metric_id: "escaped_defect_rate", value: 100 }),
+      expect.objectContaining({ metric_id: "latency_p50_p95_p99", unit: "milliseconds" }),
     ]));
   });
 });
