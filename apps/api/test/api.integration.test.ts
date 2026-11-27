@@ -163,11 +163,15 @@ integration("API com PostgreSQL real", () => {
       status: "success", workflowRunId: "run-deploy-1", startedAt: started.toISOString(), completedAt: now.toISOString(),
     } });
     expect(deploy.statusCode).toBe(201);
-    await app.inject({ method: "POST", url: "/internal/kpis/pipelines", headers: ingest, payload: {
+    // O CI envia firstCommitAt no formato do `git log --format=%cI`, com fuso (ex.: -03:00).
+    const firstCommit = new Date(started.getTime() - 600_000);
+    const firstCommitWithOffset = new Date(firstCommit.getTime() - 3 * 3_600_000).toISOString().replace(/\.\d{3}Z$/, "-03:00");
+    const pipeline = await app.inject({ method: "POST", url: "/internal/kpis/pipelines", headers: ingest, payload: {
       workflowRunId: "run-ci-1", commitSha: "1234567abcdef", branch: "main", status: "success",
-      startedAt: started.toISOString(), completedAt: now.toISOString(), firstCommitAt: new Date(started.getTime() - 600_000).toISOString(), testsTotal: 100, testsPassed: 98,
+      startedAt: started.toISOString(), completedAt: now.toISOString(), firstCommitAt: firstCommitWithOffset, testsTotal: 100, testsPassed: 98,
       coveragePercentage: 98.9, flakyTests: 0,
     } });
+    expect(pipeline.statusCode).toBe(201);
     await app.inject({ method: "POST", url: "/internal/kpis/incidents", headers: ingest, payload: {
       deploymentId: deploy.json<{ id: string }>().id, title: "Falha recuperada", severity: "medium", status: "resolved",
       detectedAt: new Date(now.getTime() - 300_000).toISOString(), resolvedAt: now.toISOString(), escapedDefect: true,
@@ -188,5 +192,9 @@ integration("API com PostgreSQL real", () => {
       expect.objectContaining({ metric_id: "escaped_defect_rate", value: 100 }),
       expect.objectContaining({ metric_id: "latency_p50_p95_p99", unit: "milliseconds" }),
     ]));
+    // Lead time = 20 min desde o primeiro commit (enviado com fuso; o formato sem milissegundos arredonda para cima).
+    const leadTime = metrics.find((metric) => metric.metric_id === "lead_time_for_changes")?.value;
+    expect(leadTime).toBeGreaterThanOrEqual(20);
+    expect(leadTime).toBeLessThan(20.1);
   });
 });

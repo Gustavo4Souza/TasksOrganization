@@ -14,6 +14,8 @@ const emailSchema = z.string().trim().toLowerCase().email().max(254);
 const passwordSchema = z.string().min(8).max(128);
 const registerSchema = z.object({ name: z.string().trim().min(2).max(80), email: emailSchema, password: passwordSchema });
 const loginSchema = z.object({ email: emailSchema, password: passwordSchema });
+// Datas dos eventos de KPI: aceita UTC ("Z") ou fuso ("-03:00"), como o `git log --format=%cI` do CI gera.
+const isoDateTime = z.iso.datetime({ offset: true });
 const taskSchema = z.object({
   id: z.string().min(1).max(80),
   title: z.string().trim().min(1).max(160),
@@ -45,8 +47,8 @@ const deploymentSchema = z.object({
   commitSha: z.string().trim().min(7).max(64),
   status: z.enum(["success", "failure", "rollback", "hotfix"]),
   workflowRunId: z.string().max(80).optional(),
-  startedAt: z.iso.datetime(),
-  completedAt: z.iso.datetime(),
+  startedAt: isoDateTime,
+  completedAt: isoDateTime,
 });
 const incidentSchema = z.object({
   id: z.uuid().optional(),
@@ -54,8 +56,8 @@ const incidentSchema = z.object({
   title: z.string().trim().min(1).max(200),
   severity: z.enum(["low", "medium", "high", "critical"]),
   status: z.enum(["open", "resolved"]),
-  detectedAt: z.iso.datetime(),
-  resolvedAt: z.iso.datetime().optional(),
+  detectedAt: isoDateTime,
+  resolvedAt: isoDateTime.optional(),
   notes: z.string().max(10_000).optional(),
   escapedDefect: z.boolean().default(true),
 }).superRefine((value, context) => {
@@ -66,9 +68,9 @@ const pipelineSchema = z.object({
   commitSha: z.string().trim().min(7).max(64),
   branch: z.string().trim().min(1).max(200),
   status: z.enum(["success", "failure", "cancelled"]),
-  startedAt: z.iso.datetime(),
-  completedAt: z.iso.datetime(),
-  firstCommitAt: z.iso.datetime().optional(),
+  startedAt: isoDateTime,
+  completedAt: isoDateTime,
+  firstCommitAt: isoDateTime.optional(),
   testsTotal: z.number().int().min(0).optional(),
   testsPassed: z.number().int().min(0).optional(),
   coveragePercentage: z.number().min(0).max(100).optional(),
