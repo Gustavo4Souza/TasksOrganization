@@ -50,14 +50,13 @@ Detalhes das agregações atuais:
   issues estiver disponível.
 
 As fontes de GitHub Actions são alimentadas pelos workflows por meio dos
-endpoints internos de coleta. Deploys automáticos da Vercel são alimentados
-pelo workflow `record-vercel-deployment.yml`, acionado por
-`deployment_status`; o registro só ocorre quando o estado termina em
-`success`, `failure` ou `error`. A integração de SAST/SCA, secret scanning,
-monitoramento e APM permanece planejada; esses indicadores não devem ser
-simulados. Uma rotina diária em `sync-vercel-deployments.yml` reconcilia os
-deployments Vercel dos últimos 90 dias, caso algum evento não tenha sido
-entregue ao workflow.
+endpoints internos de coleta. Deploys de produção da Vercel são alimentados
+pela rotina diária `sync-vercel-deployments.yml`, que lê os status
+"Vercel – <projeto>" dos commits que entraram direto no `main` nos últimos 90
+dias (`git log --first-parent`). Só entram deploys concluídos (`success`,
+`failure` ou `error`); projetos pulados ("Skipped") e cancelados ficam de fora.
+A integração de SAST/SCA, secret scanning, monitoramento e APM permanece
+planejada; esses indicadores não devem ser simulados.
 
 ## Grupo 1 — DORA e entrega
 
