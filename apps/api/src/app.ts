@@ -50,6 +50,31 @@ const deploymentSchema = z.object({
   startedAt: isoDateTime,
   completedAt: isoDateTime,
 });
+// KPIs de segurança e operação: como cada um é agregado no período escolhido.
+// "latest" usa a medição mais recente (contagens que são um retrato do momento);
+// "average" usa a média das medições do período (taxas, tempos e latência).
+const measuredMetrics = {
+  sast_findings_by_severity: { unit: "count", aggregate: "latest", source: "sast", missing: "Fonte SAST ainda não integrada." },
+  vulnerability_remediation_time: { unit: "minutes", aggregate: "average", source: "sast-sca", missing: "Fonte de vulnerabilidades ainda não integrada." },
+  dependency_vulnerability_count: { unit: "count", aggregate: "latest", source: "sca", missing: "Auditoria de dependências ainda não integrada." },
+  secret_scan_findings: { unit: "count", aggregate: "latest", source: "secret-scanning", missing: "Fonte de secret scanning ainda não integrada." },
+  sast_false_positive_rate: { unit: "percentage", aggregate: "average", source: "sast", missing: "Revisões SAST ainda não integradas." },
+  availability: { unit: "percentage", aggregate: "average", source: "monitoring", missing: "Monitoramento de disponibilidade ainda não integrado." },
+  application_error_rate: { unit: "percentage", aggregate: "average", source: "apm", missing: "Logs e APM ainda não integrados." },
+  latency_p50_p95_p99: { unit: "milliseconds", aggregate: "average", source: "apm", missing: "Métricas de latência ainda não integradas." },
+  critical_operation_success_rate: { unit: "percentage", aggregate: "average", source: "api-frontend", missing: "Telemetria de operações críticas ainda não integrada." },
+} as const;
+type MeasuredMetricId = keyof typeof measuredMetrics;
+const measuredMetricIds = Object.keys(measuredMetrics) as [MeasuredMetricId, ...MeasuredMetricId[]];
+const measurementSchema = z.object({
+  metricId: z.enum(measuredMetricIds),
+  value: z.number().min(0),
+  measuredAt: isoDateTime,
+  source: z.string().trim().min(1).max(80),
+  notes: z.string().max(500).optional(),
+}).superRefine((value, context) => {
+  if (measuredMetrics[value.metricId].unit === "percentage" && value.value > 100) context.addIssue({ code: "custom", message: "Percentual deve ficar entre 0 e 100.", path: ["value"] });
+});
 const incidentSchema = z.object({
   id: z.uuid().optional(),
   deploymentId: z.uuid().optional(),
@@ -413,6 +438,21 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     return reply.code(201).send({ id: item.workflowRunId });
   });
 
+  app.post("/internal/kpis/measurements", async (request, reply) => {
+    if (!requireIngestSecret(request, reply)) return;
+    const parsed = measurementSchema.safeParse(request.body);
+    if (!parsed.success) return sendValidation(reply, parsed.error);
+    const item = parsed.data;
+    const result = await pool.query<{ id: string }>(
+      `INSERT INTO kpi_measurements(id, metric_id, value, measured_at, source, notes)
+       VALUES ($1,$2,$3,$4,$5,$6)
+       ON CONFLICT (metric_id, source, measured_at) DO UPDATE SET value = EXCLUDED.value, notes = EXCLUDED.notes
+       RETURNING id`,
+      [randomUUID(), item.metricId, item.value, item.measuredAt, item.source, item.notes ?? null],
+    );
+    return reply.code(201).send({ id: result.rows[0]!.id });
+  });
+
   app.get("/kpis", async (request, reply) => {
     const userId = await requireUser(request, reply, pool);
     if (!userId) return;
@@ -421,7 +461,7 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
     const days = Number.parseInt(parsed.data.period, 10);
     const periodEnd = new Date();
     const periodStart = new Date(periodEnd.getTime() - days * 86_400_000);
-    const [deployments, incidents, tests] = await Promise.all([
+    const [deployments, incidents, tests, measurements] = await Promise.all([
       pool.query<{ total: string; successes: string; failures: string; recovery_actions: string; escaped_deployments: string }>(
         `SELECT count(*)::text AS total,
                 count(*) FILTER (WHERE status = 'success')::text AS successes,
@@ -455,13 +495,20 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
                 avg(coverage_percentage)::text AS coverage,
                 sum(flaky_tests)::text AS flaky
          FROM pipeline_runs WHERE completed_at >= $1 AND completed_at <= $2`, [periodStart, periodEnd]),
+      pool.query<{ metric_id: string; average: string; latest: string; latest_source: string; latest_notes: string | null }>(
+        `SELECT DISTINCT ON (metric_id) metric_id,
+                avg(value) OVER (PARTITION BY metric_id)::text AS average,
+                value::text AS latest, source AS latest_source, notes AS latest_notes
+         FROM kpi_measurements WHERE measured_at >= $1 AND measured_at <= $2
+         ORDER BY metric_id, measured_at DESC`, [periodStart, periodEnd]),
     ]);
     const deploy = deployments.rows[0]!;
     const incident = incidents.rows[0]!;
     const test = tests.rows[0]!;
+    const measured = new Map(measurements.rows.map((row) => [row.metric_id, row]));
     const totalDeployments = Number(deploy.total);
     const totalTests = Number(test.tests_total ?? 0);
-    const metric = (metricId: string, value: number | null, unit: "count" | "percentage" | "minutes" | "milliseconds", source: string, notes?: string) => ({
+    const metric = (metricId: string, value: number | null, unit: "count" | "percentage" | "minutes" | "milliseconds", source: string, notes?: string | null) => ({
       metric_id: metricId,
       period_start: periodStart.toISOString(),
       period_end: periodEnd.toISOString(),
@@ -471,8 +518,15 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
       collected_at: new Date().toISOString(),
       owner: "Higor (implementação; proprietários originais no catálogo)",
       data_quality: value === null ? "unavailable" : "complete",
-      notes,
+      notes: notes ?? undefined,
     });
+    const measuredMetric = (metricId: MeasuredMetricId) => {
+      const definition = measuredMetrics[metricId];
+      const row = measured.get(metricId);
+      if (!row) return metric(metricId, null, definition.unit, definition.source, definition.missing);
+      const raw = Number(definition.aggregate === "latest" ? row.latest : row.average);
+      return metric(metricId, Number(raw.toFixed(2)), definition.unit, row.latest_source, row.latest_notes);
+    };
     return { metrics: [
       metric("deployment_frequency", totalDeployments ? totalDeployments : null, "count", "deployments", totalDeployments ? undefined : "Nenhum deploy registrado no período."),
       metric("lead_time_for_changes", test.lead_time_minutes ? Number(Number(test.lead_time_minutes).toFixed(2)) : null, "minutes", "pipeline_runs", test.lead_time_minutes ? undefined : "Nenhum primeiro commit associado a um pipeline no período."),
@@ -485,15 +539,7 @@ export async function buildApp(pool: DatabasePool, config: ApiConfig): Promise<F
       metric("escaped_defect_rate", totalDeployments ? Number(((Number(deploy.escaped_deployments) / totalDeployments) * 100).toFixed(2)) : null, "percentage", "deployments+incidents", totalDeployments ? "Deploys do período com ao menos um incidente de defeito escapado." : "Nenhum deploy registrado no período."),
       metric("rollback_hotfix_rate", totalDeployments ? Number(((Number(deploy.recovery_actions) / totalDeployments) * 100).toFixed(2)) : null, "percentage", "deployments", totalDeployments ? undefined : "Nenhum deploy registrado no período."),
       metric("flaky_test_rate", totalTests ? Number(((Number(test.flaky ?? 0) / totalTests) * 100).toFixed(2)) : null, "percentage", "pipeline_runs", totalTests ? undefined : "Nenhum resultado de testes registrado no período."),
-      metric("sast_findings_by_severity", null, "count", "sast", "Fonte SAST ainda não integrada."),
-      metric("vulnerability_remediation_time", null, "minutes", "sast-sca", "Fonte de vulnerabilidades ainda não integrada."),
-      metric("dependency_vulnerability_count", null, "count", "sca", "Auditoria de dependências ainda não integrada."),
-      metric("secret_scan_findings", null, "count", "secret-scanning", "Fonte de secret scanning ainda não integrada."),
-      metric("sast_false_positive_rate", null, "percentage", "sast", "Revisões SAST ainda não integradas."),
-      metric("availability", null, "percentage", "monitoring", "Monitoramento de disponibilidade ainda não integrado."),
-      metric("application_error_rate", null, "percentage", "apm", "Logs e APM ainda não integrados."),
-      metric("latency_p50_p95_p99", null, "milliseconds", "apm", "Métricas de latência ainda não integradas."),
-      metric("critical_operation_success_rate", null, "percentage", "api-frontend", "Telemetria de operações críticas ainda não integrada."),
+      ...measuredMetricIds.map(measuredMetric),
     ] };
   });
 
