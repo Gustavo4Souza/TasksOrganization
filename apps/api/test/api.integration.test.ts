@@ -197,4 +197,35 @@ integration("API com PostgreSQL real", () => {
     expect(leadTime).toBeGreaterThanOrEqual(20);
     expect(leadTime).toBeLessThan(20.1);
   });
+
+  it("agrega medições de segurança e operação e mantém indisponível o que não tem fonte", async () => {
+    const token = await register("medicoes@example.test");
+    const ingest = { "x-kpi-secret": "segredo-de-coleta" };
+    const at = (hoursAgo: number) => new Date(Date.now() - hoursAgo * 3_600_000).toISOString();
+    const send = (payload: Record<string, unknown>, headers: Record<string, string> = ingest) =>
+      app.inject({ method: "POST", url: "/internal/kpis/measurements", headers, payload });
+
+    expect((await send({ metricId: "availability", value: 99.9, measuredAt: at(1), source: "uptime" }, {})).statusCode).toBe(401);
+    expect((await send({ metricId: "availability", value: 120, measuredAt: at(1), source: "uptime" })).statusCode).toBe(400);
+    expect((await send({ metricId: "metrica_inexistente", value: 1, measuredAt: at(1), source: "x" })).statusCode).toBe(400);
+
+    // "average": média do período; "latest": medição mais recente.
+    expect((await send({ metricId: "availability", value: 99.5, measuredAt: at(3), source: "uptime" })).statusCode).toBe(201);
+    expect((await send({ metricId: "availability", value: 100, measuredAt: at(1), source: "uptime" })).statusCode).toBe(201);
+    expect((await send({ metricId: "dependency_vulnerability_count", value: 7, measuredAt: at(5), source: "pnpm-audit" })).statusCode).toBe(201);
+    expect((await send({ metricId: "dependency_vulnerability_count", value: 3, measuredAt: at(2), source: "pnpm-audit", notes: "2 moderadas, 1 baixa" })).statusCode).toBe(201);
+    // Reenviar a mesma medição atualiza em vez de duplicar.
+    expect((await send({ metricId: "dependency_vulnerability_count", value: 3, measuredAt: at(2), source: "pnpm-audit", notes: "2 moderadas, 1 baixa" })).statusCode).toBe(201);
+    // Fora do período de 7 dias: não entra.
+    expect((await send({ metricId: "secret_scan_findings", value: 4, measuredAt: at(24 * 10), source: "github" })).statusCode).toBe(201);
+
+    const response = await app.inject({ method: "GET", url: "/kpis?period=7d", headers: { authorization: `Bearer ${token}` } });
+    const metrics = response.json<{ metrics: Array<{ metric_id: string; value: number | null; source: string; notes?: string; data_quality: string }> }>().metrics;
+    const byId = new Map(metrics.map((metric) => [metric.metric_id, metric]));
+    expect(byId.get("availability")).toEqual(expect.objectContaining({ value: 99.75, source: "uptime", data_quality: "complete" }));
+    expect(byId.get("dependency_vulnerability_count")).toEqual(expect.objectContaining({ value: 3, notes: "2 moderadas, 1 baixa" }));
+    expect(byId.get("secret_scan_findings")).toEqual(expect.objectContaining({ value: null, data_quality: "unavailable" }));
+    expect(byId.get("latency_p50_p95_p99")).toEqual(expect.objectContaining({ value: null, notes: "Métricas de latência ainda não integradas." }));
+    expect(metrics).toHaveLength(20);
+  });
 });

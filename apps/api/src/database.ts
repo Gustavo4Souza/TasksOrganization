@@ -12,7 +12,7 @@ export function createDatabasePool(connectionString: string): DatabasePool {
 export async function migrate(pool: DatabasePool): Promise<void> {
   const client = await pool.connect();
   try {
-    const migrations = ["001_initial.sql", "002_kpis.sql", "003_kpi_quality.sql"];
+    const migrations = ["001_initial.sql", "002_kpis.sql", "003_kpi_quality.sql", "004_kpi_measurements.sql"];
     for (const [index, name] of migrations.entries()) {
       const version = index + 1;
       const sql = await readFile(new URL(`../migrations/${name}`, import.meta.url), "utf8");
